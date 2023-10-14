@@ -1,0 +1,15 @@
+{
+  "name": "dificult",
+  "version": "1.0.0",
+  "description": "Toughest Typing speed Test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Akshat N",
+  "license": "ISC",
+  "dependencies": {
+    "javascript-obfuscator": "^4.1.0",
+    "terser": "^5.21.0"
+  }
+}
