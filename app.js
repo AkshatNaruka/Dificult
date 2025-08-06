@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-  const filePath = req.url === '/' ? '/index.html' : req.url;
+  const filePath = req.url === '/' ? '/home.html' : req.url;
   const fileExtension = path.extname(filePath);
   const contentType = getContentType(fileExtension);
 
