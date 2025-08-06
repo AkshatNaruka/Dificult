@@ -3,21 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Speed Test</title>
+    <title>TypeWarrior - Battle Your Way to Typing Mastery</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Dare to take on this challenging speed typing test!</h1>
-        <p id="quote">Thsi rsetcniiposnti cnateclocinnosstcn sytedpnii rqueersis mucth aratceipi, ctiupracse, nda xprasteise.</p>
-        <div class="typing-box">
-            <textarea id="input" placeholder="Start typing here..."></textarea>
-            <button id="restart">Restart</button>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>TypeWarrior</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <i class="fas fa-crown"></i>
+                    <span id="level">Level 1</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-star"></i>
+                    <span id="xp">0 XP</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-fire"></i>
+                    <span id="streak">0 Streak</span>
+                </div>
+            </div>
+            <div class="game-modes">
+                <button class="mode-btn active" data-mode="story">Story Mode</button>
+                <button class="mode-btn" data-mode="battle">Battle Royale</button>
+                <button class="mode-btn" data-mode="challenge">Daily Challenge</button>
+            </div>
+        </header>
+
+        <!-- Game Modes -->
+        <div id="story-mode" class="game-mode active">
+            <div class="mode-header">
+                <h2><i class="fas fa-book"></i> Story Mode: Chapter <span id="chapter">1</span></h2>
+                <div class="chapter-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="chapter-progress"></div>
+                    </div>
+                    <span id="chapter-text">The Typing Apprentice</span>
+                </div>
+            </div>
         </div>
-        <p id="result">Start typing to begin the test.</p>
-        <div id="timer">Time: 0s</div>
+
+        <div id="battle-mode" class="game-mode">
+            <div class="mode-header">
+                <h2><i class="fas fa-swords"></i> Battle Royale</h2>
+                <div class="battle-status">
+                    <span id="players-online">Finding opponents...</span>
+                    <button id="join-battle" class="join-btn">Join Battle</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="challenge-mode" class="game-mode">
+            <div class="mode-header">
+                <h2><i class="fas fa-calendar-alt"></i> Daily Challenge</h2>
+                <div class="challenge-info">
+                    <span id="challenge-name">Wizard's Vocabulary</span>
+                    <div class="challenge-reward">
+                        <i class="fas fa-gem"></i>
+                        <span>500 XP + Rare Theme</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="game-area">
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-value" id="wpm">0</div>
+                    <div class="stat-label">WPM</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="accuracy">100%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="combo">x1</div>
+                    <div class="stat-label">Combo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="timer">60</div>
+                    <div class="stat-label">Time</div>
+                </div>
+            </div>
+
+            <div class="typing-area">
+                <div class="text-display" id="text-display">
+                    <span class="text-content" id="quote">Click "Start Game" to begin your typing adventure!</span>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="input" placeholder="Start typing here..." disabled>
+                    <div class="power-ups">
+                        <button class="power-up" id="slow-time" title="Slow Time">
+                            <i class="fas fa-clock"></i>
+                        </button>
+                        <button class="power-up" id="double-points" title="Double Points">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                        <button class="power-up" id="shield" title="Error Shield">
+                            <i class="fas fa-shield-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="start-game" class="start-btn">
+                    <i class="fas fa-play"></i>
+                    Start Game
+                </button>
+                <button id="restart" class="restart-btn">
+                    <i class="fas fa-redo"></i>
+                    Restart
+                </button>
+                <div class="settings">
+                    <button id="theme-toggle" class="settings-btn">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <button id="sound-toggle" class="settings-btn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Panel -->
+        <div class="achievements-panel">
+            <h3><i class="fas fa-trophy"></i> Recent Achievements</h3>
+            <div class="achievements-list" id="achievements">
+                <div class="achievement">
+                    <i class="fas fa-baby"></i>
+                    <span>First Steps - Complete your first test</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h3><i class="fas fa-medal"></i> Global Leaderboard</h3>
+            <div class="leaderboard-list" id="leaderboard">
+                <div class="rank-item">
+                    <span class="rank">#1</span>
+                    <span class="name">TypeMaster</span>
+                    <span class="score">156 WPM</span>
+                </div>
+                <div class="rank-item">
+                    <span class="rank">#2</span>
+                    <span class="name">SpeedDemon</span>
+                    <span class="score">142 WPM</span>
+                </div>
+                <div class="rank-item">
+                    <span class="rank">#3</span>
+                    <span class="name">KeyboardNinja</span>
+                    <span class="score">138 WPM</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="script.min.js"></script>
+    <!-- Particle Effects Container -->
+    <div id="particles"></div>
+
+    <!-- Game Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Initialize the enhanced game
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTypeWarrior();
+        });
+    </script>
 </body>
 </html>
