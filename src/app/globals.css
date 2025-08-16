@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
 
 :root {
   --background: #111827;
@@ -12,8 +11,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'Orbitron', monospace;
+  --font-sans: system-ui, sans-serif;
+  --font-mono: monospace;
 }
 
 @media (prefers-color-scheme: light) {
@@ -26,11 +25,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
-}
-
-.font-orbitron {
-  font-family: 'Orbitron', monospace;
+  font-family: system-ui, sans-serif;
 }
 
 .gradient-text {

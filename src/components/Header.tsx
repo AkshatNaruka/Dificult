@@ -2,9 +2,10 @@ import { GameStats } from './TypeWarriorGame';
 
 interface HeaderProps {
   stats: GameStats;
+  onOpenSettings: () => void;
 }
 
-export default function Header({ stats }: HeaderProps) {
+export default function Header({ stats, onOpenSettings }: HeaderProps) {
   return (
     <header className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 card-glow">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -62,7 +63,10 @@ export default function Header({ stats }: HeaderProps) {
           <button className="p-3 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg transition-colors">
             <span className="text-xl">🔊</span>
           </button>
-          <button className="p-3 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg transition-colors">
+          <button 
+            onClick={onOpenSettings}
+            className="p-3 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg transition-colors"
+          >
             <span className="text-xl">⚙️</span>
           </button>
         </div>

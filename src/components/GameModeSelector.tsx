@@ -4,9 +4,11 @@ interface GameModeSelectorProps {
   currentMode: GameMode;
   onModeChange: (mode: GameMode) => void;
   isPlaying: boolean;
+  onJoinRace: () => void;
+  onCreateRoom: () => void;
 }
 
-export default function GameModeSelector({ currentMode, onModeChange, isPlaying }: GameModeSelectorProps) {
+export default function GameModeSelector({ currentMode, onModeChange, isPlaying, onJoinRace, onCreateRoom }: GameModeSelectorProps) {
   const modes = [
     { id: 'story' as GameMode, name: 'Story Mode', icon: '📖', description: 'Progress through typing adventures' },
     { id: 'battle' as GameMode, name: 'Battle Royale', icon: '⚔️', description: 'Compete against other players' },
@@ -93,10 +95,16 @@ export default function GameModeSelector({ currentMode, onModeChange, isPlaying 
               Race against other players! Your car moves forward with each correct word.
             </p>
             <div className="flex items-center gap-4">
-              <button className="btn-primary text-sm py-2 px-4">
+              <button 
+                onClick={onJoinRace}
+                className="btn-primary text-sm py-2 px-4"
+              >
                 🚗 Join Race
               </button>
-              <button className="btn-secondary text-sm py-2 px-4">
+              <button 
+                onClick={onCreateRoom}
+                className="btn-secondary text-sm py-2 px-4"
+              >
                 🏁 Create Room
               </button>
             </div>

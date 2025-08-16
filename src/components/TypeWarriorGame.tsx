@@ -7,6 +7,9 @@ import TypingArea from './TypingArea';
 import StatsPanel from './StatsPanel';
 import Leaderboard from './Leaderboard';
 import AchievementsPanel from './AchievementsPanel';
+import RoomSelector from './RoomSelector';
+import MultiplayerRace from './MultiplayerRace';
+import Settings from './Settings';
 
 export type GameMode = 'story' | 'battle' | 'challenge' | 'racing';
 
@@ -30,6 +33,9 @@ export interface Achievement {
 export default function TypeWarriorGame() {
   const [gameMode, setGameMode] = useState<GameMode>('story');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showRoomSelector, setShowRoomSelector] = useState(false);
+  const [showMultiplayerRace, setShowMultiplayerRace] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [stats, setStats] = useState<GameStats>({
     wpm: 0,
     accuracy: 100,
@@ -66,10 +72,27 @@ export default function TypeWarriorGame() {
     }));
   };
 
+  const handleJoinRace = () => {
+    setShowRoomSelector(true);
+  };
+
+  const handleCreateRoom = () => {
+    setShowRoomSelector(true);
+  };
+
+  const handleStartMultiplayerRace = () => {
+    setShowRoomSelector(false);
+    setShowMultiplayerRace(true);
+  };
+
+  const handleOpenSettings = () => {
+    setShowSettings(true);
+  };
+
   return (
     <div className="min-h-screen text-white">
       <div className="container mx-auto px-4 py-6">
-        <Header stats={stats} />
+        <Header stats={stats} onOpenSettings={handleOpenSettings} />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
           {/* Main Game Area */}
@@ -78,6 +101,8 @@ export default function TypeWarriorGame() {
               currentMode={gameMode} 
               onModeChange={handleModeChange}
               isPlaying={isPlaying}
+              onJoinRace={handleJoinRace}
+              onCreateRoom={handleCreateRoom}
             />
             
             <TypingArea 
@@ -95,6 +120,23 @@ export default function TypeWarriorGame() {
             <Leaderboard />
           </div>
         </div>
+
+        {/* Modals */}
+        <RoomSelector
+          isVisible={showRoomSelector}
+          onClose={() => setShowRoomSelector(false)}
+          onJoinRace={handleStartMultiplayerRace}
+        />
+        
+        <MultiplayerRace
+          isVisible={showMultiplayerRace}
+          onClose={() => setShowMultiplayerRace(false)}
+        />
+        
+        <Settings
+          isVisible={showSettings}
+          onClose={() => setShowSettings(false)}
+        />
       </div>
     </div>
   );
