@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useSocket } from '@/hooks/useSocket';
+import { useRaceStore } from '@/store/raceStore';
 
 interface Room {
   id: string;
@@ -18,19 +20,14 @@ interface RoomSelectorProps {
   onJoinRace: () => void;
 }
 
-const demoRooms: Room[] = [
-  { id: '1', name: 'Speed Demons Only', players: 3, maxPlayers: 4, difficulty: 'Hard', status: 'Waiting' },
-  { id: '2', name: 'Beginner Friendly', players: 2, maxPlayers: 6, difficulty: 'Easy', status: 'Waiting' },
-  { id: '3', name: 'Pro Championship', players: 4, maxPlayers: 4, difficulty: 'Hard', status: 'In Progress' },
-  { id: '4', name: 'Quick Race', players: 1, maxPlayers: 3, difficulty: 'Medium', status: 'Waiting' },
-  { id: '5', name: 'Late Night Session', players: 2, maxPlayers: 5, difficulty: 'Medium', status: 'Waiting' },
-];
-
 export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSelectorProps) {
   const [activeTab, setActiveTab] = useState<'join' | 'create'>('join');
   const [roomName, setRoomName] = useState('');
   const [maxPlayers, setMaxPlayers] = useState(4);
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
+  
+  const { joinRoom, createRoom, isConnected } = useSocket();
+  const { availableRooms } = useRaceStore();
 
   const getDifficultyColor = (diff: string) => {
     switch (diff) {
@@ -52,13 +49,48 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
 
   const handleCreateRoom = () => {
     if (roomName.trim()) {
-      // Here you would normally create the room via API/Socket
+      createRoom({
+        name: roomName.trim(),
+        maxPlayers,
+        difficulty,
+        playerData: {
+          name: 'You',
+          avatar: '🎯'
+        }
+      });
       onJoinRace();
     }
   };
 
   const handleJoinRoom = (roomId: string, room: Room) => {
     if (room.status === 'Waiting' && room.players < room.maxPlayers) {
+      joinRoom(roomId, {
+        name: 'You',
+        avatar: '🎯'
+      });
+      onJoinRace();
+    }
+  };
+
+  const handleQuickJoin = () => {
+    // Find the first available room
+    const availableRoom = availableRooms.find(
+      room => room.status === 'Waiting' && room.players < room.maxPlayers
+    );
+    
+    if (availableRoom) {
+      handleJoinRoom(availableRoom.id, availableRoom);
+    } else {
+      // Create a quick room if none available
+      createRoom({
+        name: 'Quick Race Room',
+        maxPlayers: 4,
+        difficulty: 'Medium',
+        playerData: {
+          name: 'You',
+          avatar: '🎯'
+        }
+      });
       onJoinRace();
     }
   };
@@ -116,15 +148,28 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
         {/* Join Room Tab */}
         {activeTab === 'join' && (
           <div>
+            {!isConnected && (
+              <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
+                <p className="text-yellow-300 text-sm">
+                  🔄 Connecting to server... Please wait.
+                </p>
+              </div>
+            )}
+            
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">Available Rooms</h3>
               <div className="text-sm text-gray-400">
-                {demoRooms.filter(r => r.status === 'Waiting').length} rooms waiting for players
+                {availableRooms.filter(r => r.status === 'Waiting').length} rooms waiting for players
               </div>
             </div>
             
             <div className="space-y-3">
-              {demoRooms.map((room) => (
+              {availableRooms.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  {isConnected ? 'No rooms available. Create one to get started!' : 'Loading rooms...'}
+                </div>
+              ) : (
+                availableRooms.map((room) => (
                 <motion.div
                   key={room.id}
                   whileHover={{ scale: 1.02 }}
@@ -164,7 +209,8 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
                     </button>
                   </div>
                 </motion.div>
-              ))}
+                ))
+              )}
             </div>
 
             {/* Quick Join */}
@@ -174,8 +220,9 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
                 Jump into the next available room that matches your skill level.
               </p>
               <button
-                onClick={onJoinRace}
-                className="btn-primary"
+                onClick={handleQuickJoin}
+                disabled={!isConnected}
+                className={`btn-primary ${!isConnected ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 🎮 Quick Join
               </button>
@@ -242,9 +289,9 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
             <div className="flex items-center gap-4">
               <button
                 onClick={handleCreateRoom}
-                disabled={!roomName.trim()}
+                disabled={!roomName.trim() || !isConnected}
                 className={`flex-1 py-3 px-6 rounded-lg font-medium transition-colors ${
-                  roomName.trim()
+                  roomName.trim() && isConnected
                     ? 'bg-green-600 hover:bg-green-700 text-white'
                     : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                 }`}

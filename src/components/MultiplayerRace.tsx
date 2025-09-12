@@ -3,72 +3,73 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRaceStore, Player } from '@/store/raceStore';
+import { useSocket } from '@/hooks/useSocket';
 
 interface MultiplayerRaceProps {
   isVisible: boolean;
   onClose: () => void;
 }
 
-const demoPlayers: Player[] = [
-  { id: '1', name: 'You', avatar: '🎯', position: 1, wpm: 0, accuracy: 100, progress: 0, isFinished: false },
-  { id: '2', name: 'SpeedRacer', avatar: '🏎️', position: 2, wpm: 0, accuracy: 100, progress: 0, isFinished: false },
-  { id: '3', name: 'TypeMaster', avatar: '👑', position: 3, wpm: 0, accuracy: 100, progress: 0, isFinished: false },
-  { id: '4', name: 'KeyNinja', avatar: '🥷', position: 4, wpm: 0, accuracy: 100, progress: 0, isFinished: false },
-];
-
-const raceText = "Speed through the winding course of letters. Navigate the challenging turns of punctuation and acceleration zones of common words. Cross the finish line first by maintaining both speed and accuracy.";
-
 export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceProps) {
-  const [players, setPlayers] = useState<Player[]>(demoPlayers);
-  const [currentText, setCurrentText] = useState(raceText);
+  const { currentRoom, currentPlayer } = useRaceStore();
+  const { updateProgress, markReady, leaveRoom, socket } = useSocket();
+  
   const [typedText, setTypedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [raceStarted, setRaceStarted] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
-  const currentPlayer = players[0]; // User is always first player
+  // Get current room data or fallback
+  const players = currentRoom?.players || [];
+  const raceText = currentRoom?.text || "Speed through the winding course of letters. Navigate the challenging turns of punctuation and acceleration zones of common words. Cross the finish line first by maintaining both speed and accuracy.";
+  const raceStarted = currentRoom?.isStarted || false;
+
+  // Socket event handlers
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCountdown = (data: { countdown: number }) => {
+      setCountdown(data.countdown);
+    };
+
+    const handleRaceStart = () => {
+      setStartTime(Date.now());
+      setCountdown(0);
+    };
+
+    const handleRaceFinished = (data: { room: any; winner: Player }) => {
+      console.log('Race finished!', data);
+    };
+
+    socket.on('race:countdown', handleCountdown);
+    socket.on('race:start', handleRaceStart);
+    socket.on('race:finished', handleRaceFinished);
+
+    return () => {
+      socket.off('race:countdown', handleCountdown);
+      socket.off('race:start', handleRaceStart);
+      socket.off('race:finished', handleRaceFinished);
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (countdown === 0 && raceStarted) {
-      setStartTime(Date.now());
     }
-  }, [countdown, raceStarted]);
+  }, [countdown]);
 
-  // Simulate other players' progress
-  useEffect(() => {
-    if (!raceStarted || countdown > 0) return;
+  const handleStartRace = () => {
+    if (!isReady) {
+      setIsReady(true);
+      markReady();
+    }
+  };
 
-    const interval = setInterval(() => {
-      setPlayers(prev => prev.map((player, index) => {
-        if (index === 0) return player; // Don't update user
-
-        const baseSpeed = 0.3 + Math.random() * 0.4; // 0.3-0.7% per update
-        const newProgress = Math.min(100, player.progress + baseSpeed);
-        const newWpm = Math.round(40 + Math.random() * 60); // 40-100 WPM
-        
-        return {
-          ...player,
-          progress: newProgress,
-          wpm: newWpm,
-          accuracy: 95 + Math.random() * 5,
-          isFinished: newProgress >= 100
-        };
-      }));
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, [raceStarted, countdown]);
-
-  const startRace = () => {
-    setCountdown(3);
-    setRaceStarted(true);
-    setTypedText('');
-    setCurrentIndex(0);
-    setStartTime(null);
+  const handleCloseRace = () => {
+    leaveRoom();
+    onClose();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -77,37 +78,24 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
     const value = (e.target as HTMLInputElement).value;
     const lastChar = value[value.length - 1];
     
-    if (lastChar === currentText[currentIndex]) {
+    if (lastChar === raceText[currentIndex]) {
       setCurrentIndex(prev => prev + 1);
       setTypedText(value);
       
       // Calculate progress and WPM
-      const progress = (currentIndex + 1) / currentText.length * 100;
+      const progress = (currentIndex + 1) / raceText.length * 100;
       const timeElapsed = startTime ? (Date.now() - startTime) / 1000 / 60 : 0; // minutes
       const wordsTyped = value.split(' ').length;
-      const wpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
+      const wmp = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
       
-      // Update current player
-      setPlayers(prev => prev.map((player, index) => 
-        index === 0 
-          ? { ...player, progress, wpm, accuracy: 99.5 }
-          : player
-      ));
+      // Send progress to server
+      updateProgress(progress, wmp, 99.5);
       
       // Check if race is complete
-      if (currentIndex + 1 >= currentText.length) {
-        setPlayers(prev => prev.map((player, index) => 
-          index === 0 
-            ? { ...player, isFinished: true }
-            : player
-        ));
+      if (currentIndex + 1 >= raceText.length) {
+        console.log('Race complete for current player!');
       }
     }
-  };
-
-  const getRacePosition = (playerId: string) => {
-    const sortedPlayers = [...players].sort((a, b) => b.progress - a.progress);
-    return sortedPlayers.findIndex(p => p.id === playerId) + 1;
   };
 
   const getCharacterClass = (index: number) => {
@@ -139,7 +127,7 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">🏎️ Type Racing - Multiplayer</h2>
           <button
-            onClick={onClose}
+            onClick={handleCloseRace}
             className="text-gray-400 hover:text-white text-2xl"
           >
             ✕
@@ -168,7 +156,8 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
             {players.map((player) => (
               <div key={player.id} className="flex items-center gap-4">
                 <div className="w-20 text-sm font-medium">
-                  #{getRacePosition(player.id)} {player.name}
+                  #{player.position} {player.name}
+                  {player.id === currentPlayer?.id && ' (You)'}
                 </div>
                 <div className="flex-1 relative bg-gray-700 rounded-full h-8">
                   <div 
@@ -199,7 +188,7 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
         {/* Text Display */}
         <div className="mb-6 p-6 bg-gray-900 rounded-xl">
           <div className="text-lg leading-relaxed font-mono">
-            {currentText.split('').map((char, index) => (
+            {raceText.split('').map((char, index) => (
               <span
                 key={index}
                 className={`${getCharacterClass(index)} transition-colors duration-100`}
@@ -229,28 +218,34 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-300">
-              Progress: {currentPlayer.progress.toFixed(1)}%
+              Progress: {currentPlayer?.progress?.toFixed(1) || 0}%
             </div>
             <div className="text-sm text-gray-300">
-              WPM: {currentPlayer.wpm}
+              WPM: {currentPlayer?.wpm || 0}
             </div>
             <div className="text-sm text-gray-300">
-              Position: #{getRacePosition(currentPlayer.id)}
+              Position: #{currentPlayer?.position || 1}
             </div>
           </div>
           
-          {!raceStarted && (
+          {!raceStarted && !isReady && (
             <button
-              onClick={startRace}
+              onClick={handleStartRace}
               className="btn-primary"
             >
-              🏁 Start Race
+              🏁 Ready to Race
             </button>
           )}
           
-          {raceStarted && currentPlayer.isFinished && (
+          {!raceStarted && isReady && (
+            <div className="text-lg font-bold text-yellow-400">
+              ⏳ Waiting for other players...
+            </div>
+          )}
+          
+          {raceStarted && currentPlayer?.isFinished && (
             <div className="text-xl font-bold text-yellow-400">
-              🏆 Race Complete! Position: #{getRacePosition(currentPlayer.id)}
+              🏆 Race Complete! Position: #{currentPlayer.position}
             </div>
           )}
         </div>
@@ -262,12 +257,12 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">{player.avatar}</span>
                 <span className="font-semibold">{player.name}</span>
-                {player.id === currentPlayer.id && (
+                {player.id === currentPlayer?.id && (
                   <span className="text-xs bg-blue-500 px-2 py-1 rounded">YOU</span>
                 )}
               </div>
               <div className="text-sm space-y-1">
-                <div>Position: #{getRacePosition(player.id)}</div>
+                <div>Position: #{player.position}</div>
                 <div>Progress: {player.progress.toFixed(1)}%</div>
                 <div>WPM: {player.wpm}</div>
                 <div>Accuracy: {player.accuracy.toFixed(1)}%</div>

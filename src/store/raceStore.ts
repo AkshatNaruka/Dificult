@@ -19,7 +19,10 @@ export interface RaceRoom {
   isStarted: boolean;
   isFinished: boolean;
   maxPlayers: number;
-  createdAt: Date;
+  createdAt?: Date;
+  difficulty?: string;
+  status?: string;
+  countdown?: number;
 }
 
 interface RaceState {
