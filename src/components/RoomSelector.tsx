@@ -3,16 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSocket } from '@/hooks/useSocket';
-import { useRaceStore } from '@/store/raceStore';
-
-interface Room {
-  id: string;
-  name: string;
-  players: number;
-  maxPlayers: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  status: 'Waiting' | 'In Progress' | 'Finished';
-}
+import { useRaceStore, RaceRoom } from '@/store/raceStore';
 
 interface RoomSelectorProps {
   isVisible: boolean;
@@ -62,8 +53,8 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
     }
   };
 
-  const handleJoinRoom = (roomId: string, room: Room) => {
-    if (room.status === 'Waiting' && room.players < room.maxPlayers) {
+  const handleJoinRoom = (roomId: string, room: RaceRoom) => {
+    if ((room.status || 'Waiting') === 'Waiting' && room.players.length < room.maxPlayers) {
       joinRoom(roomId, {
         name: 'You',
         avatar: '🎯'
@@ -75,7 +66,7 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
   const handleQuickJoin = () => {
     // Find the first available room
     const availableRoom = availableRooms.find(
-      room => room.status === 'Waiting' && room.players < room.maxPlayers
+      room => (room.status || 'Waiting') === 'Waiting' && room.players.length < room.maxPlayers
     );
     
     if (availableRoom) {
@@ -159,7 +150,7 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">Available Rooms</h3>
               <div className="text-sm text-gray-400">
-                {availableRooms.filter(r => r.status === 'Waiting').length} rooms waiting for players
+                {availableRooms.filter(r => (r.status || 'Waiting') === 'Waiting').length} rooms waiting for players
               </div>
             </div>
             
@@ -180,29 +171,29 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
                       <h4 className="font-semibold text-white mb-1">{room.name}</h4>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="text-gray-300">
-                          👥 {room.players}/{room.maxPlayers} players
+                          👥 {room.players.length}/{room.maxPlayers} players
                         </span>
-                        <span className={`font-medium ${getDifficultyColor(room.difficulty)}`}>
-                          {room.difficulty}
+                        <span className={`font-medium ${getDifficultyColor(room.difficulty || 'Medium')}`}>
+                          {room.difficulty || 'Medium'}
                         </span>
-                        <span className={`font-medium ${getStatusColor(room.status)}`}>
-                          {room.status}
+                        <span className={`font-medium ${getStatusColor(room.status || 'Waiting')}`}>
+                          {room.status || 'Waiting'}
                         </span>
                       </div>
                     </div>
                     
                     <button
                       onClick={() => handleJoinRoom(room.id, room)}
-                      disabled={room.status !== 'Waiting' || room.players >= room.maxPlayers}
+                      disabled={(room.status || 'Waiting') !== 'Waiting' || room.players.length >= room.maxPlayers}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        room.status === 'Waiting' && room.players < room.maxPlayers
+                        (room.status || 'Waiting') === 'Waiting' && room.players.length < room.maxPlayers
                           ? 'bg-green-600 hover:bg-green-700 text-white'
                           : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                       }`}
                     >
-                      {room.status === 'Waiting' && room.players < room.maxPlayers 
+                      {(room.status || 'Waiting') === 'Waiting' && room.players.length < room.maxPlayers 
                         ? 'Join' 
-                        : room.status === 'In Progress' 
+                        : (room.status || 'Waiting') === 'In Progress' 
                         ? 'In Progress' 
                         : 'Full'
                       }
