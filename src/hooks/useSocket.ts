@@ -2,18 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useRaceStore, Player, RaceRoom } from '@/store/raceStore';
-
-interface SocketEvents {
-  'rooms:list': (rooms: any[]) => void;
-  'room:joined': (data: { room: RaceRoom; player: Player }) => void;
-  'room:created': (data: { room: RaceRoom; player: Player }) => void;
-  'room:updated': (room: RaceRoom) => void;
-  'room:join:failed': (data: { message: string }) => void;
-  'race:countdown': (data: { countdown: number }) => void;
-  'race:start': (data: { room: RaceRoom }) => void;
-  'race:finished': (data: { room: RaceRoom; winner: Player }) => void;
-}
+import { useRaceStore, RaceRoom } from '@/store/raceStore';
 
 export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
@@ -23,7 +12,6 @@ export const useSocket = () => {
     setAvailableRooms, 
     setCurrentPlayer, 
     setIsConnected: setStoreConnected,
-    currentRoom,
     currentPlayer 
   } = useRaceStore();
 
@@ -49,7 +37,7 @@ export const useSocket = () => {
     });
 
     // Room events
-    socket.on('rooms:list', (rooms) => {
+    socket.on('rooms:list', (rooms: RaceRoom[]) => {
       setAvailableRooms(rooms);
     });
 
