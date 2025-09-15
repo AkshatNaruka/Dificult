@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useRaceStore, Player } from '@/store/raceStore';
+import { useRaceStore, Player, RaceRoom } from '@/store/raceStore';
 import { useSocket } from '@/hooks/useSocket';
 
 interface MultiplayerRaceProps {
@@ -38,7 +38,7 @@ export default function MultiplayerRace({ isVisible, onClose }: MultiplayerRaceP
       setCountdown(0);
     };
 
-    const handleRaceFinished = (data: { room: any; winner: Player }) => {
+    const handleRaceFinished = (data: { room: RaceRoom; winner: Player }) => {
       console.log('Race finished!', data);
     };
 
