@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSocket } from '@/hooks/useSocket';
 import Header from './Header';
 import GameModeSelector from './GameModeSelector';
 import TypingArea from './TypingArea';
@@ -31,6 +32,9 @@ export interface Achievement {
 }
 
 export default function TypeWarriorGame() {
+  // Initialize socket connection
+  useSocket();
+  
   const [gameMode, setGameMode] = useState<GameMode>('story');
   const [isPlaying, setIsPlaying] = useState(false);
   const [showRoomSelector, setShowRoomSelector] = useState(false);
