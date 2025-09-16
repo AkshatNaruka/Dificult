@@ -297,6 +297,14 @@
         .typing-stats-left {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .typing-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .text-display {
@@ -690,10 +698,27 @@
                                 <span>Accuracy:</span>
                                 <span class="stat-value" id="current-accuracy">100.0%</span>
                             </div>
+                            <div class="stat-item" id="timer-display" style="display: none;">
+                                <span style="color: #f59e0b;">⏰</span>
+                                <span>Time:</span>
+                                <span class="stat-value" id="timer-value">60s</span>
+                            </div>
                         </div>
-                        <button class="btn btn-primary" id="start-btn">
-                            🚀 Start Test
-                        </button>
+                        <div class="typing-controls">
+                            <select id="test-duration" class="btn btn-secondary" style="margin-right: 0.5rem; padding: 0.5rem;">
+                                <option value="words">Full Text</option>
+                                <option value="30">30 seconds</option>
+                                <option value="60" selected>60 seconds</option>
+                                <option value="120">2 minutes</option>
+                                <option value="300">5 minutes</option>
+                            </select>
+                            <button class="btn btn-primary" id="start-btn">
+                                🚀 Start Test
+                            </button>
+                            <button class="btn btn-secondary" id="restart-btn" style="display: none;">
+                                🔄 Restart
+                            </button>
+                        </div>
                     </div>
 
                     <div class="text-display">
@@ -950,7 +975,10 @@
                     errors: 0,
                     testCount: 3,
                     soundEnabled: true,
-                    theme: 'dark'
+                    theme: 'dark',
+                    testDuration: 60, // seconds, 0 = unlimited
+                    timeRemaining: 60,
+                    isTimedTest: false
                 };
 
                 this.quotes = {
@@ -1007,6 +1035,16 @@
                     this.startTest();
                 });
 
+                // Restart button
+                document.getElementById('restart-btn').addEventListener('click', () => {
+                    this.restartTest();
+                });
+
+                // Test duration selector
+                document.getElementById('test-duration').addEventListener('change', (e) => {
+                    this.setTestDuration(e.target.value);
+                });
+
                 // Typing input
                 const input = document.getElementById('typing-input');
                 input.addEventListener('input', (e) => {
@@ -1028,6 +1066,19 @@
                     this.toggleSound();
                 });
 
+                document.getElementById('settings-btn').addEventListener('click', () => {
+                    this.showSettings();
+                });
+
+                // Other clickable elements
+                document.getElementById('218')?.addEventListener('click', () => {
+                    this.joinCompetition();
+                });
+
+                document.getElementById('153')?.addEventListener('click', () => {
+                    this.showLeaderboard();
+                });
+
                 // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && this.gameState.isPlaying) {
@@ -1040,18 +1091,81 @@
             }
 
             setMode(mode) {
+                // End current test if running
+                if (this.gameState.isPlaying) {
+                    this.endTest();
+                }
+
                 this.gameState.mode = mode;
                 
-                // Update UI
+                // Update mode button states
                 document.querySelectorAll('.mode-btn').forEach(btn => {
                     btn.classList.remove('active');
+                    const description = btn.querySelector('.description:last-child');
+                    if (description) {
+                        description.textContent = btn.dataset.mode === mode ? '✓ SELECTED' : this.getModeDescription(btn.dataset.mode);
+                    }
+                    
                     if (btn.dataset.mode === mode) {
                         btn.classList.add('active');
                     }
                 });
 
+                // Reset typing area
+                document.getElementById('text-content').textContent = "Click 'Start Test' to begin";
+                const input = document.getElementById('typing-input');
+                input.value = '';
+                input.disabled = true;
+                input.placeholder = "Click 'Start Test' to begin";
+                
+                const startBtn = document.getElementById('start-btn');
+                startBtn.disabled = false;
+                startBtn.textContent = '🚀 Start Test';
+
                 // Update mode status
                 this.updateModeStatus();
+            }
+
+            setTestDuration(value) {
+                if (value === 'words') {
+                    this.gameState.testDuration = 0;
+                    this.gameState.isTimedTest = false;
+                    document.getElementById('timer-display').style.display = 'none';
+                } else {
+                    this.gameState.testDuration = parseInt(value);
+                    this.gameState.timeRemaining = this.gameState.testDuration;
+                    this.gameState.isTimedTest = true;
+                    document.getElementById('timer-display').style.display = 'flex';
+                    document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                }
+            }
+
+            formatTime(seconds) {
+                if (seconds >= 60) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    return `${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                return `${seconds}s`;
+            }
+
+            restartTest() {
+                if (this.gameState.isPlaying) {
+                    this.endTest();
+                }
+                setTimeout(() => {
+                    this.startTest();
+                }, 100);
+            }
+
+            getModeDescription(mode) {
+                const descriptions = {
+                    story: 'Progress through typing adventures',
+                    battle: 'Compete against other players',
+                    challenge: 'Special daily typing challenges',
+                    racing: 'Race cars with your typing speed'
+                };
+                return descriptions[mode] || '';
             }
 
             updateModeStatus() {
@@ -1090,6 +1204,7 @@
             }
 
             startTest() {
+                // Reset game state
                 this.gameState.isPlaying = true;
                 this.gameState.startTime = Date.now();
                 this.gameState.typedText = '';
@@ -1097,23 +1212,58 @@
                 this.gameState.correctChars = 0;
                 this.gameState.totalChars = 0;
                 this.gameState.errors = 0;
+                this.gameState.wpm = 0;
+                this.gameState.accuracy = 100;
+                this.gameState.combo = 1;
+
+                // Set up timer for timed tests
+                if (this.gameState.isTimedTest) {
+                    this.gameState.timeRemaining = this.gameState.testDuration;
+                    document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                }
 
                 // Get random quote based on mode
                 const quotes = this.quotes[this.gameState.mode];
                 this.gameState.currentText = quotes[Math.floor(Math.random() * quotes.length)];
 
-                // Update UI
+                // Update UI elements
                 this.renderText();
-                document.getElementById('typing-input').disabled = false;
-                document.getElementById('typing-input').placeholder = 'Start typing...';
-                document.getElementById('typing-input').focus();
-                document.getElementById('start-btn').disabled = true;
-                document.getElementById('start-btn').textContent = '⏱️ Testing...';
+                const input = document.getElementById('typing-input');
+                const startBtn = document.getElementById('start-btn');
+                const restartBtn = document.getElementById('restart-btn');
+                
+                input.value = '';
+                input.disabled = false;
+                input.placeholder = 'Start typing...';
+                input.focus();
+                
+                startBtn.style.display = 'none';
+                restartBtn.style.display = 'inline-flex';
+
+                // Clear any existing intervals
+                if (this.statsInterval) {
+                    clearInterval(this.statsInterval);
+                }
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
 
                 // Start stats update interval
                 this.statsInterval = setInterval(() => {
                     this.updateStats();
                 }, 100);
+
+                // Start timer for timed tests
+                if (this.gameState.isTimedTest) {
+                    this.timerInterval = setInterval(() => {
+                        this.gameState.timeRemaining--;
+                        document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                        
+                        if (this.gameState.timeRemaining <= 0) {
+                            this.endTest();
+                        }
+                    }, 1000);
+                }
             }
 
             handleInput(value) {
@@ -1136,8 +1286,8 @@
                 this.renderText();
                 this.updateStats();
 
-                // Check if test is complete
-                if (value.length >= this.gameState.currentText.length) {
+                // Check if test is complete (for non-timed tests or when text is finished)
+                if (!this.gameState.isTimedTest && value.length >= this.gameState.currentText.length) {
                     this.endTest();
                 }
             }
@@ -1187,7 +1337,14 @@
 
             endTest() {
                 this.gameState.isPlaying = false;
-                clearInterval(this.statsInterval);
+                
+                // Clear intervals
+                if (this.statsInterval) {
+                    clearInterval(this.statsInterval);
+                }
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
 
                 // Update streak
                 if (this.gameState.accuracy >= 95) {
@@ -1214,11 +1371,16 @@
                 this.checkAchievements();
 
                 // Reset UI
-                document.getElementById('typing-input').disabled = true;
-                document.getElementById('typing-input').value = '';
-                document.getElementById('typing-input').placeholder = 'Test completed! Press Enter or Start Test to try again.';
-                document.getElementById('start-btn').disabled = false;
-                document.getElementById('start-btn').textContent = '🚀 Start Test';
+                const input = document.getElementById('typing-input');
+                const startBtn = document.getElementById('start-btn');
+                const restartBtn = document.getElementById('restart-btn');
+                
+                input.disabled = true;
+                input.placeholder = 'Test completed! Click Start Test to try again.';
+                
+                startBtn.style.display = 'inline-flex';
+                startBtn.textContent = '🚀 Start Test';
+                restartBtn.style.display = 'none';
 
                 this.updateUI();
                 this.saveToStorage();
@@ -1322,16 +1484,70 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
             }
 
             toggleTheme() {
-                // Simple theme toggle - could be enhanced
-                document.body.style.filter = document.body.style.filter === 'invert(1) hue-rotate(180deg)' 
-                    ? '' 
-                    : 'invert(1) hue-rotate(180deg)';
+                this.gameState.theme = this.gameState.theme === 'dark' ? 'light' : 'dark';
+                
+                if (this.gameState.theme === 'light') {
+                    document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                    document.getElementById('theme-btn').textContent = '🌙';
+                } else {
+                    document.body.style.filter = '';
+                    document.getElementById('theme-btn').textContent = '🎨';
+                }
+                
+                this.saveToStorage();
             }
 
             toggleSound() {
                 this.gameState.soundEnabled = !this.gameState.soundEnabled;
                 const soundBtn = document.getElementById('sound-btn');
                 soundBtn.textContent = this.gameState.soundEnabled ? '🔊' : '🔇';
+                this.saveToStorage();
+            }
+
+            showSettings() {
+                const settings = `
+⚙️ TypeWarrior Settings
+
+🎨 Theme: ${this.gameState.theme === 'dark' ? 'Dark' : 'Light'}
+🔊 Sound: ${this.gameState.soundEnabled ? 'Enabled' : 'Disabled'}
+📊 Tests Completed: ${this.gameState.testCount}
+🏆 Level: ${this.gameState.level}
+⭐ Total XP: ${this.gameState.xp}
+
+Keyboard Shortcuts:
+• Enter: Start new test
+• Escape: End current test
+• Tab: Focus typing area
+
+Tips:
+• Maintain consistent rhythm
+• Focus on accuracy over speed
+• Take breaks every 15-20 minutes
+                `.trim();
+                
+                alert(settings);
+            }
+
+            joinCompetition() {
+                alert('🏆 Competition Feature Coming Soon!\n\nThis will allow you to compete with other players in weekly typing tournaments with XP prizes!');
+            }
+
+            showLeaderboard() {
+                const leaderboard = `
+🏅 Global Leaderboard - Top Players
+
+🥇 #1 TypeMaster - 156 WPM (98.5% ACC)
+🥈 #2 SpeedDemon - 142 WPM (97.2% ACC) 
+🥉 #3 KeyboardNinja - 138 WPM (99.1% ACC)
+#4 FingerFlash - 134 WPM (96.8% ACC)
+#5 TextTornado - 129 WPM (98.3% ACC)
+...
+#47 You - ${this.gameState.wpm} WPM (${this.gameState.accuracy.toFixed(1)}% ACC)
+
+Keep practicing to climb the ranks!
+                `.trim();
+                
+                alert(leaderboard);
             }
 
             saveToStorage() {
@@ -1340,7 +1556,9 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
                     xp: this.gameState.xp,
                     streak: this.gameState.streak,
                     testCount: this.gameState.testCount,
-                    soundEnabled: this.gameState.soundEnabled
+                    soundEnabled: this.gameState.soundEnabled,
+                    theme: this.gameState.theme,
+                    mode: this.gameState.mode
                 }));
             }
 
@@ -1354,12 +1572,25 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
                         this.gameState.streak = data.streak || 0;
                         this.gameState.testCount = data.testCount || 3;
                         this.gameState.soundEnabled = data.soundEnabled !== false;
+                        this.gameState.theme = data.theme || 'dark';
+                        this.gameState.mode = data.mode || 'story';
                         
                         this.updateUI();
                         
+                        // Apply theme
+                        if (this.gameState.theme === 'light') {
+                            document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                            document.getElementById('theme-btn').textContent = '🌙';
+                        }
+                        
+                        // Apply sound setting
                         if (!this.gameState.soundEnabled) {
                             document.getElementById('sound-btn').textContent = '🔇';
                         }
+
+                        // Set mode
+                        this.setMode(this.gameState.mode);
+                        
                     } catch (e) {
                         console.log('Could not load saved game state');
                     }
