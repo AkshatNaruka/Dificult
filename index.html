@@ -671,6 +671,11 @@
                             <div class="title">Type Racing</div>
                             <div class="description">Race cars with your typing speed</div>
                         </div>
+                        <div class="mode-btn" data-mode="practice">
+                            <span class="icon">🎓</span>
+                            <div class="title">Practice Mode</div>
+                            <div class="description">Learn with common words and phrases</div>
+                        </div>
                     </div>
 
                     <!-- Mode Status -->
@@ -981,6 +986,17 @@
                     isTimedTest: false
                 };
 
+                this.personalBests = {
+                    wpm: 0,
+                    accuracy: 0,
+                    longestStreak: 0,
+                    totalTests: 0,
+                    totalTimeTyping: 0,
+                    averageWpm: 0
+                };
+
+                this.testHistory = [];
+
                 this.quotes = {
                     story: [
                         "In the mystical realm of keyboards, young warriors learn the ancient art of rapid text transcription. Every keystroke echoes through the digital void, building strength and precision.",
@@ -1003,7 +1019,18 @@
                         "Your fingers are the engine, your accuracy the fuel. Race against time and opponents as you navigate through challenging text tracks designed to test your limits.",
                         "The starting line awaits as you prepare for the ultimate typing race. Every character matters, every mistake costs precious seconds. Victory favors the swift and steady.",
                         "High-octane typing action where split-second decisions separate winners from the competition. Master the track, master the text, claim the checkered flag."
+                    ],
+                    practice: [
+                        "the and for are you all any can had her was one our out day get has him his how its may new now old see two way who boy did man run can let one",
+                        "about after again before between first great help just know little more other right their there these they through time under water where with work would years your",
+                        "business development experience important information interest management marketing planning process research service system technology training understand world problem project program report service support"
                     ]
+                };
+
+                this.commonWords = {
+                    beginner: ["the", "and", "for", "are", "you", "all", "can", "had", "her", "was", "one", "our", "out", "day", "get", "has", "him", "his", "how", "its"],
+                    intermediate: ["about", "after", "again", "before", "between", "first", "great", "help", "just", "know", "little", "more", "other", "right", "their", "there", "these", "they", "through", "time"],
+                    advanced: ["business", "development", "experience", "important", "information", "interest", "management", "marketing", "planning", "process", "research", "service", "system", "technology", "training", "understand"]
                 };
 
                 this.achievements = [
@@ -1163,7 +1190,8 @@
                     story: 'Progress through typing adventures',
                     battle: 'Compete against other players',
                     challenge: 'Special daily typing challenges',
-                    racing: 'Race cars with your typing speed'
+                    racing: 'Race cars with your typing speed',
+                    practice: 'Learn with common words and phrases'
                 };
                 return descriptions[mode] || '';
             }
@@ -1193,6 +1221,12 @@
                         desc: 'Race against the clock and other players in high-speed typing competitions.',
                         progress: 0,
                         progressText: 'Ready to race!'
+                    },
+                    practice: {
+                        title: '🎓 Practice Mode: Common Words',
+                        desc: 'Master your typing fundamentals with carefully selected common words and phrases.',
+                        progress: 40,
+                        progressText: 'Skill Level: Intermediate - Build muscle memory'
                     }
                 };
 
@@ -1357,6 +1391,10 @@
                 const xpGained = Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * this.gameState.combo);
                 this.gameState.xp += xpGained;
 
+                // Update personal bests and history
+                this.updatePersonalBests();
+                this.recordTestHistory();
+
                 // Update level
                 const newLevel = Math.floor(this.gameState.xp / 1000) + 1;
                 if (newLevel > this.gameState.level) {
@@ -1506,13 +1544,19 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
 
             showSettings() {
                 const settings = `
-⚙️ TypeWarrior Settings
+⚙️ TypeWarrior Settings & Stats
 
 🎨 Theme: ${this.gameState.theme === 'dark' ? 'Dark' : 'Light'}
 🔊 Sound: ${this.gameState.soundEnabled ? 'Enabled' : 'Disabled'}
 📊 Tests Completed: ${this.gameState.testCount}
-🏆 Level: ${this.gameState.level}
-⭐ Total XP: ${this.gameState.xp}
+🏆 Level: ${this.gameState.level} (${this.gameState.xp} XP)
+
+📈 Personal Bests:
+⚡ Best WPM: ${this.personalBests.wpm}
+🎯 Best Accuracy: ${this.personalBests.accuracy.toFixed(1)}%
+🔥 Longest Streak: ${this.personalBests.longestStreak}
+📊 Average WPM: ${this.personalBests.averageWpm}
+⏱️ Total Typing Time: ${Math.round(this.personalBests.totalTimeTyping / 60)} minutes
 
 Keyboard Shortcuts:
 • Enter: Start new test
@@ -1523,6 +1567,9 @@ Tips:
 • Maintain consistent rhythm
 • Focus on accuracy over speed
 • Take breaks every 15-20 minutes
+• Use Practice Mode to build fundamentals
+
+Want to export your data? Click the View All button in the leaderboard!
                 `.trim();
                 
                 alert(settings);
@@ -1533,7 +1580,7 @@ Tips:
             }
 
             showLeaderboard() {
-                const leaderboard = `
+                const response = confirm(`
 🏅 Global Leaderboard - Top Players
 
 🥇 #1 TypeMaster - 156 WPM (98.5% ACC)
@@ -1544,10 +1591,85 @@ Tips:
 ...
 #47 You - ${this.gameState.wpm} WPM (${this.gameState.accuracy.toFixed(1)}% ACC)
 
+Personal Bests:
+⚡ Best WPM: ${this.personalBests.wpm}
+🎯 Best Accuracy: ${this.personalBests.accuracy.toFixed(1)}%
+🔥 Longest Streak: ${this.personalBests.longestStreak}
+
 Keep practicing to climb the ranks!
-                `.trim();
+
+Would you like to export your typing data?`);
                 
-                alert(leaderboard);
+                if (response) {
+                    this.exportUserData();
+                }
+            }
+
+            updatePersonalBests() {
+                // Update WPM record
+                if (this.gameState.wpm > this.personalBests.wpm) {
+                    this.personalBests.wpm = this.gameState.wpm;
+                }
+
+                // Update accuracy record
+                if (this.gameState.accuracy > this.personalBests.accuracy) {
+                    this.personalBests.accuracy = this.gameState.accuracy;
+                }
+
+                // Update longest streak
+                if (this.gameState.streak > this.personalBests.longestStreak) {
+                    this.personalBests.longestStreak = this.gameState.streak;
+                }
+
+                // Update totals
+                this.personalBests.totalTests++;
+                const testDuration = (Date.now() - this.gameState.startTime) / 1000;
+                this.personalBests.totalTimeTyping += testDuration;
+                
+                // Calculate average WPM
+                this.personalBests.averageWpm = Math.round(
+                    (this.personalBests.averageWpm * (this.personalBests.totalTests - 1) + this.gameState.wpm) / this.personalBests.totalTests
+                );
+            }
+
+            recordTestHistory() {
+                const testRecord = {
+                    date: new Date().toISOString(),
+                    mode: this.gameState.mode,
+                    wpm: this.gameState.wpm,
+                    accuracy: this.gameState.accuracy,
+                    errors: this.gameState.errors,
+                    duration: this.gameState.isTimedTest ? this.gameState.testDuration : 'unlimited',
+                    xpGained: Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * this.gameState.combo)
+                };
+
+                this.testHistory.push(testRecord);
+                
+                // Keep only last 50 tests
+                if (this.testHistory.length > 50) {
+                    this.testHistory = this.testHistory.slice(-50);
+                }
+            }
+
+            exportUserData() {
+                const userData = {
+                    gameState: this.gameState,
+                    personalBests: this.personalBests,
+                    testHistory: this.testHistory,
+                    exportDate: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(userData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `typewarrior-data-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                alert('✅ Your typing data has been exported successfully!');
             }
 
             saveToStorage() {
@@ -1560,6 +1682,9 @@ Keep practicing to climb the ranks!
                     theme: this.gameState.theme,
                     mode: this.gameState.mode
                 }));
+
+                localStorage.setItem('typewarrior-personal-bests', JSON.stringify(this.personalBests));
+                localStorage.setItem('typewarrior-test-history', JSON.stringify(this.testHistory));
             }
 
             loadFromStorage() {
@@ -1593,6 +1718,26 @@ Keep practicing to climb the ranks!
                         
                     } catch (e) {
                         console.log('Could not load saved game state');
+                    }
+                }
+
+                // Load personal bests
+                const savedBests = localStorage.getItem('typewarrior-personal-bests');
+                if (savedBests) {
+                    try {
+                        this.personalBests = JSON.parse(savedBests);
+                    } catch (e) {
+                        console.log('Could not load personal bests');
+                    }
+                }
+
+                // Load test history
+                const savedHistory = localStorage.getItem('typewarrior-test-history');
+                if (savedHistory) {
+                    try {
+                        this.testHistory = JSON.parse(savedHistory);
+                    } catch (e) {
+                        console.log('Could not load test history');
                     }
                 }
             }
