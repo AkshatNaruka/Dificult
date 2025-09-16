@@ -297,6 +297,14 @@
         .typing-stats-left {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .typing-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .text-display {
@@ -663,6 +671,11 @@
                             <div class="title">Type Racing</div>
                             <div class="description">Race cars with your typing speed</div>
                         </div>
+                        <div class="mode-btn" data-mode="practice">
+                            <span class="icon">🎓</span>
+                            <div class="title">Practice Mode</div>
+                            <div class="description">Learn with common words and phrases</div>
+                        </div>
                     </div>
 
                     <!-- Mode Status -->
@@ -690,10 +703,27 @@
                                 <span>Accuracy:</span>
                                 <span class="stat-value" id="current-accuracy">100.0%</span>
                             </div>
+                            <div class="stat-item" id="timer-display" style="display: none;">
+                                <span style="color: #f59e0b;">⏰</span>
+                                <span>Time:</span>
+                                <span class="stat-value" id="timer-value">60s</span>
+                            </div>
                         </div>
-                        <button class="btn btn-primary" id="start-btn">
-                            🚀 Start Test
-                        </button>
+                        <div class="typing-controls">
+                            <select id="test-duration" class="btn btn-secondary" style="margin-right: 0.5rem; padding: 0.5rem;">
+                                <option value="words">Full Text</option>
+                                <option value="30">30 seconds</option>
+                                <option value="60" selected>60 seconds</option>
+                                <option value="120">2 minutes</option>
+                                <option value="300">5 minutes</option>
+                            </select>
+                            <button class="btn btn-primary" id="start-btn">
+                                🚀 Start Test
+                            </button>
+                            <button class="btn btn-secondary" id="restart-btn" style="display: none;">
+                                🔄 Restart
+                            </button>
+                        </div>
                     </div>
 
                     <div class="text-display">
@@ -950,8 +980,22 @@
                     errors: 0,
                     testCount: 3,
                     soundEnabled: true,
-                    theme: 'dark'
+                    theme: 'dark',
+                    testDuration: 60, // seconds, 0 = unlimited
+                    timeRemaining: 60,
+                    isTimedTest: false
                 };
+
+                this.personalBests = {
+                    wpm: 0,
+                    accuracy: 0,
+                    longestStreak: 0,
+                    totalTests: 0,
+                    totalTimeTyping: 0,
+                    averageWpm: 0
+                };
+
+                this.testHistory = [];
 
                 this.quotes = {
                     story: [
@@ -975,7 +1019,18 @@
                         "Your fingers are the engine, your accuracy the fuel. Race against time and opponents as you navigate through challenging text tracks designed to test your limits.",
                         "The starting line awaits as you prepare for the ultimate typing race. Every character matters, every mistake costs precious seconds. Victory favors the swift and steady.",
                         "High-octane typing action where split-second decisions separate winners from the competition. Master the track, master the text, claim the checkered flag."
+                    ],
+                    practice: [
+                        "the and for are you all any can had her was one our out day get has him his how its may new now old see two way who boy did man run can let one",
+                        "about after again before between first great help just know little more other right their there these they through time under water where with work would years your",
+                        "business development experience important information interest management marketing planning process research service system technology training understand world problem project program report service support"
                     ]
+                };
+
+                this.commonWords = {
+                    beginner: ["the", "and", "for", "are", "you", "all", "can", "had", "her", "was", "one", "our", "out", "day", "get", "has", "him", "his", "how", "its"],
+                    intermediate: ["about", "after", "again", "before", "between", "first", "great", "help", "just", "know", "little", "more", "other", "right", "their", "there", "these", "they", "through", "time"],
+                    advanced: ["business", "development", "experience", "important", "information", "interest", "management", "marketing", "planning", "process", "research", "service", "system", "technology", "training", "understand"]
                 };
 
                 this.achievements = [
@@ -1007,6 +1062,16 @@
                     this.startTest();
                 });
 
+                // Restart button
+                document.getElementById('restart-btn').addEventListener('click', () => {
+                    this.restartTest();
+                });
+
+                // Test duration selector
+                document.getElementById('test-duration').addEventListener('change', (e) => {
+                    this.setTestDuration(e.target.value);
+                });
+
                 // Typing input
                 const input = document.getElementById('typing-input');
                 input.addEventListener('input', (e) => {
@@ -1028,6 +1093,19 @@
                     this.toggleSound();
                 });
 
+                document.getElementById('settings-btn').addEventListener('click', () => {
+                    this.showSettings();
+                });
+
+                // Other clickable elements
+                document.getElementById('218')?.addEventListener('click', () => {
+                    this.joinCompetition();
+                });
+
+                document.getElementById('153')?.addEventListener('click', () => {
+                    this.showLeaderboard();
+                });
+
                 // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && this.gameState.isPlaying) {
@@ -1040,18 +1118,82 @@
             }
 
             setMode(mode) {
+                // End current test if running
+                if (this.gameState.isPlaying) {
+                    this.endTest();
+                }
+
                 this.gameState.mode = mode;
                 
-                // Update UI
+                // Update mode button states
                 document.querySelectorAll('.mode-btn').forEach(btn => {
                     btn.classList.remove('active');
+                    const description = btn.querySelector('.description:last-child');
+                    if (description) {
+                        description.textContent = btn.dataset.mode === mode ? '✓ SELECTED' : this.getModeDescription(btn.dataset.mode);
+                    }
+                    
                     if (btn.dataset.mode === mode) {
                         btn.classList.add('active');
                     }
                 });
 
+                // Reset typing area
+                document.getElementById('text-content').textContent = "Click 'Start Test' to begin";
+                const input = document.getElementById('typing-input');
+                input.value = '';
+                input.disabled = true;
+                input.placeholder = "Click 'Start Test' to begin";
+                
+                const startBtn = document.getElementById('start-btn');
+                startBtn.disabled = false;
+                startBtn.textContent = '🚀 Start Test';
+
                 // Update mode status
                 this.updateModeStatus();
+            }
+
+            setTestDuration(value) {
+                if (value === 'words') {
+                    this.gameState.testDuration = 0;
+                    this.gameState.isTimedTest = false;
+                    document.getElementById('timer-display').style.display = 'none';
+                } else {
+                    this.gameState.testDuration = parseInt(value);
+                    this.gameState.timeRemaining = this.gameState.testDuration;
+                    this.gameState.isTimedTest = true;
+                    document.getElementById('timer-display').style.display = 'flex';
+                    document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                }
+            }
+
+            formatTime(seconds) {
+                if (seconds >= 60) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    return `${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                return `${seconds}s`;
+            }
+
+            restartTest() {
+                if (this.gameState.isPlaying) {
+                    this.endTest();
+                }
+                setTimeout(() => {
+                    this.startTest();
+                }, 100);
+            }
+
+            getModeDescription(mode) {
+                const descriptions = {
+                    story: 'Progress through typing adventures',
+                    battle: 'Compete against other players',
+                    challenge: 'Special daily typing challenges',
+                    racing: 'Race cars with your typing speed',
+                    practice: 'Learn with common words and phrases'
+                };
+                return descriptions[mode] || '';
             }
 
             updateModeStatus() {
@@ -1079,6 +1221,12 @@
                         desc: 'Race against the clock and other players in high-speed typing competitions.',
                         progress: 0,
                         progressText: 'Ready to race!'
+                    },
+                    practice: {
+                        title: '🎓 Practice Mode: Common Words',
+                        desc: 'Master your typing fundamentals with carefully selected common words and phrases.',
+                        progress: 40,
+                        progressText: 'Skill Level: Intermediate - Build muscle memory'
                     }
                 };
 
@@ -1090,6 +1238,7 @@
             }
 
             startTest() {
+                // Reset game state
                 this.gameState.isPlaying = true;
                 this.gameState.startTime = Date.now();
                 this.gameState.typedText = '';
@@ -1097,23 +1246,58 @@
                 this.gameState.correctChars = 0;
                 this.gameState.totalChars = 0;
                 this.gameState.errors = 0;
+                this.gameState.wpm = 0;
+                this.gameState.accuracy = 100;
+                this.gameState.combo = 1;
+
+                // Set up timer for timed tests
+                if (this.gameState.isTimedTest) {
+                    this.gameState.timeRemaining = this.gameState.testDuration;
+                    document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                }
 
                 // Get random quote based on mode
                 const quotes = this.quotes[this.gameState.mode];
                 this.gameState.currentText = quotes[Math.floor(Math.random() * quotes.length)];
 
-                // Update UI
+                // Update UI elements
                 this.renderText();
-                document.getElementById('typing-input').disabled = false;
-                document.getElementById('typing-input').placeholder = 'Start typing...';
-                document.getElementById('typing-input').focus();
-                document.getElementById('start-btn').disabled = true;
-                document.getElementById('start-btn').textContent = '⏱️ Testing...';
+                const input = document.getElementById('typing-input');
+                const startBtn = document.getElementById('start-btn');
+                const restartBtn = document.getElementById('restart-btn');
+                
+                input.value = '';
+                input.disabled = false;
+                input.placeholder = 'Start typing...';
+                input.focus();
+                
+                startBtn.style.display = 'none';
+                restartBtn.style.display = 'inline-flex';
+
+                // Clear any existing intervals
+                if (this.statsInterval) {
+                    clearInterval(this.statsInterval);
+                }
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
 
                 // Start stats update interval
                 this.statsInterval = setInterval(() => {
                     this.updateStats();
                 }, 100);
+
+                // Start timer for timed tests
+                if (this.gameState.isTimedTest) {
+                    this.timerInterval = setInterval(() => {
+                        this.gameState.timeRemaining--;
+                        document.getElementById('timer-value').textContent = this.formatTime(this.gameState.timeRemaining);
+                        
+                        if (this.gameState.timeRemaining <= 0) {
+                            this.endTest();
+                        }
+                    }, 1000);
+                }
             }
 
             handleInput(value) {
@@ -1136,8 +1320,8 @@
                 this.renderText();
                 this.updateStats();
 
-                // Check if test is complete
-                if (value.length >= this.gameState.currentText.length) {
+                // Check if test is complete (for non-timed tests or when text is finished)
+                if (!this.gameState.isTimedTest && value.length >= this.gameState.currentText.length) {
                     this.endTest();
                 }
             }
@@ -1187,7 +1371,14 @@
 
             endTest() {
                 this.gameState.isPlaying = false;
-                clearInterval(this.statsInterval);
+                
+                // Clear intervals
+                if (this.statsInterval) {
+                    clearInterval(this.statsInterval);
+                }
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
 
                 // Update streak
                 if (this.gameState.accuracy >= 95) {
@@ -1199,6 +1390,10 @@
                 // Add XP
                 const xpGained = Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * this.gameState.combo);
                 this.gameState.xp += xpGained;
+
+                // Update personal bests and history
+                this.updatePersonalBests();
+                this.recordTestHistory();
 
                 // Update level
                 const newLevel = Math.floor(this.gameState.xp / 1000) + 1;
@@ -1214,11 +1409,16 @@
                 this.checkAchievements();
 
                 // Reset UI
-                document.getElementById('typing-input').disabled = true;
-                document.getElementById('typing-input').value = '';
-                document.getElementById('typing-input').placeholder = 'Test completed! Press Enter or Start Test to try again.';
-                document.getElementById('start-btn').disabled = false;
-                document.getElementById('start-btn').textContent = '🚀 Start Test';
+                const input = document.getElementById('typing-input');
+                const startBtn = document.getElementById('start-btn');
+                const restartBtn = document.getElementById('restart-btn');
+                
+                input.disabled = true;
+                input.placeholder = 'Test completed! Click Start Test to try again.';
+                
+                startBtn.style.display = 'inline-flex';
+                startBtn.textContent = '🚀 Start Test';
+                restartBtn.style.display = 'none';
 
                 this.updateUI();
                 this.saveToStorage();
@@ -1322,16 +1522,154 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
             }
 
             toggleTheme() {
-                // Simple theme toggle - could be enhanced
-                document.body.style.filter = document.body.style.filter === 'invert(1) hue-rotate(180deg)' 
-                    ? '' 
-                    : 'invert(1) hue-rotate(180deg)';
+                this.gameState.theme = this.gameState.theme === 'dark' ? 'light' : 'dark';
+                
+                if (this.gameState.theme === 'light') {
+                    document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                    document.getElementById('theme-btn').textContent = '🌙';
+                } else {
+                    document.body.style.filter = '';
+                    document.getElementById('theme-btn').textContent = '🎨';
+                }
+                
+                this.saveToStorage();
             }
 
             toggleSound() {
                 this.gameState.soundEnabled = !this.gameState.soundEnabled;
                 const soundBtn = document.getElementById('sound-btn');
                 soundBtn.textContent = this.gameState.soundEnabled ? '🔊' : '🔇';
+                this.saveToStorage();
+            }
+
+            showSettings() {
+                const settings = `
+⚙️ TypeWarrior Settings & Stats
+
+🎨 Theme: ${this.gameState.theme === 'dark' ? 'Dark' : 'Light'}
+🔊 Sound: ${this.gameState.soundEnabled ? 'Enabled' : 'Disabled'}
+📊 Tests Completed: ${this.gameState.testCount}
+🏆 Level: ${this.gameState.level} (${this.gameState.xp} XP)
+
+📈 Personal Bests:
+⚡ Best WPM: ${this.personalBests.wpm}
+🎯 Best Accuracy: ${this.personalBests.accuracy.toFixed(1)}%
+🔥 Longest Streak: ${this.personalBests.longestStreak}
+📊 Average WPM: ${this.personalBests.averageWpm}
+⏱️ Total Typing Time: ${Math.round(this.personalBests.totalTimeTyping / 60)} minutes
+
+Keyboard Shortcuts:
+• Enter: Start new test
+• Escape: End current test
+• Tab: Focus typing area
+
+Tips:
+• Maintain consistent rhythm
+• Focus on accuracy over speed
+• Take breaks every 15-20 minutes
+• Use Practice Mode to build fundamentals
+
+Want to export your data? Click the View All button in the leaderboard!
+                `.trim();
+                
+                alert(settings);
+            }
+
+            joinCompetition() {
+                alert('🏆 Competition Feature Coming Soon!\n\nThis will allow you to compete with other players in weekly typing tournaments with XP prizes!');
+            }
+
+            showLeaderboard() {
+                const response = confirm(`
+🏅 Global Leaderboard - Top Players
+
+🥇 #1 TypeMaster - 156 WPM (98.5% ACC)
+🥈 #2 SpeedDemon - 142 WPM (97.2% ACC) 
+🥉 #3 KeyboardNinja - 138 WPM (99.1% ACC)
+#4 FingerFlash - 134 WPM (96.8% ACC)
+#5 TextTornado - 129 WPM (98.3% ACC)
+...
+#47 You - ${this.gameState.wpm} WPM (${this.gameState.accuracy.toFixed(1)}% ACC)
+
+Personal Bests:
+⚡ Best WPM: ${this.personalBests.wpm}
+🎯 Best Accuracy: ${this.personalBests.accuracy.toFixed(1)}%
+🔥 Longest Streak: ${this.personalBests.longestStreak}
+
+Keep practicing to climb the ranks!
+
+Would you like to export your typing data?`);
+                
+                if (response) {
+                    this.exportUserData();
+                }
+            }
+
+            updatePersonalBests() {
+                // Update WPM record
+                if (this.gameState.wpm > this.personalBests.wpm) {
+                    this.personalBests.wpm = this.gameState.wpm;
+                }
+
+                // Update accuracy record
+                if (this.gameState.accuracy > this.personalBests.accuracy) {
+                    this.personalBests.accuracy = this.gameState.accuracy;
+                }
+
+                // Update longest streak
+                if (this.gameState.streak > this.personalBests.longestStreak) {
+                    this.personalBests.longestStreak = this.gameState.streak;
+                }
+
+                // Update totals
+                this.personalBests.totalTests++;
+                const testDuration = (Date.now() - this.gameState.startTime) / 1000;
+                this.personalBests.totalTimeTyping += testDuration;
+                
+                // Calculate average WPM
+                this.personalBests.averageWpm = Math.round(
+                    (this.personalBests.averageWpm * (this.personalBests.totalTests - 1) + this.gameState.wpm) / this.personalBests.totalTests
+                );
+            }
+
+            recordTestHistory() {
+                const testRecord = {
+                    date: new Date().toISOString(),
+                    mode: this.gameState.mode,
+                    wpm: this.gameState.wpm,
+                    accuracy: this.gameState.accuracy,
+                    errors: this.gameState.errors,
+                    duration: this.gameState.isTimedTest ? this.gameState.testDuration : 'unlimited',
+                    xpGained: Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * this.gameState.combo)
+                };
+
+                this.testHistory.push(testRecord);
+                
+                // Keep only last 50 tests
+                if (this.testHistory.length > 50) {
+                    this.testHistory = this.testHistory.slice(-50);
+                }
+            }
+
+            exportUserData() {
+                const userData = {
+                    gameState: this.gameState,
+                    personalBests: this.personalBests,
+                    testHistory: this.testHistory,
+                    exportDate: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(userData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `typewarrior-data-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                alert('✅ Your typing data has been exported successfully!');
             }
 
             saveToStorage() {
@@ -1340,8 +1678,13 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
                     xp: this.gameState.xp,
                     streak: this.gameState.streak,
                     testCount: this.gameState.testCount,
-                    soundEnabled: this.gameState.soundEnabled
+                    soundEnabled: this.gameState.soundEnabled,
+                    theme: this.gameState.theme,
+                    mode: this.gameState.mode
                 }));
+
+                localStorage.setItem('typewarrior-personal-bests', JSON.stringify(this.personalBests));
+                localStorage.setItem('typewarrior-test-history', JSON.stringify(this.testHistory));
             }
 
             loadFromStorage() {
@@ -1354,14 +1697,47 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
                         this.gameState.streak = data.streak || 0;
                         this.gameState.testCount = data.testCount || 3;
                         this.gameState.soundEnabled = data.soundEnabled !== false;
+                        this.gameState.theme = data.theme || 'dark';
+                        this.gameState.mode = data.mode || 'story';
                         
                         this.updateUI();
                         
+                        // Apply theme
+                        if (this.gameState.theme === 'light') {
+                            document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                            document.getElementById('theme-btn').textContent = '🌙';
+                        }
+                        
+                        // Apply sound setting
                         if (!this.gameState.soundEnabled) {
                             document.getElementById('sound-btn').textContent = '🔇';
                         }
+
+                        // Set mode
+                        this.setMode(this.gameState.mode);
+                        
                     } catch (e) {
                         console.log('Could not load saved game state');
+                    }
+                }
+
+                // Load personal bests
+                const savedBests = localStorage.getItem('typewarrior-personal-bests');
+                if (savedBests) {
+                    try {
+                        this.personalBests = JSON.parse(savedBests);
+                    } catch (e) {
+                        console.log('Could not load personal bests');
+                    }
+                }
+
+                // Load test history
+                const savedHistory = localStorage.getItem('typewarrior-test-history');
+                if (savedHistory) {
+                    try {
+                        this.testHistory = JSON.parse(savedHistory);
+                    } catch (e) {
+                        console.log('Could not load test history');
                     }
                 }
             }
