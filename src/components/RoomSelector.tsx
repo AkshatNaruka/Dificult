@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSocket } from '@/hooks/useSocket';
 import { useRaceStore, RaceRoom } from '@/store/raceStore';
+import { generateShortRoomCode, isValidRoomCode, getDifficultyColor, getStatusColor } from '@/utils/helpers';
 
 interface RoomSelectorProps {
   isVisible: boolean;
@@ -12,8 +13,9 @@ interface RoomSelectorProps {
 }
 
 export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSelectorProps) {
-  const [activeTab, setActiveTab] = useState<'join' | 'create'>('join');
+  const [activeTab, setActiveTab] = useState<'join' | 'create' | 'code'>('join');
   const [roomName, setRoomName] = useState('');
+  const [roomCode, setRoomCode] = useState('');
   const [maxPlayers, setMaxPlayers] = useState(4);
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   
@@ -40,14 +42,26 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
 
   const handleCreateRoom = () => {
     if (roomName.trim()) {
+      const generatedCode = generateShortRoomCode();
       createRoom({
         name: roomName.trim(),
         maxPlayers,
         difficulty,
+        roomCode: generatedCode,
         playerData: {
           name: 'You',
           avatar: '🎯'
         }
+      });
+      onJoinRace();
+    }
+  };
+
+  const handleJoinByCode = () => {
+    if (roomCode.trim() && isValidRoomCode(roomCode.trim())) {
+      joinRoom(roomCode.trim(), {
+        name: 'You',
+        avatar: '🎯'
       });
       onJoinRace();
     }
@@ -123,6 +137,16 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
             }`}
           >
             🔍 Join Room
+          </button>
+          <button
+            onClick={() => setActiveTab('code')}
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
+              activeTab === 'code' 
+                ? 'bg-blue-600 text-white' 
+                : 'text-gray-300 hover:text-white'
+            }`}
+          >
+            🔑 Room Code
           </button>
           <button
             onClick={() => setActiveTab('create')}
@@ -221,6 +245,65 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
           </div>
         )}
 
+        {/* Join by Room Code Tab */}
+        {activeTab === 'code' && (
+          <div>
+            <div className="bg-blue-900/20 rounded-lg p-6 border border-blue-500/30">
+              <h3 className="text-xl font-semibold text-blue-300 mb-4">🔑 Join with Room Code</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Enter Room Code
+                  </label>
+                  <input
+                    type="text"
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    placeholder="Enter 6-character room code (e.g., ABC123)"
+                    className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg text-white text-center text-xl font-mono tracking-widest
+                               focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    maxLength={6}
+                  />
+                  <p className="text-sm text-gray-400 mt-2">
+                    Ask the room creator for their room code to join directly
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleJoinByCode}
+                    disabled={!roomCode.trim() || !isValidRoomCode(roomCode.trim()) || !isConnected}
+                    className={`flex-1 py-3 px-6 rounded-lg font-medium transition-colors ${
+                      roomCode.trim() && isValidRoomCode(roomCode.trim()) && isConnected
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    🚀 Join Room
+                  </button>
+                  <button
+                    onClick={() => setRoomCode('')}
+                    className="px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                {/* Room Code Format Guide */}
+                <div className="mt-6 p-4 bg-gray-800 rounded-lg">
+                  <h4 className="font-semibold text-white mb-2">Room Code Format</h4>
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <div>• 6 characters (letters and numbers)</div>
+                    <div>• Example: <span className="font-mono bg-gray-700 px-2 py-1 rounded">ABC123</span></div>
+                    <div>• Not case sensitive</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Create Room Tab */}
         {activeTab === 'create' && (
           <div className="space-y-6">
@@ -301,10 +384,19 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
             {roomName && (
               <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
                 <h4 className="font-semibold text-white mb-2">Room Preview</h4>
-                <div className="text-sm space-y-1">
+                <div className="text-sm space-y-2">
                   <div>Name: <span className="text-blue-300">{roomName}</span></div>
                   <div>Max Players: <span className="text-blue-300">{maxPlayers}</span></div>
                   <div>Difficulty: <span className={getDifficultyColor(difficulty)}>{difficulty}</span></div>
+                  <div className="mt-3 p-3 bg-blue-900/20 rounded border border-blue-500/30">
+                    <div className="text-blue-300 font-semibold mb-1">Room Code (auto-generated):</div>
+                    <div className="font-mono text-xl text-center text-white bg-gray-800 p-2 rounded">
+                      {generateShortRoomCode()}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1 text-center">
+                      Share this code with others to let them join directly
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
