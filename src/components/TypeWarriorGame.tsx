@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSocket } from '@/hooks/useSocket';
+import { useThemeStore } from '@/store/themeStore';
 import Header from './Header';
 import GameModeSelector from './GameModeSelector';
 import TypingArea from './TypingArea';
@@ -34,6 +35,14 @@ export interface Achievement {
 export default function TypeWarriorGame() {
   // Initialize socket connection
   useSocket();
+  
+  // Initialize theme store and apply theme on mount
+  const { applyTheme } = useThemeStore();
+  
+  useEffect(() => {
+    // Apply theme on component mount
+    applyTheme();
+  }, [applyTheme]);
   
   const [gameMode, setGameMode] = useState<GameMode>('story');
   const [isPlaying, setIsPlaying] = useState(false);

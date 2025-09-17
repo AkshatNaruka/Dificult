@@ -1,33 +1,66 @@
 @import "tailwindcss";
 
+/* Default theme variables (dark theme) */
 :root {
-  --background: #111827;
-  --foreground: #f9fafb;
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background colors */
+  --color-background: #111827;
+  --color-background-secondary: #1f2937;
+  --color-surface: #374151;
+  --color-surface-secondary: #4b5563;
+  
+  /* Text colors */
+  --color-text: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-dimmed: #9ca3af;
+  
+  /* Accent colors */
+  --color-primary: #3b82f6;
+  --color-secondary: #6b7280;
+  --color-accent: #8b5cf6;
+  
+  /* Typing colors */
+  --color-correct: #10b981;
+  --color-incorrect: #ef4444;
+  --color-current: #fbbf24;
+  --color-untyped: #6b7280;
+  
+  /* UI element colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Border and shadow */
+  --color-border: #374151;
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  
+  /* Font settings */
+  --font-size-base: 16px;
+  --font-family-base: Inter, system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+  
+  /* Legacy gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: system-ui, sans-serif;
-  --font-mono: monospace;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #f8fafc;
-    --foreground: #1f2937;
-  }
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text);
+  --font-sans: var(--font-family-base);
+  --font-mono: var(--font-family-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Theme-specific styles and utilities */
 .gradient-text {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -36,33 +69,121 @@ body {
 }
 
 .card-glow {
-  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 0 20px var(--color-shadow);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--color-text);
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
   transform: scale(1);
+  border: 1px solid var(--color-border);
 }
 
 .btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px var(--color-shadow);
 }
 
 .btn-secondary {
-  background: #374151;
-  color: white;
+  background: var(--color-surface);
+  color: var(--color-text);
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
+  border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background: #4b5563;
+  background: var(--color-surface-secondary);
+}
+
+/* Typing area styles */
+.typing-text {
+  font-family: var(--font-family-mono);
+  font-size: calc(var(--font-size-base) * 1.2);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+.char-correct {
+  color: var(--color-correct);
+  background-color: transparent;
+}
+
+.char-incorrect {
+  color: var(--color-incorrect);
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.char-current {
+  background-color: var(--color-current);
+  color: var(--color-background);
+  animation: caret-blink 1s infinite;
+}
+
+.char-untyped {
+  color: var(--color-untyped);
+}
+
+@keyframes caret-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+/* Theme-specific enhancements */
+.theme-cyberpunk {
+  --glow-color: var(--color-primary);
+}
+
+.theme-cyberpunk .card-glow {
+  box-shadow: 0 0 20px var(--glow-color), 0 0 40px var(--glow-color);
+}
+
+.theme-cyberpunk .typing-text {
+  text-shadow: 0 0 10px var(--color-current);
+}
+
+.theme-nord .btn-primary,
+.theme-dracula .btn-primary,
+.theme-tokyo-night .btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .typing-text {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .char-current {
+    animation: none;
+    background-color: var(--color-current);
+  }
+}
+
+/* Focus states for better accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
