@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSocket } from '@/hooks/useSocket';
 import { useRaceStore, RaceRoom } from '@/store/raceStore';
-import { generateShortRoomCode, isValidRoomCode, getDifficultyColor, getStatusColor } from '@/utils/helpers';
+import { generateShortRoomCode, isValidRoomCode } from '@/utils/helpers';
 
 interface RoomSelectorProps {
   isVisible: boolean;
@@ -42,12 +42,10 @@ export default function RoomSelector({ isVisible, onClose, onJoinRace }: RoomSel
 
   const handleCreateRoom = () => {
     if (roomName.trim()) {
-      const generatedCode = generateShortRoomCode();
       createRoom({
         name: roomName.trim(),
         maxPlayers,
         difficulty,
-        roomCode: generatedCode,
         playerData: {
           name: 'You',
           avatar: '🎯'
