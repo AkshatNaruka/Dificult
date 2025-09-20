@@ -23,7 +23,7 @@ interface ThemeState extends ThemeConfig {
 }
 
 const defaultConfig: ThemeConfig = {
-  currentTheme: 'dark',
+  currentTheme: 'minimal',
   fontSize: 16,
   fontFamily: 'Inter',
   smoothCaret: true,

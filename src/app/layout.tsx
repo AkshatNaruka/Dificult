@@ -94,7 +94,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></script>
       </head>
-      <body className="antialiased bg-gray-900 text-white font-sans">
+      <body className="antialiased bg-white text-gray-900 font-sans">
         {children}
         
         {/* Google Analytics - Replace with your actual GA4 measurement ID */}

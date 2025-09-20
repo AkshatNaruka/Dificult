@@ -115,28 +115,28 @@ export default function TypingArea({ gameMode, isPlaying, onGameStart, onGameEnd
 
   const getCharacterClass = (index: number) => {
     if (index < currentIndex) {
-      return text[index] === typedText[index] ? 'text-green-400' : 'text-red-400 bg-red-400/20';
+      return text[index] === typedText[index] ? 'text-green-600' : 'text-red-600 bg-red-100';
     } else if (index === currentIndex && isPlaying) {
-      return 'bg-blue-400 text-black animate-pulse';
+      return 'bg-orange-500 text-white animate-pulse';
     } else {
       return 'text-gray-400';
     }
   };
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700">
+    <div className="card">
       {/* Game Status */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-green-400">⚡</span>
-            <span className="text-sm text-gray-300">WPM:</span>
-            <span className="font-bold text-lg">{wpm}</span>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-lg border">
+            <span className="text-xl">⚡</span>
+            <span className="text-sm text-gray-600 font-medium">WPM:</span>
+            <span className="font-bold text-xl text-gray-900">{wpm}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-blue-400">🎯</span>
-            <span className="text-sm text-gray-300">Accuracy:</span>
-            <span className="font-bold text-lg">{accuracy.toFixed(1)}%</span>
+          <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-lg border">
+            <span className="text-xl">🎯</span>
+            <span className="text-sm text-gray-600 font-medium">Accuracy:</span>
+            <span className="font-bold text-xl text-gray-900">{accuracy.toFixed(1)}%</span>
           </div>
         </div>
         
@@ -151,8 +151,8 @@ export default function TypingArea({ gameMode, isPlaying, onGameStart, onGameEnd
       </div>
 
       {/* Text Display */}
-      <div className="mb-6 p-6 bg-gray-900/50 rounded-xl border border-gray-600">
-        <div className="text-lg leading-relaxed font-mono">
+      <div className="mb-8 p-8 bg-gray-50 rounded-xl border border-gray-200">
+        <div className="text-xl leading-relaxed font-mono text-gray-900">
           {text.split('').map((char, index) => (
             <span
               key={index}
@@ -174,9 +174,9 @@ export default function TypingArea({ gameMode, isPlaying, onGameStart, onGameEnd
           onKeyDown={handleKeyPress}
           disabled={!isPlaying}
           placeholder={isPlaying ? "Start typing..." : "Click 'Start Test' to begin"}
-          className="w-full p-4 bg-gray-700/50 border border-gray-600 rounded-xl text-lg font-mono 
-                     focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
-                     disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full p-6 bg-white border-2 border-gray-200 rounded-xl text-lg font-mono text-gray-900
+                     focus:outline-none focus:border-gray-900 focus:ring-4 focus:ring-gray-100
+                     disabled:opacity-50 disabled:cursor-not-allowed placeholder-gray-400"
         />
         
         {isPlaying && (
@@ -199,13 +199,13 @@ export default function TypingArea({ gameMode, isPlaying, onGameStart, onGameEnd
 
       {/* Racing Mode Specific */}
       {gameMode === 'racing' && (
-        <div className="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-500/30">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold">🏁 Race Track</h3>
-            <div className="text-sm text-gray-300">Position: 1st</div>
+        <div className="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-lg text-gray-900">🏁 Race Track</h3>
+            <div className="text-sm text-gray-600 font-medium">Position: 1st</div>
           </div>
-          <div className="relative bg-gray-700 rounded-lg h-12 overflow-hidden">
-            <div className="absolute top-0 left-0 h-full bg-green-500/20 transition-all duration-300"
+          <div className="relative bg-gray-200 rounded-lg h-12 overflow-hidden">
+            <div className="absolute top-0 left-0 h-full bg-green-400/40 transition-all duration-300"
                  style={{ width: `${(currentIndex / text.length) * 100}%` }}>
             </div>
             <div className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300"

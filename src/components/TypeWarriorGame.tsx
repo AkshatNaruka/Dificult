@@ -132,8 +132,8 @@ export default function TypeWarriorGame() {
   };
 
   return (
-    <div className="min-h-screen text-white">
-      <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-6 py-8">
         <Header stats={stats} onOpenSettings={handleOpenSettings} />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">

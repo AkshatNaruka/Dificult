@@ -18,30 +18,30 @@ export default function GameModeSelector({ currentMode, onModeChange, isPlaying 
   ];
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 mb-6">
-      <h2 className="text-xl font-semibold mb-4 text-center">Choose Your Battle</h2>
+    <div className="card mb-8">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center">Choose Your Battle</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {modes.map((mode) => (
           <button
             key={mode.id}
             onClick={() => !isPlaying && onModeChange(mode.id)}
             disabled={isPlaying}
             className={`
-              p-4 rounded-xl border-2 transition-all duration-300 text-left
+              p-5 rounded-xl border-2 transition-all duration-300 text-left min-h-[140px]
               ${currentMode === mode.id 
-                ? 'border-blue-500 bg-blue-500/20 text-blue-300' 
-                : 'border-gray-600 hover:border-gray-500 bg-gray-700/30'
+                ? 'border-gray-900 bg-gray-50 text-gray-900 shadow-md' 
+                : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
               }
-              ${isPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'}
+              ${isPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg hover:transform hover:scale-105 cursor-pointer'}
             `}
           >
-            <div className="text-3xl mb-2">{mode.icon}</div>
-            <div className="font-semibold mb-1">{mode.name}</div>
-            <div className="text-sm text-gray-400">{mode.description}</div>
+            <div className="text-4xl mb-3">{mode.icon}</div>
+            <div className="font-semibold mb-2 text-lg text-gray-900">{mode.name}</div>
+            <div className="text-sm text-gray-600 leading-relaxed">{mode.description}</div>
             
             {currentMode === mode.id && (
-              <div className="mt-2 text-xs text-blue-300 font-medium">
+              <div className="mt-3 text-xs text-gray-900 font-bold bg-gray-200 px-2 py-1 rounded-full inline-block">
                 ✓ SELECTED
               </div>
             )}

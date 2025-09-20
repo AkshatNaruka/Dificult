@@ -305,5 +305,5 @@ export const getThemeById = (id: string): Theme | undefined => {
 };
 
 export const getDefaultTheme = (): Theme => {
-  return themes.find(theme => theme.id === 'dark') || themes[0];
+  return themes.find(theme => theme.id === 'minimal') || themes[0];
 };

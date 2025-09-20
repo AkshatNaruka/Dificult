@@ -54,10 +54,10 @@ export default function DailyChallenges() {
   };
   
   return (
-    <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-700">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">📅 Daily Challenge</h3>
-        <div className="text-xs text-gray-400">
+    <div className="card">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-gray-900">📅 Daily Challenge</h3>
+        <div className="text-sm text-gray-600 font-medium bg-gray-100 px-3 py-1 rounded-full">
           {new Date().toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric',
@@ -66,39 +66,39 @@ export default function DailyChallenges() {
         </div>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Challenge Info */}
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">{getModeIcon(todayChallenge.mode)}</div>
+        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border">
+          <div className="text-4xl">{getModeIcon(todayChallenge.mode)}</div>
           <div className="flex-1">
-            <div className="font-semibold text-sm capitalize">
+            <div className="font-bold text-lg capitalize text-gray-900">
               {todayChallenge.mode} Challenge
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-sm text-gray-600">
               {getModeDescription(todayChallenge.mode)}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm font-bold text-yellow-400">
+            <div className="text-lg font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
               +{todayChallenge.reward} XP
             </div>
-            <div className="text-xs text-gray-400">Reward</div>
+            <div className="text-xs text-gray-500 mt-1 font-medium">Reward</div>
           </div>
         </div>
         
         {/* Target */}
-        <div className="bg-gray-700/30 rounded-lg p-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-300">Target:</span>
-            <span className="text-sm font-bold text-blue-400">
+        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-gray-700 font-medium">Target:</span>
+            <span className="text-lg font-bold text-blue-700">
               {getTargetText(todayChallenge.mode, todayChallenge.target)}
             </span>
           </div>
           
           {todayChallenge.bestScore && (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">Your Best:</span>
-              <span className="text-sm font-bold text-green-400">
+              <span className="text-sm text-gray-700 font-medium">Your Best:</span>
+              <span className="text-lg font-bold text-green-600">
                 {getTargetText(todayChallenge.mode, todayChallenge.bestScore)}
               </span>
             </div>
@@ -106,9 +106,9 @@ export default function DailyChallenges() {
         </div>
         
         {/* Challenge Text Preview */}
-        <div className="bg-gray-700/30 rounded-lg p-3">
-          <div className="text-xs text-gray-400 mb-2">Challenge Text:</div>
-          <div className="text-sm text-gray-200 line-clamp-3">
+        <div className="bg-gray-50 rounded-lg p-4 border">
+          <div className="text-sm text-gray-600 mb-2 font-medium">Challenge Text:</div>
+          <div className="text-base text-gray-900 line-clamp-3 font-mono">
             {todayChallenge.text}
           </div>
         </div>
@@ -116,14 +116,14 @@ export default function DailyChallenges() {
         {/* Action Button */}
         <div>
           {todayChallenge.completed ? (
-            <div className="flex items-center justify-center gap-2 py-3 bg-green-900/20 border border-green-500/30 rounded-lg text-green-400">
-              <span className="text-lg">✓</span>
-              <span className="text-sm font-medium">Challenge Completed!</span>
+            <div className="flex items-center justify-center gap-2 py-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+              <span className="text-xl">✓</span>
+              <span className="font-medium">Challenge Completed!</span>
             </div>
           ) : (
             <button 
               onClick={handleStartChallenge}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+              className="btn-primary w-full"
             >
               Start Challenge
             </button>
@@ -132,10 +132,10 @@ export default function DailyChallenges() {
         
         {/* Stats */}
         {player && (
-          <div className="pt-2 border-t border-gray-600">
-            <div className="flex items-center justify-between text-xs text-gray-400">
-              <span>Daily Challenges Completed</span>
-              <span className="font-bold">{player.stats.dailyChallengesCompleted}</span>
+          <div className="pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <span className="font-medium">Daily Challenges Completed</span>
+              <span className="font-bold text-gray-900">{player.stats.dailyChallengesCompleted}</span>
             </div>
           </div>
         )}
