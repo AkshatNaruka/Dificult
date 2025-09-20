@@ -1,0 +1,96 @@
+{
+  "lastUpdated": "2024-01-01T00:00:00Z",
+  "version": "1.0",
+  "leaderboard": [
+    {
+      "id": "default_1",
+      "name": "TypeMaster",
+      "wpm": 156,
+      "accuracy": 98.5,
+      "avatar": "👑",
+      "level": 12,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_2",
+      "name": "SpeedDemon",
+      "wpm": 142,
+      "accuracy": 97.2,
+      "avatar": "⚡",
+      "level": 10,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_3",
+      "name": "KeyboardNinja",
+      "wpm": 138,
+      "accuracy": 99.1,
+      "avatar": "🥷",
+      "level": 11,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_4",
+      "name": "FingerFlash",
+      "wpm": 134,
+      "accuracy": 96.8,
+      "avatar": "💨",
+      "level": 9,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_5",
+      "name": "TextTornado",
+      "wpm": 129,
+      "accuracy": 98.3,
+      "avatar": "🌪️",
+      "level": 8,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_6",
+      "name": "CodeCrusher",
+      "wpm": 125,
+      "accuracy": 97.8,
+      "avatar": "💻",
+      "level": 7,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_7",
+      "name": "SwiftStroke",
+      "wpm": 121,
+      "accuracy": 96.5,
+      "avatar": "🚀",
+      "level": 7,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_8",
+      "name": "QuantumQuill",
+      "wpm": 118,
+      "accuracy": 98.9,
+      "avatar": "🔮",
+      "level": 6,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_9",
+      "name": "LaserLetters",
+      "wpm": 115,
+      "accuracy": 95.7,
+      "avatar": "🎯",
+      "level": 6,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "default_10",
+      "name": "TurboType",
+      "wpm": 112,
+      "accuracy": 97.1,
+      "avatar": "🏎️",
+      "level": 5,
+      "lastUpdated": "2024-01-01T00:00:00Z"
+    }
+  ]
+}

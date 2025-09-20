@@ -3,17 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useThemeStore } from '@/store/themeStore';
+import { usePlayerStore } from '@/store/playerStore';
+import { useLeaderboardStore } from '@/store/leaderboardStore';
 import Header from './Header';
 import GameModeSelector from './GameModeSelector';
 import TypingArea from './TypingArea';
 import StatsPanel from './StatsPanel';
 import Leaderboard from './Leaderboard';
 import AchievementsPanel from './AchievementsPanel';
-import RoomSelector from './RoomSelector';
-import MultiplayerRace from './MultiplayerRace';
 import Settings from './Settings';
+import DailyChallenges from './DailyChallenges';
 
-export type GameMode = 'story' | 'battle' | 'challenge' | 'racing';
+export type GameMode = 'story' | 'challenge' | 'racing' | 'vowels' | 'numbers' | 'mixed' | 'symbols';
 
 export interface GameStats {
   wpm: number;
@@ -36,27 +37,38 @@ export default function TypeWarriorGame() {
   // Initialize socket connection
   useSocket();
   
-  // Initialize theme store and apply theme on mount
+  // Initialize stores
   const { applyTheme } = useThemeStore();
+  const { player, initializePlayer, updateStats, addTestResult } = usePlayerStore();
+  const { addOrUpdatePlayer } = useLeaderboardStore();
   
   useEffect(() => {
     // Apply theme on component mount
     applyTheme();
-  }, [applyTheme]);
+    // Initialize player data
+    initializePlayer();
+  }, [applyTheme, initializePlayer]);
   
   const [gameMode, setGameMode] = useState<GameMode>('story');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showRoomSelector, setShowRoomSelector] = useState(false);
-  const [showMultiplayerRace, setShowMultiplayerRace] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [stats, setStats] = useState<GameStats>({
+  
+  // Use player stats from store, with fallback
+  const stats: GameStats = player ? {
+    wpm: player.stats.wpm,
+    accuracy: player.stats.accuracy,
+    level: player.stats.level,
+    xp: player.stats.xp,
+    streak: player.stats.streak,
+    combo: player.stats.combo,
+  } : {
     wpm: 0,
     accuracy: 100,
     level: 1,
     xp: 0,
     streak: 0,
     combo: 1,
-  });
+  };
   
   const [achievements] = useState<Achievement[]>([
     { id: 'first_steps', name: 'First Steps', description: 'Complete your first test', icon: '🐣', unlocked: false },
@@ -74,28 +86,45 @@ export default function TypeWarriorGame() {
     setIsPlaying(true);
   };
 
-  const handleGameEnd = (wpm: number, accuracy: number) => {
+  const handleGameEnd = (wpm: number, accuracy: number, charactersTyped = 0, duration = 60) => {
     setIsPlaying(false);
-    setStats(prev => ({
-      ...prev,
+    
+    if (!player) return;
+    
+    // Calculate XP based on performance
+    const xpGained = Math.round(wpm * (accuracy / 100) * stats.combo);
+    
+    // Update player stats
+    const newStreak = accuracy > 95 ? stats.streak + 1 : 0;
+    updateStats({
       wpm,
       accuracy,
-      streak: accuracy > 95 ? prev.streak + 1 : 0,
-      xp: prev.xp + Math.round(wpm * (accuracy / 100)),
-    }));
-  };
-
-  const handleJoinRace = () => {
-    setShowRoomSelector(true);
-  };
-
-  const handleCreateRoom = () => {
-    setShowRoomSelector(true);
-  };
-
-  const handleStartMultiplayerRace = () => {
-    setShowRoomSelector(false);
-    setShowMultiplayerRace(true);
+      streak: newStreak,
+      xp: stats.xp + xpGained,
+    });
+    
+    // Add to test history
+    addTestResult({
+      wpm,
+      accuracy,
+      mode: gameMode,
+      duration,
+      charactersTyped: charactersTyped || Math.floor(wpm * 5 * (duration / 60)), // Estimate if not provided
+      xpGained,
+    });
+    
+    // Update leaderboard if this is a good score
+    if (wpm >= player.stats.bestWpm * 0.8) { // Update if within 80% of best
+      const leaderboardEntry = {
+        id: player.id,
+        name: player.name,
+        wpm: Math.max(wpm, player.stats.bestWpm),
+        accuracy: Math.max(accuracy, player.stats.bestAccuracy),
+        avatar: player.avatar,
+        level: player.stats.level,
+      };
+      addOrUpdatePlayer(leaderboardEntry);
+    }
   };
 
   const handleOpenSettings = () => {
@@ -114,8 +143,6 @@ export default function TypeWarriorGame() {
               currentMode={gameMode} 
               onModeChange={handleModeChange}
               isPlaying={isPlaying}
-              onJoinRace={handleJoinRace}
-              onCreateRoom={handleCreateRoom}
             />
             
             <TypingArea 
@@ -129,23 +156,13 @@ export default function TypeWarriorGame() {
           {/* Side Panels */}
           <div className="lg:col-span-4 space-y-6">
             <StatsPanel stats={stats} />
+            <DailyChallenges />
             <AchievementsPanel achievements={achievements} />
             <Leaderboard />
           </div>
         </div>
 
         {/* Modals */}
-        <RoomSelector
-          isVisible={showRoomSelector}
-          onClose={() => setShowRoomSelector(false)}
-          onJoinRace={handleStartMultiplayerRace}
-        />
-        
-        <MultiplayerRace
-          isVisible={showMultiplayerRace}
-          onClose={() => setShowMultiplayerRace(false)}
-        />
-        
         <Settings
           isVisible={showSettings}
           onClose={() => setShowSettings(false)}

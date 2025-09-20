@@ -4,23 +4,24 @@ interface GameModeSelectorProps {
   currentMode: GameMode;
   onModeChange: (mode: GameMode) => void;
   isPlaying: boolean;
-  onJoinRace: () => void;
-  onCreateRoom: () => void;
 }
 
-export default function GameModeSelector({ currentMode, onModeChange, isPlaying, onJoinRace, onCreateRoom }: GameModeSelectorProps) {
+export default function GameModeSelector({ currentMode, onModeChange, isPlaying }: GameModeSelectorProps) {
   const modes = [
     { id: 'story' as GameMode, name: 'Story Mode', icon: '📖', description: 'Progress through typing adventures' },
-    { id: 'battle' as GameMode, name: 'Battle Royale', icon: '⚔️', description: 'Compete against other players' },
     { id: 'challenge' as GameMode, name: 'Daily Challenge', icon: '📅', description: 'Special daily typing challenges' },
     { id: 'racing' as GameMode, name: 'Type Racing', icon: '🏎️', description: 'Race cars with your typing speed' },
+    { id: 'vowels' as GameMode, name: 'Vowels Only', icon: '🅰️', description: 'Focus on vowels and common words' },
+    { id: 'numbers' as GameMode, name: 'Numbers Mix', icon: '🔢', description: 'Numbers and alphanumeric text' },
+    { id: 'mixed' as GameMode, name: 'Mixed Mode', icon: '🎯', description: 'Letters, numbers, and symbols' },
+    { id: 'symbols' as GameMode, name: 'Symbol Master', icon: '⚡', description: 'Special characters and coding symbols' },
   ];
 
   return (
     <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 mb-6">
       <h2 className="text-xl font-semibold mb-4 text-center">Choose Your Battle</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {modes.map((mode) => (
           <button
             key={mode.id}
@@ -63,27 +64,14 @@ export default function GameModeSelector({ currentMode, onModeChange, isPlaying,
           </div>
         )}
         
-        {currentMode === 'battle' && (
-          <div>
-            <h3 className="font-semibold text-lg mb-2">⚔️ Battle Royale</h3>
-            <p className="text-gray-300 text-sm mb-3">
-              Join real-time battles with up to 10 players. Last typer standing wins!
-            </p>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-              <span className="text-sm text-green-400">47 players online</span>
-            </div>
-          </div>
-        )}
-        
         {currentMode === 'challenge' && (
           <div>
             <h3 className="font-semibold text-lg mb-2">📅 Daily Challenge</h3>
             <p className="text-gray-300 text-sm mb-3">
-              Today&apos;s challenge: &quot;Wizard&apos;s Vocabulary&quot; - Special magical words and phrases.
+              Complete today&apos;s special challenge for bonus XP and achievements!
             </p>
             <div className="flex items-center gap-4">
-              <span className="text-yellow-400">💎 Reward: 500 XP + Rare Theme</span>
+              <span className="text-yellow-400">💎 Reward: Bonus XP + Streak Boost</span>
             </div>
           </div>
         )}
@@ -92,21 +80,58 @@ export default function GameModeSelector({ currentMode, onModeChange, isPlaying,
           <div>
             <h3 className="font-semibold text-lg mb-2">🏎️ Type Racing</h3>
             <p className="text-gray-300 text-sm mb-3">
-              Race against other players! Your car moves forward with each correct word.
+              Race against the clock! Speed through challenging texts and beat your personal records.
             </p>
             <div className="flex items-center gap-4">
-              <button 
-                onClick={onJoinRace}
-                className="btn-primary text-sm py-2 px-4"
-              >
-                🚗 Join Race
-              </button>
-              <button 
-                onClick={onCreateRoom}
-                className="btn-secondary text-sm py-2 px-4"
-              >
-                🏁 Create Room
-              </button>
+              <span className="text-green-400">🏆 Best Time: Personal Records</span>
+            </div>
+          </div>
+        )}
+        
+        {currentMode === 'vowels' && (
+          <div>
+            <h3 className="font-semibold text-lg mb-2">🅰️ Vowels Only</h3>
+            <p className="text-gray-300 text-sm mb-3">
+              Focus on vowel-heavy words and improve your vowel key accuracy. Great for building finger strength!
+            </p>
+            <div className="text-sm text-blue-400">
+              Targets: A, E, I, O, U and common vowel combinations
+            </div>
+          </div>
+        )}
+        
+        {currentMode === 'numbers' && (
+          <div>
+            <h3 className="font-semibold text-lg mb-2">🔢 Numbers Mix</h3>
+            <p className="text-gray-300 text-sm mb-3">
+              Practice typing numbers, dates, and alphanumeric combinations. Essential for data entry!
+            </p>
+            <div className="text-sm text-blue-400">
+              Includes: 0-9, dates, phone numbers, and mixed text
+            </div>
+          </div>
+        )}
+        
+        {currentMode === 'mixed' && (
+          <div>
+            <h3 className="font-semibold text-lg mb-2">🎯 Mixed Mode</h3>
+            <p className="text-gray-300 text-sm mb-3">
+              The ultimate challenge! Letters, numbers, and basic symbols in realistic text scenarios.
+            </p>
+            <div className="text-sm text-orange-400">
+              Advanced difficulty - recommended for experienced typists
+            </div>
+          </div>
+        )}
+        
+        {currentMode === 'symbols' && (
+          <div>
+            <h3 className="font-semibold text-lg mb-2">⚡ Symbol Master</h3>
+            <p className="text-gray-300 text-sm mb-3">
+              Master programming symbols and special characters. Perfect for developers and coders!
+            </p>
+            <div className="text-sm text-purple-400">
+              Includes: {}, [], (), &lt;&gt;, @#$%^&*, and more
             </div>
           </div>
         )}
