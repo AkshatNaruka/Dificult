@@ -16,11 +16,6 @@ const textSamples = {
     "As darkness falls upon the mechanical switches, only those with lightning-fast fingers can hope to survive the grueling trials ahead. Each letter demands perfect timing and unwavering focus.",
     "The ancient scrolls speak of legendary typists who could weave words at impossible speeds, their fingers dancing across keys like virtuoso pianists performing symphonies of text."
   ],
-  battle: [
-    "In the heat of battle, every keystroke counts. Warriors clash with words, each error a weakness to exploit. Only the fastest and most accurate will claim victory.",
-    "The arena trembles as typing gladiators face off in epic combat. Fingers fly across keyboards like lightning, each word a weapon in this digital colosseum.",
-    "Champions rise and fall with each passing second. In this realm, speed is power, accuracy is armor, and victory belongs to the swift."
-  ],
   challenge: [
     "Today's challenge demands the precision of a surgeon and the speed of light. Ancient runes and mystical incantations test even the most skilled practitioners.",
     "Beware the cursed texts that twist tongues and tangle fingers. Only true masters can navigate these treacherous linguistic labyrinths.",
@@ -30,6 +25,26 @@ const textSamples = {
     "Start your engines! The race begins with these words. Every correct keystroke moves your car forward on the track.",
     "Speed through the winding course of letters. Navigate the challenging turns of punctuation and acceleration zones of common words.",
     "Cross the finish line first by maintaining both speed and accuracy. The checkered flag awaits the typing champion!"
+  ],
+  vowels: [
+    "aeiou aeiou aeiou beautiful outstanding education awesome incredible mysterious adventurous courageous ambitious creative",
+    "outstanding beautiful education curious mysterious adventurous courageous ambitious creative outstanding education",
+    "awesome incredible outstanding beautiful curious mysterious adventurous courageous ambitious creative education"
+  ],
+  numbers: [
+    "1234567890 1234567890 password123 user456 phone555-1234 code9876 year2024 date01-15-2024",
+    "The year 2024 has been amazing with 365 days of progress and 52 weeks of learning new skills every day.",
+    "Phone numbers like 555-1234 and codes like 9876 are common in everyday typing scenarios and data entry."
+  ],
+  mixed: [
+    "Username: john_doe123 Password: Secure@2024! Email: user@domain.com Phone: (555) 123-4567",
+    "Price: $29.99 Discount: 15% Code: SAVE2024 Expires: 12/31/2024 Contact: support@company.com",
+    "Order #12345: 3 items @ $15.99 each = $47.97 + tax $3.84 = Total: $51.81 (Card ending 5678)"
+  ],
+  symbols: [
+    "function(){} array[0] object.method() string = 'value' number += 10; boolean == true",
+    "if (x > 0 && y < 10) { return x * y; } else { throw new Error('Invalid input'); }",
+    "const obj = { key: 'value', num: 42, arr: [1, 2, 3] }; console.log(obj?.key ?? 'default');"
   ]
 };
 
