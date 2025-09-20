@@ -1,38 +1,38 @@
 @import "tailwindcss";
 
-/* Default theme variables (dark theme) */
+/* Default theme variables (minimal white theme) */
 :root {
   /* Background colors */
-  --color-background: #111827;
-  --color-background-secondary: #1f2937;
-  --color-surface: #374151;
-  --color-surface-secondary: #4b5563;
+  --color-background: #ffffff;
+  --color-background-secondary: #fafafa;
+  --color-surface: #f5f5f5;
+  --color-surface-secondary: #e5e5e5;
   
   /* Text colors */
-  --color-text: #f9fafb;
-  --color-text-secondary: #d1d5db;
-  --color-text-dimmed: #9ca3af;
+  --color-text: #171717;
+  --color-text-secondary: #404040;
+  --color-text-dimmed: #737373;
   
   /* Accent colors */
-  --color-primary: #3b82f6;
-  --color-secondary: #6b7280;
-  --color-accent: #8b5cf6;
+  --color-primary: #171717;
+  --color-secondary: #a3a3a3;
+  --color-accent: #525252;
   
   /* Typing colors */
-  --color-correct: #10b981;
-  --color-incorrect: #ef4444;
-  --color-current: #fbbf24;
-  --color-untyped: #6b7280;
+  --color-correct: #16a34a;
+  --color-incorrect: #dc2626;
+  --color-current: #ea580c;
+  --color-untyped: #d4d4d4;
   
   /* UI element colors */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
+  --color-error: #dc2626;
+  --color-info: #171717;
   
   /* Border and shadow */
-  --color-border: #374151;
-  --color-shadow: rgba(0, 0, 0, 0.5);
+  --color-border: #e5e5e5;
+  --color-shadow: rgba(23, 23, 23, 0.08);
   
   /* Font settings */
   --font-size-base: 16px;
@@ -62,44 +62,81 @@ body {
 
 /* Theme-specific styles and utilities */
 .gradient-text {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(23, 23, 23, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: 0 8px 25px rgba(23, 23, 23, 0.08);
+  transform: translateY(-2px);
+}
+
 .card-glow {
-  box-shadow: 0 0 20px var(--color-shadow);
+  box-shadow: 0 4px 20px rgba(23, 23, 23, 0.08);
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
-  color: var(--color-text);
+  background: var(--color-primary);
+  color: var(--color-background);
   font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1);
-  border: 1px solid var(--color-border);
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(23, 23, 23, 0.1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
 }
 
 .btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 25px var(--color-shadow);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(23, 23, 23, 0.15);
+  background: var(--color-accent);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px 0 rgba(23, 23, 23, 0.2);
 }
 
 .btn-secondary {
   background: var(--color-surface);
   color: var(--color-text);
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--color-border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
 }
 
 .btn-secondary:hover {
   background: var(--color-surface-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(23, 23, 23, 0.08);
 }
 
 /* Typing area styles */
