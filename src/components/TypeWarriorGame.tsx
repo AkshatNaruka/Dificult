@@ -13,6 +13,7 @@ import Leaderboard from './Leaderboard';
 import AchievementsPanel from './AchievementsPanel';
 import Settings from './Settings';
 import DailyChallenges from './DailyChallenges';
+import Analytics from './Analytics';
 
 export type GameMode = 'story' | 'challenge' | 'racing' | 'vowels' | 'numbers' | 'mixed' | 'symbols';
 
@@ -52,6 +53,7 @@ export default function TypeWarriorGame() {
   const [gameMode, setGameMode] = useState<GameMode>('story');
   const [isPlaying, setIsPlaying] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [activeTab, setActiveTab] = useState<'stats' | 'analytics' | 'achievements' | 'challenges' | 'leaderboard'>('stats');
   
   // Use player stats from store, with fallback
   const stats: GameStats = player ? {
@@ -155,10 +157,40 @@ export default function TypeWarriorGame() {
           
           {/* Side Panels */}
           <div className="lg:col-span-4 space-y-6">
-            <StatsPanel stats={stats} />
-            <DailyChallenges />
-            <AchievementsPanel achievements={achievements} />
-            <Leaderboard />
+            {/* Tab Navigation */}
+            <div className="card">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {[
+                  { id: 'stats', label: '📊 Stats', icon: '📊' },
+                  { id: 'analytics', label: '📈 Analytics', icon: '📈' },
+                  { id: 'challenges', label: '🎯 Challenges', icon: '🎯' },
+                  { id: 'achievements', label: '🏆 Achievements', icon: '🏆' },
+                  { id: 'leaderboard', label: '🏅 Leaderboard', icon: '🏅' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as 'stats' | 'analytics' | 'achievements' | 'challenges' | 'leaderboard')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.icon}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'stats' && <StatsPanel stats={stats} />}
+            {activeTab === 'analytics' && player?.testHistory && (
+              <Analytics testHistory={player.testHistory} />
+            )}
+            {activeTab === 'challenges' && <DailyChallenges />}
+            {activeTab === 'achievements' && <AchievementsPanel achievements={achievements} />}
+            {activeTab === 'leaderboard' && <Leaderboard />}
           </div>
         </div>
 
