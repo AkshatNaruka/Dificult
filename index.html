@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeWarrior - Battle Your Way to Typing Mastery</title>
+    <!-- Chart.js for analytics graphs - Trying different CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.2/chart.umd.js"></script>
     <style>
         /* TypeWarrior - Standalone HTML Version Styles */
         :root {
@@ -954,6 +956,51 @@
                         <button class="btn btn-primary" style="width: 100%; justify-content: center;">Join Competition</button>
                     </div>
                 </div>
+
+                <!-- Performance Analytics -->
+                <div class="panel" id="analytics-panel" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>📈 Performance Analytics</h3>
+                        <button class="btn-secondary" id="toggle-analytics" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Show Graph</button>
+                    </div>
+                    
+                    <div id="analytics-message" style="text-align: center; color: var(--text-secondary); margin: 2rem 0;">
+                        Complete one typing test to unlock performance analytics!
+                    </div>
+                    
+                    <div id="analytics-content" style="display: none;">
+                        <!-- Stats Summary -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(59, 130, 246, 0.2);">
+                                <div style="font-size: 0.75rem; color: #3b82f6; font-weight: 600;">Average WPM</div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #1e40af;" id="avg-wpm">0</div>
+                            </div>
+                            <div style="background: rgba(34, 197, 94, 0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(34, 197, 94, 0.2);">
+                                <div style="font-size: 0.75rem; color: #22c55e; font-weight: 600;">Best WPM</div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #16a34a;" id="best-wpm">0</div>
+                            </div>
+                            <div style="background: rgba(168, 85, 247, 0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(168, 85, 247, 0.2);">
+                                <div style="font-size: 0.75rem; color: #a855f7; font-weight: 600;">Tests</div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #7c3aed;" id="total-tests">0</div>
+                            </div>
+                            <div style="background: rgba(249, 115, 22, 0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(249, 115, 22, 0.2);">
+                                <div style="font-size: 0.75rem; color: #f97316; font-weight: 600;">Accuracy</div>
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #ea580c;" id="avg-accuracy">0%</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Container -->
+                        <div id="chart-container" style="position: relative; height: 300px; background: rgba(17, 24, 39, 0.3); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                        
+                        <!-- Recent Tests -->
+                        <div id="recent-tests" style="margin-top: 1rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Recent Tests</h4>
+                            <div id="recent-tests-list" style="max-height: 150px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1046,6 +1093,11 @@
                 this.bindEvents();
                 this.updateUI();
                 this.loadFromStorage();
+                
+                // Initialize analytics if there's test history
+                if (this.testHistory.length > 0) {
+                    this.updateAnalytics();
+                }
             }
 
             bindEvents() {
@@ -1095,6 +1147,11 @@
 
                 document.getElementById('settings-btn').addEventListener('click', () => {
                     this.showSettings();
+                });
+
+                // Analytics toggle
+                document.getElementById('toggle-analytics').addEventListener('click', () => {
+                    this.toggleAnalytics();
                 });
 
                 // Other clickable elements
@@ -1425,6 +1482,9 @@
 
                 // Show results
                 this.showResults();
+                
+                // Update analytics after test completion
+                this.updateAnalytics();
             }
 
             checkAchievements() {
@@ -1670,6 +1730,233 @@ Would you like to export your typing data?`);
                 
                 URL.revokeObjectURL(url);
                 alert('✅ Your typing data has been exported successfully!');
+            }
+
+            toggleAnalytics() {
+                const content = document.getElementById('analytics-content');
+                const button = document.getElementById('toggle-analytics');
+                
+                if (content.style.display === 'none') {
+                    this.updateAnalytics();
+                    content.style.display = 'block';
+                    button.textContent = 'Hide Graph';
+                } else {
+                    content.style.display = 'none';
+                    button.textContent = 'Show Graph';
+                }
+            }
+
+            updateAnalytics() {
+                if (this.testHistory.length === 0) return;
+
+                // Show analytics panel after first test
+                document.getElementById('analytics-panel').style.display = 'block';
+                document.getElementById('analytics-message').style.display = 'none';
+
+                // Calculate stats
+                const wpmValues = this.testHistory.map(test => test.wpm);
+                const accuracyValues = this.testHistory.map(test => test.accuracy);
+                
+                const avgWpm = Math.round(wpmValues.reduce((a, b) => a + b, 0) / wpmValues.length);
+                const bestWpm = Math.max(...wpmValues);
+                const avgAccuracy = Math.round((accuracyValues.reduce((a, b) => a + b, 0) / accuracyValues.length) * 10) / 10;
+                
+                // Update stats display
+                document.getElementById('avg-wpm').textContent = avgWpm;
+                document.getElementById('best-wpm').textContent = bestWpm;
+                document.getElementById('total-tests').textContent = this.testHistory.length;
+                document.getElementById('avg-accuracy').textContent = avgAccuracy + '%';
+
+                // Update chart
+                this.updatePerformanceChart();
+                
+                // Update recent tests
+                this.updateRecentTests();
+            }
+
+            updatePerformanceChart() {
+                const chartContainer = document.getElementById('chart-container');
+                
+                // Check if Chart.js is available
+                if (typeof Chart === 'undefined') {
+                    // Fallback: Show simple table with data
+                    const recentTests = this.testHistory.slice(-10); // Show last 10 tests
+                    let fallbackHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                            <div style="margin-bottom: 1rem;">📊 Chart.js not available - showing data table</div>
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                <table style="width: 100%; font-size: 0.875rem; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid var(--border-color);">
+                                            <th style="padding: 0.5rem; text-align: left; color: var(--text-primary);">Test</th>
+                                            <th style="padding: 0.5rem; text-align: center; color: #3b82f6;">WPM</th>
+                                            <th style="padding: 0.5rem; text-align: center; color: #22c55e;">Accuracy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    `;
+                    
+                    recentTests.forEach((test, index) => {
+                        fallbackHTML += `
+                            <tr style="border-bottom: 1px solid rgba(156, 163, 175, 0.1);">
+                                <td style="padding: 0.5rem; color: var(--text-secondary);">Test ${index + 1}</td>
+                                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #3b82f6;">${test.wpm}</td>
+                                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #22c55e;">${test.accuracy.toFixed(1)}%</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    fallbackHTML += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    
+                    chartContainer.innerHTML = fallbackHTML;
+                    return;
+                }
+
+                const ctx = document.getElementById('performance-chart').getContext('2d');
+                
+                // Destroy existing chart if it exists
+                if (this.performanceChart) {
+                    this.performanceChart.destroy();
+                }
+
+                const recentTests = this.testHistory.slice(-20); // Show last 20 tests
+                const labels = recentTests.map((_, index) => `Test ${index + 1}`);
+                const wpmData = recentTests.map(test => test.wpm);
+                const accuracyData = recentTests.map(test => test.accuracy);
+
+                this.performanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'WPM',
+                            data: wpmData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Accuracy (%)',
+                            data: accuracyData,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#f9fafb',
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Performance Over Time',
+                                color: '#f9fafb',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: '#9ca3af',
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(156, 163, 175, 0.1)'
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'WPM',
+                                    color: '#3b82f6'
+                                },
+                                ticks: {
+                                    color: '#3b82f6',
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(59, 130, 246, 0.1)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Accuracy (%)',
+                                    color: '#22c55e'
+                                },
+                                ticks: {
+                                    color: '#22c55e',
+                                    min: 0,
+                                    max: 100,
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                });
+            }
+
+            updateRecentTests() {
+                const recentTestsList = document.getElementById('recent-tests-list');
+                const recentTests = this.testHistory.slice(-5).reverse(); // Show last 5 tests
+
+                let html = '';
+                recentTests.forEach((test, index) => {
+                    const date = new Date(test.date).toLocaleDateString();
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; margin-bottom: 0.5rem; background: rgba(17, 24, 39, 0.3); border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                            <div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary);">${date}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">${test.mode.charAt(0).toUpperCase() + test.mode.slice(1)} Mode</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.875rem; font-weight: 700; color: #3b82f6;">${test.wpm} WPM</div>
+                                <div style="font-size: 0.75rem; color: #22c55e;">${test.accuracy.toFixed(1)}% ACC</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                recentTestsList.innerHTML = html || '<div style="text-align: center; color: var(--text-secondary); padding: 1rem;">No tests yet</div>';
             }
 
             saveToStorage() {
