@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "start:server": "NODE_ENV=production node server.js",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up",
     "lint": "next lint"
   },
   "dependencies": {
