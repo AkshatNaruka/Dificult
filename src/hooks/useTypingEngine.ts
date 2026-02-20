@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { getWords } from '../utils/words';
+import { useTypingSounds } from './useTypingSounds';
 
 export type TestMode = 'time' | 'words';
 export type TestType = 'words' | 'numbers' | 'symbols';
@@ -22,6 +23,7 @@ export const useTypingEngine = () => {
     const [state, setState] = useState<'idle' | 'running' | 'finished'>('idle');
     const [words, setWords] = useState<string>('');
     const [typed, setTyped] = useState<string>(''); // What the user has typed so far
+    const { playClick, playError } = useTypingSounds();
 
     // Metrics
     const [timeLeft, setTimeLeft] = useState(timeConfig);
@@ -139,6 +141,9 @@ export const useTypingEngine = () => {
 
             if (char !== targetChar) {
                 setErrors(e => e + 1);
+                playError();
+            } else {
+                playClick();
             }
 
             // Check if finished by words
@@ -160,6 +165,9 @@ export const useTypingEngine = () => {
 
         setTyped(prev => {
             if (prev.length === 0) return prev;
+
+            // Play click on backspace
+            playClick();
 
             if (ctrlKey) {
                 // Delete last word

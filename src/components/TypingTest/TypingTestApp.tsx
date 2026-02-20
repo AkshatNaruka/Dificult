@@ -7,6 +7,7 @@ import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
 import { ThemePicker } from '../ThemePicker';
 import { motion, AnimatePresence } from 'framer-motion';
+import { saveTestStats } from '@/app/actions/stats';
 
 import Link from 'next/link';
 
@@ -25,6 +26,26 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
         themeStore.applyTheme();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [themeStore.currentTheme]);
+
+    // Save stats when game finishes
+    useEffect(() => {
+        if (engine.state === 'finished' && engine.history.length > 0) {
+            const finalWpm = engine.history[engine.history.length - 1].wpm;
+
+            let correctChars = 0;
+            for (let i = 0; i < engine.typed.length; i++) {
+                if (engine.typed[i] === engine.words[i]) correctChars++;
+            }
+            const accuracy = engine.typed.length > 0 ? Math.round((correctChars / engine.typed.length) * 100) : 100;
+            const timeTaken = engine.history[engine.history.length - 1].time;
+
+            if (user && user.id) {
+                // Background save, no need to await in effect
+                saveTestStats(finalWpm, accuracy, engine.testMode, timeTaken)
+                    .catch(e => console.error("Failed to save stats:", e));
+            }
+        }
+    }, [engine.state, engine.history, engine.typed, engine.words, engine.testMode, user]);
     useEffect(() => {
         focusInput();
         const handleGlobalClick = (e: MouseEvent) => {
@@ -106,6 +127,24 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                 <div className="flex items-center gap-5">
                     {/* Theme Picker */}
                     <ThemePicker />
+
+                    {/* Multiplayer Link */}
+                    {user && (
+                        <Link
+                            href="/multiplayer"
+                            className="font-typing text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"
+                            style={{ color: 'var(--text-accent)' }}
+                            title="Multiplayer Race"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>Race</span>
+                        </Link>
+                    )}
 
                     {/* Settings icon */}
                     <button

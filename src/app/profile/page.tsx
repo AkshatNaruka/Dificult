@@ -12,6 +12,23 @@ export default async function ProfilePage() {
         redirect('/login')
     }
 
+    // Fetch Profile
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+    // Fetch Stats
+    const { data: stats } = await supabase
+        .from('stats')
+        .select('*')
+        .eq('user_id', user.id)
+
+    const highestWpm = stats?.length ? Math.max(...stats.map(s => s.wpm)) : 0
+    const avgAccuracy = stats?.length ? (stats.reduce((acc, curr) => acc + curr.accuracy, 0) / stats.length).toFixed(1) : 0
+    const testsCompleted = stats?.length || 0
+
     return (
         <div className="min-h-screen flex flex-col transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
             {/* Navbar */}
@@ -35,7 +52,7 @@ export default async function ProfilePage() {
                                 <h1 className="text-3xl font-bold font-typing mb-1" style={{ color: 'var(--text-primary)' }}>
                                     {user.email?.split('@')[0]}
                                 </h1>
-                                <p className="font-typing text-sm" style={{ color: 'var(--text-main)' }}>Level 1 Typist • 0 XP</p>
+                                <p className="font-typing text-sm" style={{ color: 'var(--text-main)' }}>Level {profile?.level || 1} Typist • {profile?.xp || 0} XP</p>
                             </div>
                         </div>
 
@@ -46,12 +63,12 @@ export default async function ProfilePage() {
                         </form>
                     </div>
 
-                    {/* Stats Grid - Placeholder for DB integration */}
+                    {/* Stats Grid - DB integration */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {[
-                            { label: 'Highest WPM', value: '-', suffix: 'wpm' },
-                            { label: 'Average Accuracy', value: '-', suffix: '%' },
-                            { label: 'Tests Completed', value: '0', suffix: '' },
+                            { label: 'Highest WPM', value: highestWpm, suffix: 'wpm' },
+                            { label: 'Average Accuracy', value: avgAccuracy, suffix: '%' },
+                            { label: 'Tests Completed', value: testsCompleted, suffix: '' },
                         ].map((stat, i) => (
                             <div key={i} className="p-6 rounded-2xl flex flex-col items-center justify-center gap-2" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
                                 <span className="font-typing text-sm" style={{ color: 'var(--text-main)' }}>{stat.label}</span>
