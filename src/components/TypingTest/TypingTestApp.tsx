@@ -8,7 +8,9 @@ import { StatsScreen } from './StatsScreen';
 import { ThemePicker } from '../ThemePicker';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function TypingTestApp() {
+import Link from 'next/link';
+
+export default function TypingTestApp({ user }: { user: { email?: string, id: string } | null }) {
     const engine = useTypingEngine();
     const themeStore = useThemeStore();
     const hiddenInputRef = useRef<HTMLInputElement>(null);
@@ -114,12 +116,25 @@ export default function TypingTestApp() {
                     </button>
 
                     {/* User icon */}
-                    <button
-                        style={{ color: 'var(--text-main)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                        title="Account"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </button>
+                    {user ? (
+                        <Link
+                            href="/profile"
+                            style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
+                            title="Profile"
+                            className="font-typing text-sm hover:opacity-80 transition-opacity"
+                        >
+                            <span>{user.email?.split('@')[0]}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="px-4 py-1.5 rounded-full text-sm font-bold font-typing transition-all hover:bg-opacity-80"
+                            style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
+                        >
+                            Log In
+                        </Link>
+                    )}
                 </div>
             </motion.nav>
 
