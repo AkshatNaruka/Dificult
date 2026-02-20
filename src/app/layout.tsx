@@ -73,7 +73,7 @@ export default function RootLayout({
     "features": [
       "Daily typing challenges",
       "Multiple game modes",
-      "Real-time leaderboards", 
+      "Real-time leaderboards",
       "Theme customization",
       "Progress tracking",
       "Achievements system"
@@ -81,34 +81,15 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        {/* Google AdSense - Replace with your actual AdSense code */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX"
-          crossOrigin="anonymous"
-        ></script>
       </head>
-      <body className="antialiased bg-white text-gray-900 font-sans">
+      <body className="antialiased font-sans transition-colors duration-300" suppressHydrationWarning>
         {children}
-        
-        {/* Google Analytics - Replace with your actual GA4 measurement ID */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-XXXXXXXXXX');
-            `,
-          }}
-        />
       </body>
     </html>
   );

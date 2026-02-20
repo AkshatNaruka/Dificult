@@ -1,9 +1,7 @@
-import TypeWarriorGame from '@/components/TypeWarriorGame';
+import TypingTestApp from '@/components/TypingTest/TypingTestApp';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
-      <TypeWarriorGame />
-    </main>
+    <TypingTestApp />
   );
 }

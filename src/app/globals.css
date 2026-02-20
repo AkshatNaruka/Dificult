@@ -1,226 +1,45 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;700;800&display=swap');
 
-/* Default theme variables (minimal white theme) */
-:root {
-  /* Background colors */
-  --color-background: #ffffff;
-  --color-background-secondary: #fafafa;
-  --color-surface: #f5f5f5;
-  --color-surface-secondary: #e5e5e5;
-  
-  /* Text colors */
-  --color-text: #171717;
-  --color-text-secondary: #404040;
-  --color-text-dimmed: #737373;
-  
-  /* Accent colors */
-  --color-primary: #171717;
-  --color-secondary: #a3a3a3;
-  --color-accent: #525252;
-  
-  /* Typing colors */
-  --color-correct: #16a34a;
-  --color-incorrect: #dc2626;
-  --color-current: #ea580c;
-  --color-untyped: #d4d4d4;
-  
-  /* UI element colors */
-  --color-success: #16a34a;
-  --color-warning: #ea580c;
-  --color-error: #dc2626;
-  --color-info: #171717;
-  
-  /* Border and shadow */
-  --color-border: #e5e5e5;
-  --color-shadow: rgba(23, 23, 23, 0.08);
-  
-  /* Font settings */
-  --font-size-base: 16px;
-  --font-family-base: Inter, system-ui, sans-serif;
-  --font-family-mono: 'JetBrains Mono', monospace;
-  
-  /* Legacy gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-background: var(--color-background);
-  --color-foreground: var(--color-text);
-  --font-sans: var(--font-family-base);
-  --font-mono: var(--font-family-mono);
-}
+@layer base {
+  :root {
+    /* Fallback default theme (Minimal) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #fafafa;
+    --bg-glass: rgba(250, 250, 250, 0.8);
+    --border-glass: rgba(0, 0, 0, 0.05);
 
-body {
-  background: var(--color-background);
-  color: var(--color-text);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+    /* Text Colors */
+    --text-main: #737373;
+    --text-primary: #171717;
+    --text-accent: #525252;
+    --text-accent-muted: rgba(82, 82, 82, 0.4);
+    --text-error: #dc2626;
+    --bg-error: rgba(220, 38, 38, 0.15);
+  }
 
-/* Theme-specific styles and utilities */
-.gradient-text {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
 
-.card {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(23, 23, 23, 0.04);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card:hover {
-  box-shadow: 0 8px 25px rgba(23, 23, 23, 0.08);
-  transform: translateY(-2px);
-}
-
-.card-glow {
-  box-shadow: 0 4px 20px rgba(23, 23, 23, 0.08);
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-background);
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 1rem 2rem;
-  border-radius: 0.75rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: scale(1);
-  border: none;
-  box-shadow: 0 4px 14px 0 rgba(23, 23, 23, 0.1);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 3rem;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(23, 23, 23, 0.15);
-  background: var(--color-accent);
-}
-
-.btn-primary:active {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px 0 rgba(23, 23, 23, 0.2);
-}
-
-.btn-secondary {
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 500;
-  font-size: 0.95rem;
-  padding: 0.875rem 1.75rem;
-  border-radius: 0.75rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-}
-
-.btn-secondary:hover {
-  background: var(--color-surface-secondary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(23, 23, 23, 0.08);
-}
-
-/* Typing area styles */
-.typing-text {
-  font-family: var(--font-family-mono);
-  font-size: calc(var(--font-size-base) * 1.2);
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-}
-
-.char-correct {
-  color: var(--color-correct);
-  background-color: transparent;
-}
-
-.char-incorrect {
-  color: var(--color-incorrect);
-  background-color: rgba(239, 68, 68, 0.2);
-}
-
-.char-current {
-  background-color: var(--color-current);
-  color: var(--color-background);
-  animation: caret-blink 1s infinite;
-}
-
-.char-untyped {
-  color: var(--color-untyped);
-}
-
-@keyframes caret-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
-}
-
-/* Theme-specific enhancements */
-.theme-cyberpunk {
-  --glow-color: var(--color-primary);
-}
-
-.theme-cyberpunk .card-glow {
-  box-shadow: 0 0 20px var(--glow-color), 0 0 40px var(--glow-color);
-}
-
-.theme-cyberpunk .typing-text {
-  text-shadow: 0 0 10px var(--color-current);
-}
-
-.theme-nord .btn-primary,
-.theme-dracula .btn-primary,
-.theme-tokyo-night .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .typing-text {
-    font-size: var(--font-size-base);
+  /* Custom Scrollbar for sleek UI */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
   }
 }
 
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@layer utilities {
+  .font-typing {
+    font-family: 'JetBrains Mono', monospace;
   }
-  
-  .char-current {
-    animation: none;
-    background-color: var(--color-current);
-  }
-}
-
-/* Focus states for better accessibility */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Smooth transitions for theme changes */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

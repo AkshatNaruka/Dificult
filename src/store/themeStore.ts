@@ -6,17 +6,17 @@ import { themes, getThemeById, getDefaultTheme } from '@/data/themes';
 interface ThemeState extends ThemeConfig {
   // Available themes
   availableThemes: Theme[];
-  
+
   // Current active theme object
   activeTheme: Theme;
-  
+
   // Actions
   setTheme: (themeId: string) => void;
   setFontSize: (size: number) => void;
   setFontFamily: (family: string) => void;
   setSmoothCaret: (smooth: boolean) => void;
   setShowKeyboard: (show: boolean) => void;
-  
+
   // Theme utilities
   applyTheme: () => void;
   resetToDefault: () => void;
@@ -68,29 +68,33 @@ export const useThemeStore = create<ThemeState>()(
 
       applyTheme: () => {
         const state = get();
-        const { activeTheme, fontSize, fontFamily } = state;
-        
-        // Apply CSS custom properties to the document root
+        const { activeTheme } = state;
+
         const root = document.documentElement;
-        
-        // Apply color variables
-        Object.entries(activeTheme.colors).forEach(([key, value]) => {
-          root.style.setProperty(`--color-${key}`, value);
-        });
-        
-        // Apply font settings
-        root.style.setProperty('--font-size-base', `${fontSize}px`);
-        root.style.setProperty('--font-family-base', fontFamily);
-        
-        // Apply theme class for additional styling
+
+        // Map store colors to our custom CSS variables
+        root.style.setProperty('--bg-primary', activeTheme.colors.background);
+        root.style.setProperty('--bg-secondary', activeTheme.colors.backgroundSecondary);
+        root.style.setProperty('--text-primary', activeTheme.colors.text);
+        root.style.setProperty('--text-main', activeTheme.colors.textDimmed);
+        root.style.setProperty('--text-accent', activeTheme.colors.accent);
+        root.style.setProperty('--text-error', activeTheme.colors.error);
+
+        // Create custom muted/glass variants based on the theme colors (using hex to rgba approximations for simplicity, or hardcoded approximations)
+        // For a robust solution, we're relying on the base colors mapping accurately.
+        root.style.setProperty('--bg-glass', activeTheme.colors.backgroundSecondary + 'CC'); // 80% opacity hex
+        root.style.setProperty('--border-glass', activeTheme.colors.border + '66'); // 40% opacity hex
+        root.style.setProperty('--bg-error', activeTheme.colors.error + '26'); // 15% opacity hex
+        root.style.setProperty('--text-accent-muted', activeTheme.colors.accent + '33'); // 20% opacity hex
+
         root.className = root.className.replace(/theme-\w+/g, '');
         root.classList.add(`theme-${activeTheme.id}`);
       },
 
       resetToDefault: () => {
-        set({ 
-          ...defaultConfig, 
-          activeTheme: getDefaultTheme() 
+        set({
+          ...defaultConfig,
+          activeTheme: getDefaultTheme()
         });
         get().applyTheme();
       },
