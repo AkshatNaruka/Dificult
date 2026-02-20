@@ -240,7 +240,7 @@ export default function TypingTestApp() {
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 0.5 }}
                                 transition={{ duration: 0.3 }}
-                                className="flex items-center gap-2 text-sm font-typing"
+                                className="flex items-center gap-2 text-sm font-typing mt-[120px]"
                                 style={{ color: 'var(--text-main)' }}
                             >
                                 <span
