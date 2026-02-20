@@ -23,6 +23,8 @@ export const useTypingEngine = () => {
     const [state, setState] = useState<'idle' | 'running' | 'finished'>('idle');
     const [words, setWords] = useState<string>('');
     const [typed, setTyped] = useState<string>(''); // What the user has typed so far
+    const [combo, setCombo] = useState<number>(0);
+    const [maxCombo, setMaxCombo] = useState<number>(0);
     const { playClick, playError } = useTypingSounds();
 
     // Metrics
@@ -59,6 +61,8 @@ export const useTypingEngine = () => {
         setState('idle');
         setTyped('');
         setErrors(0);
+        setCombo(0);
+        setMaxCombo(0);
         setStartTime(null);
         setHistory([]);
         setTimeLeft(timeConfig);
@@ -141,8 +145,14 @@ export const useTypingEngine = () => {
 
             if (char !== targetChar) {
                 setErrors(e => e + 1);
+                setCombo(0);
                 playError();
             } else {
+                setCombo(c => {
+                    const newCombo = c + 1;
+                    setMaxCombo(max => Math.max(max, newCombo));
+                    return newCombo;
+                });
                 playClick();
             }
 
@@ -189,6 +199,8 @@ export const useTypingEngine = () => {
         typed,
         timeLeft,
         errors,
+        combo,
+        maxCombo,
         history,
         testMode,
         testType,

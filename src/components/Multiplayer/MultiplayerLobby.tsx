@@ -12,7 +12,7 @@ import { Room } from '../../types/multiplayer';
 export default function MultiplayerLobby({ user }: { user: { id: string; email?: string } | null }) {
     const {
         isConnected, rooms, currentRoom, currentPlayer, error,
-        createRoom, joinRoom, leaveRoom, setReady, sendProgress
+        createRoom, joinRoom, leaveRoom, setReady, sendProgress, sendEmote, activeEmotes
     } = useMultiplayer(user);
 
     const [newRoomName, setNewRoomName] = useState('');
@@ -64,6 +64,12 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (currentRoom?.status !== 'In Progress' || !currentRoom.isStarted) {
             e.preventDefault();
+            return;
+        }
+        if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
+            e.preventDefault();
+            const map: Record<string, string> = { '1': '🔥', '2': '💀', '3': '👏', '4': '😭' };
+            sendEmote(map[e.key]);
             return;
         }
         if (e.key === ' ') e.preventDefault();
@@ -245,6 +251,22 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
                                             transition={{ ease: "linear", duration: 0.5 }}
                                         >
                                             {player.avatar}
+
+                                            {/* Emotes floating up from avatar */}
+                                            <AnimatePresence>
+                                                {activeEmotes.filter(e => e.playerId === player.id).map(e => (
+                                                    <motion.div
+                                                        key={e.id}
+                                                        initial={{ opacity: 0, y: 0, scale: 0.5 }}
+                                                        animate={{ opacity: 1, y: -40, scale: 1.5 }}
+                                                        exit={{ opacity: 0, y: -60, scale: 0 }}
+                                                        transition={{ duration: 1 }}
+                                                        className="absolute z-20 text-2xl drop-shadow-md pointer-events-none"
+                                                    >
+                                                        {e.emoji}
+                                                    </motion.div>
+                                                ))}
+                                            </AnimatePresence>
                                         </motion.div>
                                     </div>
 
@@ -272,10 +294,24 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
                             )}
                         </AnimatePresence>
 
-                        {/* Active Typing Interface */}
+                        {/* Active Typing Interface and Emote Tray */}
                         {currentRoom.isStarted && currentRoom.status === 'In Progress' && (
-                            <div className="w-full mt-8 p-8 border rounded-2xl" style={{ borderColor: 'var(--border-glass)' }} onClick={() => document.getElementById('multiplayer-hidden-input')?.focus()}>
-                                <WordDisplay words={engine.words} typed={engine.typed} />
+                            <div className="flex flex-col gap-4">
+                                <div className="w-full p-8 border rounded-2xl cursor-text" style={{ borderColor: 'var(--border-glass)' }} onClick={() => document.getElementById('multiplayer-hidden-input')?.focus()}>
+                                    <WordDisplay words={engine.words} typed={engine.typed} />
+                                </div>
+                                <div className="flex items-center gap-4 px-2">
+                                    <span className="text-xs opacity-50 font-typing uppercase tracking-wider">Emotes (Alt+1-4):</span>
+                                    {['🔥', '💀', '👏', '😭'].map((emoji, index) => (
+                                        <button
+                                            key={emoji}
+                                            onClick={(e) => { e.stopPropagation(); sendEmote(emoji); document.getElementById('multiplayer-hidden-input')?.focus(); }}
+                                            className="text-2xl hover:scale-125 transition-transform bg-black/10 rounded-full w-12 h-12 flex items-center justify-center border border-white/5"
+                                        >
+                                            {emoji}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
 

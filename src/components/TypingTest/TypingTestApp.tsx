@@ -128,6 +128,21 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                     {/* Theme Picker */}
                     <ThemePicker />
 
+                    {/* Leaderboard Link */}
+                    <Link
+                        href="/leaderboard"
+                        className="font-typing text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"
+                        style={{ color: 'var(--text-accent)' }}
+                        title="Top Players"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 20h20"></path>
+                            <path d="M5 20v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5"></path>
+                            <path d="M13 20v-9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v9"></path>
+                        </svg>
+                        <span>Ranks</span>
+                    </Link>
+
                     {/* Multiplayer Link */}
                     {user && (
                         <Link
@@ -264,6 +279,22 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 </div>
                             </motion.div>
 
+                            {/* Combo / On Fire UI */}
+                            <AnimatePresence>
+                                {engine.combo >= 20 && engine.state === 'running' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                                        className="absolute top-32 flex items-center gap-2 font-typing font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/30 backdrop-blur-sm z-10"
+                                        style={{ textShadow: '0 0 10px rgba(249, 115, 22, 0.5)' }}
+                                    >
+                                        <span className="text-xl">🔥</span>
+                                        <span>ON FIRE! {engine.combo} Combo</span>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
                             {/* Live timer / word counter — centered below nav */}
                             <motion.div
                                 animate={{ opacity: isFocused ? 1 : 0 }}
@@ -282,13 +313,14 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             </motion.div>
 
                             {/* Words area */}
-                            <div
-                                className="w-full"
+                            <motion.div
+                                className={`w-full transition-all duration-500 rounded-3xl p-8 cursor-text ${engine.combo >= 20 ? 'shadow-[0_0_50px_rgba(249,115,22,0.15)] border border-orange-500/20 bg-orange-500/5' : 'border border-transparent'}`}
                                 ref={containerRef}
                                 onClick={focusInput}
+                                animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
                             >
                                 <WordDisplay words={engine.words} typed={engine.typed} />
-                            </div>
+                            </motion.div>
 
                             {/* Restart hint */}
                             <motion.div

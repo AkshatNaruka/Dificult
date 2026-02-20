@@ -104,7 +104,7 @@ function updatePlayerProgress(playerId, progress, wpm, accuracy) {
   };
 
   players.set(playerId, updatedPlayer);
-  
+
   // Update player in room
   const playerIndex = room.players.findIndex(p => p.id === playerId);
   if (playerIndex !== -1) {
@@ -172,17 +172,17 @@ nextApp.prepare().then(() => {
     socket.on('room:join', (data) => {
       const { roomId, playerData } = data;
       const result = addPlayerToRoom(socket.id, roomId, playerData || {});
-      
+
       if (result) {
         socket.join(roomId);
         socket.emit('room:joined', {
           room: result.room,
           player: result.player
         });
-        
+
         // Broadcast to all players in room
         io.to(roomId).emit('room:updated', result.room);
-        
+
         // Update room list for all clients
         io.emit('rooms:list', Array.from(rooms.values()).map(room => ({
           id: room.id,
@@ -201,7 +201,7 @@ nextApp.prepare().then(() => {
     socket.on('room:create', (data) => {
       const roomId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const room = createRoom(roomId, data.name, data.maxPlayers, data.difficulty);
-      
+
       const result = addPlayerToRoom(socket.id, roomId, data.playerData || {});
       if (result) {
         socket.join(roomId);
@@ -209,7 +209,7 @@ nextApp.prepare().then(() => {
           room: result.room,
           player: result.player
         });
-        
+
         // Update room list for all clients
         io.emit('rooms:list', Array.from(rooms.values()).map(room => ({
           id: room.id,
@@ -245,7 +245,7 @@ nextApp.prepare().then(() => {
         room.countdown = 3;
         room.status = 'In Progress';
         io.to(player.roomId).emit('race:countdown', { countdown: 3 });
-        
+
         const countdownInterval = setInterval(() => {
           room.countdown--;
           if (room.countdown > 0) {
@@ -266,11 +266,11 @@ nextApp.prepare().then(() => {
     socket.on('player:progress', (data) => {
       const { progress, wpm, accuracy } = data;
       const result = updatePlayerProgress(socket.id, progress, wpm, accuracy);
-      
+
       if (result) {
         // Send to all players in room
         io.to(result.player.roomId).emit('room:updated', result.room);
-        
+
         // If race finished, send race results
         if (result.room.status === 'Finished') {
           io.to(result.player.roomId).emit('race:finished', {
@@ -281,6 +281,19 @@ nextApp.prepare().then(() => {
       }
     });
 
+    // Emotes
+    socket.on('player:emote', (data) => {
+      const player = players.get(socket.id);
+      if (!player) return;
+
+      const { emoji } = data;
+      // Broadcast to everyone in the room (including sender)
+      io.to(player.roomId).emit('room:emote', {
+        playerId: socket.id,
+        emoji
+      });
+    });
+
     // Leave room
     socket.on('room:leave', () => {
       const player = players.get(socket.id);
@@ -288,11 +301,11 @@ nextApp.prepare().then(() => {
 
       socket.leave(player.roomId);
       const room = removePlayerFromRoom(socket.id);
-      
+
       if (room) {
         io.to(player.roomId).emit('room:updated', room);
       }
-      
+
       // Update room list for all clients
       io.emit('rooms:list', Array.from(rooms.values()).map(room => ({
         id: room.id,
@@ -307,15 +320,15 @@ nextApp.prepare().then(() => {
     // Handle disconnect
     socket.on('disconnect', () => {
       console.log(`Player disconnected: ${socket.id}`);
-      
+
       const player = players.get(socket.id);
       if (player) {
         const room = removePlayerFromRoom(socket.id);
-        
+
         if (room) {
           io.to(player.roomId).emit('room:updated', room);
         }
-        
+
         // Update room list for all clients
         io.emit('rooms:list', Array.from(rooms.values()).map(room => ({
           id: room.id,

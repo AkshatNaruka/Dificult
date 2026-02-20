@@ -11,6 +11,7 @@ export function useMultiplayer(user: { id: string; email?: string } | null) {
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [activeEmotes, setActiveEmotes] = useState<{ id: string, playerId: string, emoji: string }[]>([]);
 
     useEffect(() => {
         // Only connect if we have a user
@@ -71,6 +72,16 @@ export function useMultiplayer(user: { id: string; email?: string } | null) {
             setCurrentRoom(data.room); // The room status will be 'Finished'
         });
 
+        socketInstance.on('room:emote', (data: { playerId: string, emoji: string }) => {
+            const emoteId = Math.random().toString(36).substring(7);
+            setActiveEmotes(prev => [...prev, { id: emoteId, playerId: data.playerId, emoji: data.emoji }]);
+
+            // Auto remove after 2 seconds
+            setTimeout(() => {
+                setActiveEmotes(prev => prev.filter(e => e.id !== emoteId));
+            }, 2000);
+        });
+
         setSocket(socketInstance);
 
         return () => {
@@ -117,7 +128,12 @@ export function useMultiplayer(user: { id: string; email?: string } | null) {
     const sendProgress = useCallback((progress: number, wpm: number, accuracy: number) => {
         if (!socket) return;
         socket.emit('player:progress', { progress, wpm, accuracy });
-    }, [socket])
+    }, [socket]);
+
+    const sendEmote = useCallback((emoji: string) => {
+        if (!socket) return;
+        socket.emit('player:emote', { emoji });
+    }, [socket]);
 
     return {
         socket,
@@ -130,6 +146,8 @@ export function useMultiplayer(user: { id: string; email?: string } | null) {
         joinRoom,
         leaveRoom,
         setReady,
-        sendProgress
+        sendProgress,
+        sendEmote,
+        activeEmotes
     };
 }
