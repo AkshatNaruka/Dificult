@@ -5,6 +5,7 @@ import { useTypingEngine } from '../../hooks/useTypingEngine';
 import { useThemeStore } from '../../store/themeStore';
 import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
+import { ThemePicker } from '../ThemePicker';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TypingTestApp() {
@@ -17,6 +18,11 @@ export default function TypingTestApp() {
         hiddenInputRef.current?.focus();
     };
 
+    // Apply theme on mount and whenever the active theme changes
+    useEffect(() => {
+        themeStore.applyTheme();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [themeStore.currentTheme]);
     useEffect(() => {
         focusInput();
         const handleGlobalClick = (e: MouseEvent) => {
@@ -96,26 +102,8 @@ export default function TypingTestApp() {
 
                 {/* Right controls */}
                 <div className="flex items-center gap-5">
-                    {/* Theme Switcher */}
-                    <select
-                        value={themeStore.currentTheme}
-                        onChange={(e) => themeStore.setTheme(e.target.value)}
-                        style={{
-                            background: 'var(--bg-secondary)',
-                            color: 'var(--text-main)',
-                            border: '1px solid var(--border-glass)',
-                            borderRadius: '8px',
-                            padding: '6px 10px',
-                            fontSize: '13px',
-                            fontFamily: 'inherit',
-                            outline: 'none',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {themeStore.availableThemes.map(t => (
-                            <option key={t.id} value={t.id}>{t.name}</option>
-                        ))}
-                    </select>
+                    {/* Theme Picker */}
+                    <ThemePicker />
 
                     {/* Settings icon */}
                     <button
