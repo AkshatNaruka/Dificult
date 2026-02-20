@@ -231,6 +231,31 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 className="flex items-center gap-1 rounded-lg px-2 py-1.5"
                                 style={{ background: 'var(--bg-secondary)' }}
                             >
+                                {/* Punctuation / Numbers / Developer Modes */}
+                                <div className="flex items-center gap-1 text-sm font-typing">
+                                    {(['words', 'numbers', 'symbols', 'html', 'javascript', 'python', 'hardcore'] as const).map(type => (
+                                        <button
+                                            key={type}
+                                            onClick={() => engine.setTestType(type)}
+                                            className="px-3 py-1 rounded-md transition-all duration-200"
+                                            style={{
+                                                color: engine.testType === type ? 'var(--text-accent)' : 'var(--text-main)',
+                                                background: 'none',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontFamily: 'inherit',
+                                            }}
+                                            title={type}
+                                        >
+                                            {type === 'javascript' ? 'js' : type === 'python' ? 'py' : type === 'hardcore' ? '☠️' : type}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Divider */}
+                                <div style={{ width: '1px', height: '16px', background: 'var(--text-main)', opacity: 0.25, margin: '0 4px' }} />
+
                                 {/* Mode tabs */}
                                 <div className="flex items-center gap-1 text-sm font-typing">
                                     {(['time', 'words'] as const).map(mode => (

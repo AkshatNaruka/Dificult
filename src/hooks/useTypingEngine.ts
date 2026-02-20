@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { getWords } from '../utils/words';
+import { getWords, WordMode } from '../utils/words';
 import { useTypingSounds } from './useTypingSounds';
 
 export type TestMode = 'time' | 'words';
-export type TestType = 'words' | 'numbers' | 'symbols';
+export type TestType = WordMode;
 
 export interface HistoryDataPoint {
     time: number; // second
