@@ -153,7 +153,7 @@ export default function TypingTestApp() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="w-full max-w-5xl flex flex-col items-center gap-10"
+                            className="w-full max-w-5xl flex flex-col items-center gap-8"
                         >
                             {/* Mode selector – Monkeytype style */}
                             <motion.div
@@ -210,16 +210,21 @@ export default function TypingTestApp() {
                                 </div>
                             </motion.div>
 
-                            {/* Live timer / word counter */}
+                            {/* Live timer / word counter — centered below nav */}
                             <motion.div
                                 animate={{ opacity: isFocused ? 1 : 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="w-full text-left font-typing text-3xl font-bold"
-                                style={{ color: 'var(--text-accent)', minHeight: '2.5rem' }}
+                                transition={{ duration: 0.25 }}
+                                className="w-full flex justify-center select-none pointer-events-none"
+                                style={{ minHeight: '72px' }}
                             >
-                                {engine.testMode === 'time'
-                                    ? engine.timeLeft
-                                    : `${engine.typed.split(' ').length}/${engine.wordConfig}`}
+                                <span
+                                    className="font-typing font-bold"
+                                    style={{ color: 'var(--text-accent)', fontSize: '72px', lineHeight: 1, letterSpacing: '-0.03em' }}
+                                >
+                                    {engine.testMode === 'time'
+                                        ? engine.timeLeft
+                                        : `${engine.typed.split(' ').filter(Boolean).length}/${engine.wordConfig}`}
+                                </span>
                             </motion.div>
 
                             {/* Words area */}
