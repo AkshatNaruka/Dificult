@@ -39,7 +39,7 @@ export function WordDisplay({ words, typed }: WordDisplayProps) {
 
             <div
                 ref={containerRef}
-                className="absolute w-full flex flex-wrap justify-center gap-x-[0.55em] gap-y-[0.4em] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] left-0 right-0 px-4"
+                className="absolute w-full flex flex-wrap justify-start gap-x-[0.55em] gap-y-[0.4em] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] left-0 right-0 px-4"
             >
                 <Caret top={caretPos.top} left={caretPos.left} />
 

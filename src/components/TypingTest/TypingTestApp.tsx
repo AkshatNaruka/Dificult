@@ -289,27 +289,11 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 </div>
                             </motion.div>
 
-                            {/* Combo / On Fire UI */}
-                            <AnimatePresence>
-                                {engine.combo >= 20 && engine.state === 'running' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                                        className="absolute top-32 flex items-center gap-2 font-typing font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/30 backdrop-blur-sm z-10"
-                                        style={{ textShadow: '0 0 10px rgba(249, 115, 22, 0.5)' }}
-                                    >
-                                        <span className="text-xl">🔥</span>
-                                        <span>ON FIRE! {engine.combo} Combo</span>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
                             {/* Live timer / word counter — centered below nav */}
                             <motion.div
                                 animate={{ opacity: isFocused ? 1 : 0 }}
                                 transition={{ duration: 0.25 }}
-                                className="w-full flex justify-center select-none pointer-events-none"
+                                className="w-full flex justify-center select-none pointer-events-none relative mb-6"
                                 style={{ minHeight: '72px' }}
                             >
                                 <span
@@ -324,13 +308,32 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
 
                             {/* Words area */}
                             <motion.div
-                                className={`w-full transition-all duration-500 rounded-3xl p-8 cursor-text ${engine.combo >= 20 ? 'shadow-[0_0_50px_rgba(249,115,22,0.15)] border border-orange-500/20 bg-orange-500/5' : 'border border-transparent'}`}
+                                className="w-full transition-all duration-500 rounded-3xl p-8 cursor-text"
                                 ref={containerRef}
                                 onClick={focusInput}
                                 animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
                             >
                                 <WordDisplay words={engine.words} typed={engine.typed} />
                             </motion.div>
+
+                            {/* Combo / On Fire UI - Moved below the typing area */}
+                            <div className="h-12 flex items-center justify-center w-full mt-[120px]">
+                                <AnimatePresence>
+                                    {engine.combo >= 20 && engine.state === 'running' && (
+                                        <motion.div
+                                            key="combo"
+                                            initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                                            className="flex items-center gap-2 font-typing font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/30 backdrop-blur-sm z-10"
+                                            style={{ textShadow: '0 0 10px rgba(249, 115, 22, 0.5)' }}
+                                        >
+                                            <span className="text-xl">🔥</span>
+                                            <span>ON FIRE! {engine.combo} Combo</span>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
 
                             {/* Restart hint */}
                             <motion.div
