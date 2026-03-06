@@ -159,10 +159,10 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
             style={{ fontFamily: 'inherit' }}
         >
             {/* ── Primary stat row ── */}
-            <div className="flex items-end gap-12 px-1">
+            <div className="flex items-end px-1" style={{ gap: '48px' }}>
                 {/* WPM — hero number */}
-                <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-accent)', marginBottom: '2px' }}>
+                <div style={{ flexShrink: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-accent)', marginBottom: '4px' }}>
                         wpm
                     </div>
                     <div style={{ fontSize: '96px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>
@@ -170,23 +170,19 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
                     </div>
                 </div>
 
-                {/* Secondary stats — smaller, right of hero */}
-                <div className="flex flex-col gap-4 pb-3">
+                {/* Secondary stats — horizontal row, right of hero */}
+                <div className="flex items-end pb-2" style={{ gap: '40px' }}>
                     <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6 }}>accuracy</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{accuracy}%</div>
+                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>accuracy</div>
+                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{accuracy}%</div>
                     </div>
-                </div>
-                <div className="flex flex-col gap-4 pb-3">
                     <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6 }}>raw</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{rawWpm}</div>
+                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>raw</div>
+                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{rawWpm}</div>
                     </div>
-                </div>
-                <div className="flex flex-col gap-4 pb-3">
                     <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6 }}>time</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{timeTaken}s</div>
+                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>time</div>
+                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{timeTaken}s</div>
                     </div>
                 </div>
             </div>
