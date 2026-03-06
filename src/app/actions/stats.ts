@@ -11,6 +11,10 @@ export async function saveTestStats(
 ) {
     const supabase = await createClient()
 
+    if (!supabase) {
+        return { success: false, error: 'Database is not configured' }
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

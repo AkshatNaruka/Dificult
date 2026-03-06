@@ -9,42 +9,46 @@ interface ProfileJoin {
 
 export default async function LeaderboardPage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
-    // 1. Fetch Top 20 by XP
-    const { data: topXpProfiles } = await supabase
-        .from('profiles')
-        .select('id, email, xp, level')
-        .order('xp', { ascending: false })
-        .limit(20);
+    let topXpProfiles: { id: string; email: string; xp: number; level: number }[] | null = null;
+    let topWpmUsers: { id: string; email: string; wpm: number; accuracy: number }[] = [];
 
-    // 2. Fetch Top 20 by Max WPM
-    // Supabase RPC or complex joins are slightly trickier without raw SQL, 
-    // so we can query highest WPMs directly from stats, then join the profile data.
-    const { data: topStats } = await supabase
-        .from('stats')
-        .select('wpm, accuracy, profiles!inner(id, email)')
-        .order('wpm', { ascending: false })
-        .limit(50); // Fetch more to deduplicate
+    if (supabase) {
+        // 1. Fetch Top 20 by XP
+        const { data } = await supabase
+            .from('profiles')
+            .select('id, email, xp, level')
+            .order('xp', { ascending: false })
+            .limit(20);
+        topXpProfiles = data;
 
-    const uniqueWpmMap = new Map();
-    if (topStats) {
-        for (const stat of topStats) {
-            const profile = (Array.isArray(stat.profiles) ? stat.profiles[0] : stat.profiles) as ProfileJoin | undefined;
-            const userId = profile?.id;
-            if (!userId) continue;
-            if (!uniqueWpmMap.has(userId)) {
-                uniqueWpmMap.set(userId, {
-                    id: userId,
-                    email: profile?.email,
-                    wpm: stat.wpm,
-                    accuracy: stat.accuracy
-                });
+        // 2. Fetch Top 20 by Max WPM
+        const { data: topStats } = await supabase
+            .from('stats')
+            .select('wpm, accuracy, profiles!inner(id, email)')
+            .order('wpm', { ascending: false })
+            .limit(50);
+
+        const uniqueWpmMap = new Map();
+        if (topStats) {
+            for (const stat of topStats) {
+                const profile = (Array.isArray(stat.profiles) ? stat.profiles[0] : stat.profiles) as ProfileJoin | undefined;
+                const userId = profile?.id;
+                if (!userId) continue;
+                if (!uniqueWpmMap.has(userId)) {
+                    uniqueWpmMap.set(userId, {
+                        id: userId,
+                        email: profile?.email,
+                        wpm: stat.wpm,
+                        accuracy: stat.accuracy
+                    });
+                }
+                if (uniqueWpmMap.size >= 20) break;
             }
-            if (uniqueWpmMap.size >= 20) break;
         }
+        topWpmUsers = Array.from(uniqueWpmMap.values());
     }
-    const topWpmUsers = Array.from(uniqueWpmMap.values());
 
     return (
         <div className="min-h-screen flex flex-col transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>

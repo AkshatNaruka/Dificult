@@ -6,21 +6,21 @@ import { ThemePicker } from '@/components/ThemePicker'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null
 
     if (!user) {
         redirect('/login')
     }
 
     // Fetch Profile
-    const { data: profile } = await supabase
+    const { data: profile } = await supabase!
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single()
 
     // Fetch Stats
-    const { data: stats } = await supabase
+    const { data: stats } = await supabase!
         .from('stats')
         .select('*')
         .eq('user_id', user.id)
