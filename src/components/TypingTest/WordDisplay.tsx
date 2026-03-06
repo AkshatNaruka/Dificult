@@ -35,11 +35,11 @@ export function WordDisplay({ words, typed }: WordDisplayProps) {
     let globalCharIndex = 0;
 
     return (
-        <div className="relative w-full max-w-5xl mx-auto h-[160px] overflow-hidden text-[38px] font-typing leading-relaxed tracking-wide" style={{ color: 'var(--text-main)' }}>
+        <div className="relative w-[60vw] min-w-[320px] max-w-[800px] mx-auto h-[160px] overflow-hidden text-[38px] font-typing leading-relaxed tracking-wide px-4" style={{ color: 'var(--text-main)' }}>
 
             <div
                 ref={containerRef}
-                className="absolute w-full flex flex-wrap gap-x-[0.55em] gap-y-[0.4em] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                className="absolute w-full flex flex-wrap justify-center gap-x-[0.55em] gap-y-[0.4em] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] left-0 right-0 px-4"
             >
                 <Caret top={caretPos.top} left={caretPos.left} />
 

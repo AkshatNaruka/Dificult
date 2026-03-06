@@ -11,21 +11,34 @@ export function ThemePicker() {
     const themes = themeStore.availableThemes;
 
     const currentIndex = themes.findIndex(t => t.id === themeStore.currentTheme);
+    const originalThemeRef = useRef(themeStore.currentTheme);
 
     const open = () => {
+        originalThemeRef.current = themeStore.currentTheme;
         setIsOpen(true);
         setFocusedIndex(currentIndex >= 0 ? currentIndex : 0);
     };
 
-    const close = () => {
+    const close = useCallback((revert: boolean = true) => {
+        if (revert && originalThemeRef.current) {
+            themeStore.setTheme(originalThemeRef.current);
+        }
         setIsOpen(false);
         setFocusedIndex(-1);
-    };
+    }, [themeStore]);
+
+    const previewTheme = useCallback((index: number) => {
+        setFocusedIndex(index);
+        if (index >= 0 && index < themes.length) {
+            themeStore.setTheme(themes[index].id);
+        }
+    }, [themes, themeStore]);
 
     const select = useCallback((id: string) => {
         themeStore.setTheme(id);
-        close();
-    }, [themeStore]);
+        originalThemeRef.current = id;
+        close(false);
+    }, [themeStore, close]);
 
     // Keyboard navigation
     useEffect(() => {
@@ -33,22 +46,22 @@ export function ThemePicker() {
         const handler = (e: KeyboardEvent) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                setFocusedIndex(i => Math.min(i + 1, themes.length - 1));
+                previewTheme(Math.min(focusedIndex + 1, themes.length - 1));
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                setFocusedIndex(i => Math.max(i - 1, 0));
+                previewTheme(Math.max(focusedIndex - 1, 0));
             } else if (e.key === 'Enter') {
                 e.preventDefault();
                 if (focusedIndex >= 0 && focusedIndex < themes.length) {
                     select(themes[focusedIndex].id);
                 }
             } else if (e.key === 'Escape') {
-                close();
+                close(true);
             }
         };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
-    }, [isOpen, focusedIndex, themes, select]);
+    }, [isOpen, focusedIndex, themes, select, previewTheme, close]);
 
     // Scroll focused item into view
     useEffect(() => {
@@ -60,7 +73,7 @@ export function ThemePicker() {
     const currentTheme = themes.find(t => t.id === themeStore.currentTheme);
 
     return (
-        <>
+        <div className="relative">
             {/* Trigger button */}
             <button
                 onClick={open}
@@ -101,25 +114,19 @@ export function ThemePicker() {
 
             {/* Modal */}
             {isOpen && (
-                <div
-                    /* Full-screen backdrop with blur */
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        zIndex: 9999,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)',
-                        backgroundColor: 'rgba(0,0,0,0.4)',
-                    }}
-                    onClick={close}
-                >
-                    {/* Centered panel — stop propagation so click inside doesn't close */}
+                <>
+                    {/* Invisible fixed backdrop just to catch clicks outside */}
                     <div
-                        onClick={e => e.stopPropagation()}
+                        style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
+                        onClick={() => close(true)}
+                    />
+
+                    <div
                         style={{
+                            position: 'absolute',
+                            top: 'calc(100% + 8px)',
+                            right: 0,
+                            zIndex: 9999,
                             background: 'var(--bg-secondary)',
                             border: '1px solid var(--border-glass)',
                             borderRadius: '16px',
@@ -158,7 +165,7 @@ export function ThemePicker() {
                                     <div
                                         key={theme.id}
                                         onClick={() => select(theme.id)}
-                                        onMouseEnter={() => setFocusedIndex(idx)}
+                                        onMouseEnter={() => previewTheme(idx)}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -241,8 +248,8 @@ export function ThemePicker() {
                             <span>esc close</span>
                         </div>
                     </div>
-                </div>
+                </>
             )}
-        </>
+        </div>
     );
 }
