@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
+import { useThemeStore } from '../store/themeStore';
 
 export function useTypingSounds() {
     const audioCtxRef = useRef<AudioContext | null>(null);
@@ -15,6 +16,7 @@ export function useTypingSounds() {
     }, []);
 
     const playClick = useCallback(() => {
+        if (useThemeStore.getState().isMuted) return;
         initAudio();
         const ctx = audioCtxRef.current;
         if (!ctx) return;
@@ -38,6 +40,7 @@ export function useTypingSounds() {
     }, [initAudio]);
 
     const playError = useCallback(() => {
+        if (useThemeStore.getState().isMuted) return;
         initAudio();
         const ctx = audioCtxRef.current;
         if (!ctx) return;

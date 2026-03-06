@@ -17,17 +17,22 @@ interface ThemeState extends ThemeConfig {
   setSmoothCaret: (smooth: boolean) => void;
   setShowKeyboard: (show: boolean) => void;
 
+  // Sound
+  isMuted: boolean;
+  toggleMute: () => void;
+
   // Theme utilities
   applyTheme: () => void;
   resetToDefault: () => void;
 }
 
 const defaultConfig: ThemeConfig = {
-  currentTheme: 'dark',
+  currentTheme: 'carbon',
   fontSize: 16,
   fontFamily: 'Inter',
   smoothCaret: true,
   showKeyboard: false,
+  isMuted: false,
 };
 
 export const useThemeStore = create<ThemeState>()(
@@ -64,6 +69,11 @@ export const useThemeStore = create<ThemeState>()(
 
       setShowKeyboard: (show: boolean) => {
         set({ showKeyboard: show });
+      },
+
+      isMuted: false,
+      toggleMute: () => {
+        set(state => ({ isMuted: !state.isMuted }));
       },
 
       applyTheme: () => {
@@ -107,6 +117,7 @@ export const useThemeStore = create<ThemeState>()(
         fontFamily: state.fontFamily,
         smoothCaret: state.smoothCaret,
         showKeyboard: state.showKeyboard,
+        isMuted: state.isMuted,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
