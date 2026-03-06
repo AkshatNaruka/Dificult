@@ -325,7 +325,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                             initial={{ opacity: 0, y: -10, scale: 0.9 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                                            className="flex items-center gap-2 font-typing font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/30 backdrop-blur-sm z-10"
+                                            className="flex items-center gap-2 font-typing font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full backdrop-blur-sm z-10"
                                             style={{ textShadow: '0 0 10px rgba(249, 115, 22, 0.5)' }}
                                         >
                                             <span className="text-xl">🔥</span>
