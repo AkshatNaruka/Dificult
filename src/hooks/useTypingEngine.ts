@@ -168,7 +168,7 @@ export const useTypingEngine = () => {
 
             return nextTyped;
         });
-    }, [state, testMode, testType]);
+    }, [state, testMode, testType, playClick, playError]);
 
     const deleteChar = useCallback((ctrlKey: boolean = false) => {
         if (state !== 'running') return;
@@ -191,7 +191,7 @@ export const useTypingEngine = () => {
 
             return prev.slice(0, -1);
         });
-    }, [state]);
+    }, [state, playClick]);
 
     return {
         state,

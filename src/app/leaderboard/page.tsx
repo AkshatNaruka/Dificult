@@ -2,6 +2,11 @@ import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import { ThemePicker } from '@/components/ThemePicker';
 
+interface ProfileJoin {
+    id: string;
+    email?: string;
+}
+
 export default async function LeaderboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -25,13 +30,13 @@ export default async function LeaderboardPage() {
     const uniqueWpmMap = new Map();
     if (topStats) {
         for (const stat of topStats) {
-            const profile = Array.isArray(stat.profiles) ? stat.profiles[0] : stat.profiles;
-            const userId = (profile as any)?.id;
+            const profile = (Array.isArray(stat.profiles) ? stat.profiles[0] : stat.profiles) as ProfileJoin | undefined;
+            const userId = profile?.id;
             if (!userId) continue;
             if (!uniqueWpmMap.has(userId)) {
                 uniqueWpmMap.set(userId, {
                     id: userId,
-                    email: (profile as any)?.email,
+                    email: profile?.email,
                     wpm: stat.wpm,
                     accuracy: stat.accuracy
                 });

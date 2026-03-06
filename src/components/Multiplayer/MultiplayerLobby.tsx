@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTypingEngine } from '../../hooks/useTypingEngine';
 import { WordDisplay } from '../TypingTest/WordDisplay';
-import { Room } from '../../types/multiplayer';
+
 
 export default function MultiplayerLobby({ user }: { user: { id: string; email?: string } | null }) {
     const {
@@ -58,7 +58,7 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
             const input = document.getElementById('multiplayer-hidden-input') as HTMLInputElement;
             if (input) input.focus();
         }
-    }, [currentRoom?.isStarted, engine]);
+    }, [currentRoom?.isStarted, currentRoom?.text, engine]);
 
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -302,7 +302,7 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
                                 </div>
                                 <div className="flex items-center gap-4 px-2">
                                     <span className="text-xs opacity-50 font-typing uppercase tracking-wider">Emotes (Alt+1-4):</span>
-                                    {['🔥', '💀', '👏', '😭'].map((emoji, index) => (
+                                    {['🔥', '💀', '👏', '😭'].map((emoji) => (
                                         <button
                                             key={emoji}
                                             onClick={(e) => { e.stopPropagation(); sendEmote(emoji); document.getElementById('multiplayer-hidden-input')?.focus(); }}
