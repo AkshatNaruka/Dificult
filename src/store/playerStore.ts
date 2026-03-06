@@ -397,7 +397,7 @@ export const usePlayerStore = create<PlayerState>()(
       }
     }),
     {
-      name: 'typewarrior-player',
+      name: 'dificult-player',
       partialize: (state) => ({ player: state.player }),
       onRehydrateStorage: () => (state) => {
         if (state) {

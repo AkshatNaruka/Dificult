@@ -56,7 +56,7 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
 
     const handleCopyText = async () => {
         try {
-            const text = `⌨️ typewarrior\n\n${wpm} WPM · ${accuracy}% accuracy · ${rawWpm} raw · ${timeTaken}s\n\nTest your speed → typewarrior.com`;
+            const text = `⌨️ dificult\n\n${wpm} WPM · ${accuracy}% accuracy · ${rawWpm} raw · ${timeTaken}s\n\nTest your speed → dificult.com`;
             await navigator.clipboard.writeText(text);
             setCopied(true);
             setShowShareMenu(false);
@@ -210,7 +210,7 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
         // Website URL
         ctx.font = '600 16px Inter, system-ui, sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.fillText('typewarrior.com', 60, h - 38);
+        ctx.fillText('dificult.com', 60, h - 38);
 
         // Tagline
         ctx.font = '400 14px Inter, system-ui, sans-serif';
@@ -221,7 +221,7 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
 
         // ── Download ──
         const link = document.createElement('a');
-        link.download = `typewarrior-${wpm}wpm.png`;
+        link.download = `dificult-${wpm}wpm.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         setShowShareMenu(false);

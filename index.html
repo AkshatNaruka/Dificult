@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeWarrior - Battle Your Way to Typing Mastery</title>
+    <title>Dificult - Battle Your Way to Typing Mastery</title>
     <!-- Chart.js for analytics graphs - Trying different CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.2/chart.umd.js"></script>
     <style>
-        /* TypeWarrior - Standalone HTML Version Styles */
+        /* Dificult - Standalone HTML Version Styles */
         :root {
             --primary-color: #667eea;
             --secondary-color: #764ba2;
@@ -600,7 +600,7 @@
                 <div class="logo">
                     <div class="logo-icon">⚡</div>
                     <div class="logo-text">
-                        <h1 class="gradient-text">TypeWarrior</h1>
+                        <h1 class="gradient-text">Dificult</h1>
                         <p>Battle Your Way to Typing Mastery</p>
                     </div>
                 </div>
@@ -1006,8 +1006,8 @@
     </div>
 
     <script>
-        // TypeWarrior - Standalone HTML Game Logic
-        class TypeWarriorGame {
+        // Dificult - Standalone HTML Game Logic
+        class DificultGame {
             constructor() {
                 this.gameState = {
                     isPlaying: false,
@@ -1604,7 +1604,7 @@ XP Gained: ${Math.round(this.gameState.wpm * (this.gameState.accuracy / 100) * t
 
             showSettings() {
                 const settings = `
-⚙️ TypeWarrior Settings & Stats
+⚙️ Dificult Settings & Stats
 
 🎨 Theme: ${this.gameState.theme === 'dark' ? 'Dark' : 'Light'}
 🔊 Sound: ${this.gameState.soundEnabled ? 'Enabled' : 'Disabled'}
@@ -1725,7 +1725,7 @@ Would you like to export your typing data?`);
                 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `typewarrior-data-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = `dificult-data-${new Date().toISOString().split('T')[0]}.json`;
                 link.click();
                 
                 URL.revokeObjectURL(url);
@@ -1960,7 +1960,7 @@ Would you like to export your typing data?`);
             }
 
             saveToStorage() {
-                localStorage.setItem('typewarrior-game-state', JSON.stringify({
+                localStorage.setItem('dificult-game-state', JSON.stringify({
                     level: this.gameState.level,
                     xp: this.gameState.xp,
                     streak: this.gameState.streak,
@@ -1970,12 +1970,12 @@ Would you like to export your typing data?`);
                     mode: this.gameState.mode
                 }));
 
-                localStorage.setItem('typewarrior-personal-bests', JSON.stringify(this.personalBests));
-                localStorage.setItem('typewarrior-test-history', JSON.stringify(this.testHistory));
+                localStorage.setItem('dificult-personal-bests', JSON.stringify(this.personalBests));
+                localStorage.setItem('dificult-test-history', JSON.stringify(this.testHistory));
             }
 
             loadFromStorage() {
-                const saved = localStorage.getItem('typewarrior-game-state');
+                const saved = localStorage.getItem('dificult-game-state');
                 if (saved) {
                     try {
                         const data = JSON.parse(saved);
@@ -2009,7 +2009,7 @@ Would you like to export your typing data?`);
                 }
 
                 // Load personal bests
-                const savedBests = localStorage.getItem('typewarrior-personal-bests');
+                const savedBests = localStorage.getItem('dificult-personal-bests');
                 if (savedBests) {
                     try {
                         this.personalBests = JSON.parse(savedBests);
@@ -2019,7 +2019,7 @@ Would you like to export your typing data?`);
                 }
 
                 // Load test history
-                const savedHistory = localStorage.getItem('typewarrior-test-history');
+                const savedHistory = localStorage.getItem('dificult-test-history');
                 if (savedHistory) {
                     try {
                         this.testHistory = JSON.parse(savedHistory);
@@ -2032,8 +2032,8 @@ Would you like to export your typing data?`);
 
         // Initialize the game when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            window.typeWarriorGame = new TypeWarriorGame();
-            console.log('TypeWarrior initialized! 🚀');
+            window.dificultGame = new DificultGame();
+            console.log('Dificult initialized! 🚀');
         });
     </script>
 </body>

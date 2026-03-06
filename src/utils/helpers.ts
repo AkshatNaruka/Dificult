@@ -1,4 +1,4 @@
-// Utility functions for the TypeWarrior app
+// Utility functions for the Dificult app
 
 /**
  * Generate a unique room code

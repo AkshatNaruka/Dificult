@@ -1,4 +1,4 @@
-# TypeWarrior - Typing Game
+# Dificult - Typing Game
 
 A modern, gamified typing test application with both Next.js and standalone HTML versions.
 

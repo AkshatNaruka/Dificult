@@ -1,6 +1,6 @@
-# TypeWarrior Multiplayer Setup
+# Dificult Multiplayer Setup
 
-This guide explains how to set up and run the multiplayer version of TypeWarrior with real-time Socket.IO functionality.
+This guide explains how to set up and run the multiplayer version of Dificult with real-time Socket.IO functionality.
 
 ## 🚀 Quick Start
 

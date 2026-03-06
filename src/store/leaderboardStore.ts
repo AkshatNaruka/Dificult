@@ -50,7 +50,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
   
   initializeLeaderboard: () => {
     // Load local leaderboard from localStorage
-    const savedLeaderboard = localStorage.getItem('typewarrior-local-leaderboard');
+    const savedLeaderboard = localStorage.getItem('dificult-local-leaderboard');
     if (savedLeaderboard) {
       try {
         const localData = JSON.parse(savedLeaderboard);
@@ -116,7 +116,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
     });
     
     // Save to localStorage
-    localStorage.setItem('typewarrior-local-leaderboard', JSON.stringify(updatedLocal));
+    localStorage.setItem('dificult-local-leaderboard', JSON.stringify(updatedLocal));
     
     // Try to save to global leaderboard
     get().saveToGlobalLeaderboard(newEntry);
@@ -129,7 +129,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
     try {
       // Try to fetch from GitHub Pages (if deployed)
       // For now, we'll simulate this with localStorage for the global data
-      const globalData = localStorage.getItem('typewarrior-global-leaderboard');
+      const globalData = localStorage.getItem('dificult-global-leaderboard');
       if (globalData) {
         const parsed = JSON.parse(globalData);
         const mergedData = [...defaultLeaderboard];
@@ -163,7 +163,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
     try {
       // For GitHub Pages deployment, this would submit to a serverless function or GitHub API
       // For now, we'll save to localStorage as a simulation
-      const existingData = localStorage.getItem('typewarrior-global-leaderboard');
+      const existingData = localStorage.getItem('dificult-global-leaderboard');
       let globalData = [];
       
       if (existingData) {
@@ -184,7 +184,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
       });
       globalData = globalData.slice(0, 100);
       
-      localStorage.setItem('typewarrior-global-leaderboard', JSON.stringify(globalData));
+      localStorage.setItem('dificult-global-leaderboard', JSON.stringify(globalData));
       
       // In a real deployment, this would make an HTTP request to update the shared data
       // Example: await fetch('/api/leaderboard', { method: 'POST', body: JSON.stringify(entry) });

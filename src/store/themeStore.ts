@@ -110,7 +110,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'typewarrior-theme',
+      name: 'dificult-theme',
       partialize: (state) => ({
         currentTheme: state.currentTheme,
         fontSize: state.fontSize,

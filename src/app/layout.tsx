@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TypeWarrior - Master Your Typing Skills with Daily Challenges & Racing",
-  description: "Improve your typing speed and accuracy with TypeWarrior's engaging challenges, multiple game modes, and real-time leaderboards. Free typing trainer with themes and achievements.",
+  title: "Dificult - Master Your Typing Skills with Daily Challenges & Racing",
+  description: "Improve your typing speed and accuracy with Dificult's engaging challenges, multiple game modes, and real-time leaderboards. Free typing trainer with themes and achievements.",
   keywords: "typing game, typing test, typing trainer, WPM test, typing speed, typing accuracy, keyboard skills, daily challenges, typing practice",
-  authors: [{ name: "TypeWarrior Team" }],
-  creator: "TypeWarrior",
-  publisher: "TypeWarrior",
-  metadataBase: new URL('https://typewarrior.vercel.app'),
+  authors: [{ name: "Dificult Team" }],
+  creator: "Dificult",
+  publisher: "Dificult",
+  metadataBase: new URL('https://dificult.vercel.app'),
   openGraph: {
-    title: "TypeWarrior - Master Your Typing Skills",
+    title: "Dificult - Master Your Typing Skills",
     description: "Improve your typing speed and accuracy with engaging challenges and multiple game modes",
-    url: 'https://typewarrior.vercel.app',
-    siteName: 'TypeWarrior',
+    url: 'https://dificult.vercel.app',
+    siteName: 'Dificult',
     locale: 'en_US',
     type: 'website',
     images: [
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'TypeWarrior - Typing Game',
+        alt: 'Dificult - Typing Game',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TypeWarrior - Master Your Typing Skills',
+    title: 'Dificult - Master Your Typing Skills',
     description: 'Improve your typing speed and accuracy with engaging challenges',
     images: ['/og-image.png'],
   },
@@ -55,9 +55,9 @@ export default function RootLayout({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "TypeWarrior",
-    "description": "Improve your typing speed and accuracy with TypeWarrior's engaging challenges, multiple game modes, and real-time leaderboards",
-    "url": "https://typewarrior.vercel.app",
+    "name": "Dificult",
+    "description": "Improve your typing speed and accuracy with Dificult's engaging challenges, multiple game modes, and real-time leaderboards",
+    "url": "https://dificult.vercel.app",
     "applicationCategory": "Game",
     "operatingSystem": "Web Browser",
     "offers": {
