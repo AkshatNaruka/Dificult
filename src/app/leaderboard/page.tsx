@@ -55,7 +55,7 @@ export default async function LeaderboardPage() {
             {/* Navbar */}
             <nav className="w-full flex items-center justify-between px-10 py-5" style={{ borderBottom: '1px solid var(--border-glass)' }}>
                 <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
-                    type<span style={{ color: 'var(--text-accent)' }}>warrior</span>
+                    difi<span style={{ color: 'var(--text-accent)' }}>cult</span>
                 </Link>
                 <div className="flex items-center gap-5">
                     <ThemePicker />

@@ -6,8 +6,10 @@ import { useThemeStore } from '../../store/themeStore';
 import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
 import { ThemePicker } from '../ThemePicker';
+import { SignUpPrompt } from '../SignUpPrompt';
 import { motion, AnimatePresence } from 'framer-motion';
 import { saveTestStats } from '@/app/actions/stats';
+import { logout } from '@/app/login/actions';
 
 import Link from 'next/link';
 
@@ -119,14 +121,13 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                 <Link
                     href="/"
                     onClick={() => {
-                        // Just run restart, the Next.js Link handles the rest
                         engine.restart();
                         focusInput();
                     }}
                     className="text-2xl font-bold tracking-tight select-none font-typing hover:opacity-80 transition-opacity decoration-transparent"
                     style={{ color: 'var(--text-primary)' }}
                 >
-                    type<span style={{ color: 'var(--text-accent)' }}>warrior</span>
+                    difi<span style={{ color: 'var(--text-accent)' }}>cult</span>
                 </Link>
 
                 {/* Right controls */}
@@ -167,46 +168,53 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                         )}
                     </button>
 
-                    {/* Leaderboard Link - HIDDEN FOR NOW */}
-                    {/* <Link
+                    {/* Leaderboard Link */}
+                    <Link
                         href="/leaderboard"
-                        className="font-typing text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"
-                        style={{ color: 'var(--text-accent)' }}
-                        title="Top Players"
+                        className="font-typing text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity decoration-transparent"
+                        style={{ color: 'var(--text-main)' }}
+                        title="Leaderboard"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M2 20h20"></path>
                             <path d="M5 20v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5"></path>
                             <path d="M13 20v-9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v9"></path>
                         </svg>
-                        <span>Ranks</span>
-                    </Link> */}
+                    </Link>
 
-                    {/* Multiplayer Link - HIDDEN FOR NOW */}
-                    {/* {user && (
-                        ...
-                    )} */}
-
-                    {/* Settings icon - HIDDEN FOR NOW */}
-                    {/* <button
-                        style={{ color: 'var(--text-main)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                        title="Settings"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    </button> */}
-
-                    {/* User icon - HIDDEN FOR NOW */}
-                    {/* {user ? (
-                        <Link
-                            href="/profile"
-                            ...
-                        </Link>
+                    {/* User Auth */}
+                    {user ? (
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/profile"
+                                className="font-typing text-sm flex items-center gap-2 hover:opacity-80 transition-opacity decoration-transparent"
+                                style={{ color: 'var(--text-main)' }}
+                                title="Profile"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </Link>
+                            <form>
+                                <button
+                                    formAction={logout}
+                                    className="font-typing text-xs px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
+                                    style={{ color: 'var(--text-main)', background: 'none', border: '1px solid var(--border-glass)', cursor: 'pointer', opacity: 0.6 }}
+                                >
+                                    Log out
+                                </button>
+                            </form>
+                        </div>
                     ) : (
                         <Link
                             href="/login"
-                            ...
+                            className="font-typing text-sm font-bold px-4 py-1.5 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] decoration-transparent"
+                            style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
+                        >
+                            Sign In
                         </Link>
-                    )} */}
+                    )}
                 </div>
             </motion.nav>
 
@@ -233,6 +241,8 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 }}
                                 timeTaken={timeTaken}
                             />
+                            {/* Soft sign-up prompt for guests */}
+                            {!user && <SignUpPrompt wpm={finalWpm} accuracy={accuracy} />}
                         </motion.div>
                     ) : (
                         <motion.div
