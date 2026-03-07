@@ -17,7 +17,7 @@ interface LeaderboardState {
   localLeaderboard: LeaderboardEntry[];
   playerRank: number | null;
   isLoading: boolean;
-  
+
   // Actions
   initializeLeaderboard: () => void;
   addOrUpdatePlayer: (entry: Omit<LeaderboardEntry, 'lastUpdated' | 'rank'>) => void;
@@ -47,7 +47,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
   localLeaderboard: [],
   playerRank: null,
   isLoading: false,
-  
+
   initializeLeaderboard: () => {
     // Load local leaderboard from localStorage
     const savedLeaderboard = localStorage.getItem('dificult-local-leaderboard');
@@ -59,98 +59,90 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
         console.error('Failed to load local leaderboard:', error);
       }
     }
-    
+
     // Try to load global leaderboard
     get().loadGlobalLeaderboard();
     get().calculateRanks();
   },
-  
+
   addOrUpdatePlayer: (entry) => {
     const now = new Date().toISOString();
     const newEntry: LeaderboardEntry = {
       ...entry,
       lastUpdated: now
     };
-    
+
     const { localLeaderboard, globalLeaderboard } = get();
-    
+
     // Update local leaderboard
     const existingLocalIndex = localLeaderboard.findIndex(e => e.id === entry.id);
     let updatedLocal;
-    
+
     if (existingLocalIndex >= 0) {
       updatedLocal = [...localLeaderboard];
       updatedLocal[existingLocalIndex] = newEntry;
     } else {
       updatedLocal = [...localLeaderboard, newEntry];
     }
-    
+
     // Sort and keep top 100
     updatedLocal.sort((a, b) => {
       if (b.wpm !== a.wpm) return b.wpm - a.wpm;
       return b.accuracy - a.accuracy;
     });
     updatedLocal = updatedLocal.slice(0, 100);
-    
+
     // Update global leaderboard (local copy)
     const existingGlobalIndex = globalLeaderboard.findIndex(e => e.id === entry.id);
     let updatedGlobal;
-    
+
     if (existingGlobalIndex >= 0) {
       updatedGlobal = [...globalLeaderboard];
       updatedGlobal[existingGlobalIndex] = newEntry;
     } else {
       updatedGlobal = [...globalLeaderboard, newEntry];
     }
-    
+
     // Sort and keep top 100
     updatedGlobal.sort((a, b) => {
       if (b.wpm !== a.wpm) return b.wpm - a.wpm;
       return b.accuracy - a.accuracy;
     });
     updatedGlobal = updatedGlobal.slice(0, 100);
-    
+
     set({
       localLeaderboard: updatedLocal,
       globalLeaderboard: updatedGlobal
     });
-    
+
     // Save to localStorage
     localStorage.setItem('dificult-local-leaderboard', JSON.stringify(updatedLocal));
-    
+
     // Try to save to global leaderboard
     get().saveToGlobalLeaderboard(newEntry);
     get().calculateRanks();
   },
-  
+
   loadGlobalLeaderboard: async () => {
     set({ isLoading: true });
-    
+
     try {
-      // Try to fetch from GitHub Pages (if deployed)
-      // For now, we'll simulate this with localStorage for the global data
-      const globalData = localStorage.getItem('dificult-global-leaderboard');
-      if (globalData) {
-        const parsed = JSON.parse(globalData);
-        const mergedData = [...defaultLeaderboard];
-        
-        // Merge with existing data
-        parsed.forEach((entry: LeaderboardEntry) => {
-          const existingIndex = mergedData.findIndex(e => e.id === entry.id);
-          if (existingIndex >= 0) {
-            mergedData[existingIndex] = entry;
-          } else {
-            mergedData.push(entry);
-          }
-        });
-        
-        // Sort and keep top 100
-        mergedData.sort((a, b) => {
-          if (b.wpm !== a.wpm) return b.wpm - a.wpm;
-          return b.accuracy - a.accuracy;
-        });
-        
-        set({ globalLeaderboard: mergedData.slice(0, 100) });
+      const res = await fetch('/api/leaderboard');
+      if (res.ok) {
+        const data = await res.json();
+
+        const mappedWpm = (data.topWpm || []).map((entry: any, index: number) => ({
+          id: entry.id,
+          name: entry.display_name || entry.email?.split('@')[0] || 'Unknown',
+          wpm: entry.best_wpm,
+          accuracy: entry.best_accuracy,
+          avatar: entry.avatar || '🎯',
+          level: entry.level || 1,
+          lastUpdated: new Date().toISOString(),
+          rank: index + 1
+        }));
+
+        set({ globalLeaderboard: mappedWpm });
       }
     } catch (error) {
       console.error('Failed to load global leaderboard:', error);
@@ -158,53 +150,23 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  
+
   saveToGlobalLeaderboard: async (entry) => {
-    try {
-      // For GitHub Pages deployment, this would submit to a serverless function or GitHub API
-      // For now, we'll save to localStorage as a simulation
-      const existingData = localStorage.getItem('dificult-global-leaderboard');
-      let globalData = [];
-      
-      if (existingData) {
-        globalData = JSON.parse(existingData);
-      }
-      
-      const existingIndex = globalData.findIndex((e: LeaderboardEntry) => e.id === entry.id);
-      if (existingIndex >= 0) {
-        globalData[existingIndex] = entry;
-      } else {
-        globalData.push(entry);
-      }
-      
-      // Sort and keep top 100
-      globalData.sort((a: LeaderboardEntry, b: LeaderboardEntry) => {
-        if (b.wpm !== a.wpm) return b.wpm - a.wpm;
-        return b.accuracy - a.accuracy;
-      });
-      globalData = globalData.slice(0, 100);
-      
-      localStorage.setItem('dificult-global-leaderboard', JSON.stringify(globalData));
-      
-      // In a real deployment, this would make an HTTP request to update the shared data
-      // Example: await fetch('/api/leaderboard', { method: 'POST', body: JSON.stringify(entry) });
-      
-    } catch (error) {
-      console.error('Failed to save to global leaderboard:', error);
-    }
+    // This is now purely handled via the API backend (/api/stats) when users finish a test.
+    // Kept here for potential optimistic updates if needed, though redundant.
   },
-  
+
   calculateRanks: () => {
     const { globalLeaderboard } = get();
-    
+
     const rankedLeaderboard = globalLeaderboard.map((entry, index) => ({
       ...entry,
       rank: index + 1
     }));
-    
+
     set({ globalLeaderboard: rankedLeaderboard });
   },
-  
+
   getPlayerRank: (playerId) => {
     const { globalLeaderboard } = get();
     const playerEntry = globalLeaderboard.find(entry => entry.id === playerId);

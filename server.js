@@ -1,10 +1,15 @@
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const next = require('next');
+const { createClient } = require('@supabase/supabase-js');
 
 const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 // Game state
 const rooms = new Map();
@@ -129,6 +134,40 @@ function updatePlayerProgress(playerId, progress, wpm, accuracy) {
     if (finishedPlayers >= room.players.length - 1) {
       // Race is finished when all but one player is done, or all are done
       room.status = 'Finished';
+
+      // Persist to Supabase
+      if (supabase) {
+        // Fire and forget persistence
+        (async () => {
+          try {
+            const { data: match, error } = await supabase
+              .from('match_history')
+              .insert({
+                room_name: room.name,
+                difficulty: room.difficulty,
+                player_count: room.players.length
+              })
+              .select()
+              .single();
+
+            if (!error && match) {
+              const participants = room.players.map(p => ({
+                match_id: match.id,
+                user_id: p.id.startsWith('player_') ? null : p.id, // Only mapped if it's a real UUID, otherwise null
+                guest_name: p.name,
+                wpm: p.wpm,
+                accuracy: p.accuracy,
+                position: p.position,
+                is_winner: p.position === 1
+              }));
+
+              await supabase.from('match_participants').insert(participants);
+            }
+          } catch (e) {
+            console.error('Failed to log match to Supabase', e);
+          }
+        })();
+      }
     }
   }
 

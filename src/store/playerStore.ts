@@ -59,7 +59,7 @@ export interface Player {
 
 interface PlayerState {
   player: Player | null;
-  
+
   // Actions
   initializePlayer: () => void;
   updateStats: (newStats: Partial<PlayerStats>) => void;
@@ -68,7 +68,7 @@ interface PlayerState {
   completeDailyChallenge: (score: number) => void;
   generateTodayChallenge: () => void;
   updatePreferences: (preferences: Partial<Player['preferences']>) => void;
-  
+
   // Getters
   getLeaderboardEntry: () => { name: string; wpm: number; accuracy: number; avatar: string; level: number; } | null;
   getTodayChallenge: () => DailyChallenge | null;
@@ -78,8 +78,8 @@ interface PlayerState {
 function generatePlayerId(): string {
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substr(2, 5);
-  const navigator_info = typeof navigator !== 'undefined' ? 
-    (navigator.userAgent + navigator.language + screen.width + screen.height).length.toString(36) : 
+  const navigator_info = typeof navigator !== 'undefined' ?
+    (navigator.userAgent + navigator.language + screen.width + screen.height).length.toString(36) :
     'default';
   return `player_${navigator_info}_${timestamp}_${random}`;
 }
@@ -91,17 +91,17 @@ function generatePlayerName(): string {
     'Ninja', 'Cyber', 'Digital', 'Quantum', 'Stellar', 'Cosmic', 'Phoenix', 'Thunder',
     'Shadow', 'Mystic', 'Elite', 'Alpha', 'Prime', 'Ultra', 'Hyper', 'Master'
   ];
-  
+
   const nouns = [
     'Typer', 'Fingers', 'Keys', 'Words', 'Text', 'Code', 'Script', 'Data',
     'Warrior', 'Master', 'Wizard', 'Hero', 'Champion', 'Elite', 'Pro', 'Ace',
     'Legend', 'Storm', 'Blade', 'Force', 'Spirit', 'Ghost', 'Phantom', 'Viper'
   ];
-  
+
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
   const noun = nouns[Math.floor(Math.random() * nouns.length)];
   const number = Math.floor(Math.random() * 999) + 1;
-  
+
   return `${adjective}${noun}${number}`;
 }
 
@@ -148,10 +148,10 @@ function generateDailyChallenge(): DailyChallenge {
   const mode = modes[Math.floor(Math.random() * modes.length)];
   const texts = challengeTexts[mode as keyof typeof challengeTexts];
   const text = texts[Math.floor(Math.random() * texts.length)];
-  
+
   let target = 60; // default WPM target
   let reward = 100; // default XP reward
-  
+
   switch (mode) {
     case 'speed':
       target = 80;
@@ -170,7 +170,7 @@ function generateDailyChallenge(): DailyChallenge {
       reward = 180;
       break;
   }
-  
+
   return {
     date: today,
     mode,
@@ -204,7 +204,7 @@ export const usePlayerStore = create<PlayerState>()(
   persist(
     (set, get) => ({
       player: null,
-      
+
       initializePlayer: () => {
         const existingPlayer = get().player;
         if (!existingPlayer) {
@@ -233,13 +233,13 @@ export const usePlayerStore = create<PlayerState>()(
           }
         }
       },
-      
+
       updateStats: (newStats) => {
         const { player } = get();
         if (!player) return;
-        
+
         const updatedStats = { ...player.stats, ...newStats };
-        
+
         // Update best scores
         if (newStats.wpm && newStats.wpm > updatedStats.bestWpm) {
           updatedStats.bestWpm = newStats.wpm;
@@ -250,14 +250,14 @@ export const usePlayerStore = create<PlayerState>()(
         if (newStats.streak && newStats.streak > updatedStats.longestStreak) {
           updatedStats.longestStreak = newStats.streak;
         }
-        
+
         // Calculate level based on XP
         const newLevel = Math.floor(updatedStats.xp / 1000) + 1;
         updatedStats.level = newLevel;
-        
+
         // Update last played date
         updatedStats.lastPlayedDate = new Date().toISOString().split('T')[0];
-        
+
         set({
           player: {
             ...player,
@@ -265,19 +265,19 @@ export const usePlayerStore = create<PlayerState>()(
           }
         });
       },
-      
+
       addTestResult: (result) => {
         const { player } = get();
         if (!player) return;
-        
+
         const testResult: TestHistory = {
           ...result,
           id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
           date: new Date().toISOString()
         };
-        
+
         const updatedHistory = [testResult, ...player.testHistory].slice(0, 50); // Keep last 50
-        
+
         // Update stats based on this test
         const statsUpdate: Partial<PlayerStats> = {
           totalTests: player.stats.totalTests + 1,
@@ -289,21 +289,45 @@ export const usePlayerStore = create<PlayerState>()(
           accuracy: result.accuracy,
           xp: player.stats.xp + result.xpGained
         };
-        
+
         set({
           player: {
             ...player,
             testHistory: updatedHistory
           }
         });
-        
+
+        let syncPromise = Promise.resolve();
+        // Fire and forget sync to backend
+        try {
+          fetch('/api/stats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              wpm: result.wpm,
+              accuracy: result.accuracy,
+              mode: result.mode,
+              duration: result.duration,
+              charactersTyped: result.charactersTyped,
+              xpGained: result.xpGained
+            })
+          }).then(res => {
+            // Also check achievements whenever a test finishes
+            if (res.ok) {
+              fetch('/api/achievements/check', { method: 'POST' });
+            }
+          });
+        } catch (e) {
+          console.error('Failed to save test result to DB', e);
+        }
+
         get().updateStats(statsUpdate);
       },
-      
+
       unlockAchievement: (achievementId) => {
         const { player } = get();
         if (!player || player.achievements.includes(achievementId)) return;
-        
+
         set({
           player: {
             ...player,
@@ -311,14 +335,14 @@ export const usePlayerStore = create<PlayerState>()(
           }
         });
       },
-      
+
       completeDailyChallenge: (score) => {
         const { player } = get();
         if (!player) return;
-        
+
         const today = new Date().toISOString().split('T')[0];
         const challengeIndex = player.dailyChallenges.findIndex(c => c.date === today);
-        
+
         if (challengeIndex >= 0) {
           const challenge = player.dailyChallenges[challengeIndex];
           const updatedChallenge = {
@@ -326,17 +350,17 @@ export const usePlayerStore = create<PlayerState>()(
             completed: true,
             bestScore: Math.max(challenge.bestScore || 0, score)
           };
-          
+
           const updatedChallenges = [...player.dailyChallenges];
           updatedChallenges[challengeIndex] = updatedChallenge;
-          
+
           set({
             player: {
               ...player,
               dailyChallenges: updatedChallenges
             }
           });
-          
+
           // Award XP
           get().updateStats({
             xp: player.stats.xp + challenge.reward,
@@ -344,14 +368,14 @@ export const usePlayerStore = create<PlayerState>()(
           });
         }
       },
-      
+
       generateTodayChallenge: () => {
         const { player } = get();
         if (!player) return;
-        
+
         const today = new Date().toISOString().split('T')[0];
         const existingChallenge = player.dailyChallenges.find(c => c.date === today);
-        
+
         if (!existingChallenge) {
           const newChallenge = generateDailyChallenge();
           set({
@@ -362,11 +386,11 @@ export const usePlayerStore = create<PlayerState>()(
           });
         }
       },
-      
+
       updatePreferences: (preferences) => {
         const { player } = get();
         if (!player) return;
-        
+
         set({
           player: {
             ...player,
@@ -374,11 +398,11 @@ export const usePlayerStore = create<PlayerState>()(
           }
         });
       },
-      
+
       getLeaderboardEntry: () => {
         const { player } = get();
         if (!player) return null;
-        
+
         return {
           name: player.name,
           wpm: Math.round(player.stats.bestWpm),
@@ -387,11 +411,11 @@ export const usePlayerStore = create<PlayerState>()(
           level: player.stats.level
         };
       },
-      
+
       getTodayChallenge: () => {
         const { player } = get();
         if (!player) return null;
-        
+
         const today = new Date().toISOString().split('T')[0];
         return player.dailyChallenges.find(c => c.date === today) || null;
       }

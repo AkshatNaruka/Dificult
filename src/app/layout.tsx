@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { SupabaseSyncProvider } from "@/components/SupabaseSyncProvider";
 
 export const metadata: Metadata = {
   title: "Dificult - Master Your Typing Skills with Daily Challenges & Racing",
@@ -90,6 +91,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased font-sans transition-colors duration-300" suppressHydrationWarning>
+        <SupabaseSyncProvider />
         {children}
         {/* Google AdSense - only loads if configured */}
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
