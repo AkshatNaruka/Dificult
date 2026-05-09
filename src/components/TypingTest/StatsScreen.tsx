@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { HistoryDataPoint } from '../../hooks/useTypingEngine';
 import { Line } from 'react-chartjs-2';
+import { useMotivationalMessage, MotivationalBubble } from '@/components/Gamification/MotivationalMessages';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -32,15 +33,17 @@ interface StatsScreenProps {
     rawWpm: number;
     accuracy: number;
     history: HistoryDataPoint[];
+    shareText?: string;
     onRestart: () => void;
     timeTaken: number;
 }
 
-export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTaken }: StatsScreenProps) {
+export function StatsScreen({ wpm, rawWpm, accuracy, history, shareText, onRestart, timeTaken }: StatsScreenProps) {
     const chartRef = useRef(null);
     const [copied, setCopied] = useState(false);
     const [showShareMenu, setShowShareMenu] = useState(false);
     const shareMenuRef = useRef<HTMLDivElement>(null);
+    const motivationalMessage = useMotivationalMessage(wpm, accuracy);
 
     // Close share menu on outside click
     React.useEffect(() => {
@@ -56,7 +59,7 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
 
     const handleCopyText = async () => {
         try {
-            const text = `⌨️ dificult\n\n${wpm} WPM · ${accuracy}% accuracy · ${rawWpm} raw · ${timeTaken}s\n\nTest your speed → dificult.com`;
+            const text = shareText || `⌨️ dificult\n\n${wpm} WPM · ${accuracy}% accuracy · ${rawWpm} raw · ${timeTaken}s\n\nTest your speed → dificult.com`;
             await navigator.clipboard.writeText(text);
             setCopied(true);
             setShowShareMenu(false);
@@ -331,66 +334,71 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
 
     return (
         <div
-            className="w-full max-w-5xl mx-auto flex flex-col gap-8"
+            className="w-full max-w-5xl mx-auto flex flex-col gap-6"
             style={{ fontFamily: 'inherit' }}
         >
-            {/* ── Primary stat row ── */}
-            <div className="flex items-end px-1" style={{ gap: '48px' }}>
-                {/* WPM — hero number */}
-                <div style={{ flexShrink: 0 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-accent)', marginBottom: '4px' }}>
-                        wpm
+            {/* ── PRIMARY STATS SECTION ── */}
+            <div className="rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))', borderColor: 'var(--border-glass)' }}>
+                {/* WPM Hero */}
+                <div className="mb-6 pb-6" style={{ borderBottom: '1px solid var(--border-glass)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '8px' }}>
+                        You Typed
                     </div>
-                    <div style={{ fontSize: '96px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>
+                    <div style={{ fontSize: '88px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em', color: 'var(--text-accent)' }}>
                         {wpm}
                     </div>
+                    <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-main)', marginTop: '8px', opacity: 0.7 }}>words per minute</div>
                 </div>
 
-                {/* Secondary stats */}
-                <div className="flex items-end pb-2" style={{ gap: '40px' }}>
-                    <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>accuracy</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{accuracy}%</div>
+                {/* Secondary Stats Grid */}
+                <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-lg p-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '8px' }}>Accuracy</div>
+                        <div style={{ fontSize: '42px', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>{accuracy}<span style={{ fontSize: '22px', opacity: 0.6 }}>%</span></div>
                     </div>
-                    <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>raw</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{rawWpm}</div>
+                    <div className="rounded-lg p-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '8px' }}>Raw WPM</div>
+                        <div style={{ fontSize: '42px', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>{rawWpm}</div>
                     </div>
-                    <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '4px' }}>time</div>
-                        <div style={{ fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{timeTaken}s</div>
+                    <div className="rounded-lg p-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '8px' }}>Duration</div>
+                        <div style={{ fontSize: '42px', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>{timeTaken}<span style={{ fontSize: '22px', opacity: 0.6 }}>s</span></div>
                     </div>
+                </div>\n            </div>
+
+            {/* ── MOTIVATIONAL MESSAGE ── */}
+            <MotivationalBubble message={motivationalMessage} />
+
+            {/* ── CHART SECTION ── */}
+            <div className="rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))', borderColor: 'var(--border-glass)', height: '320px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-main)', opacity: 0.6, marginBottom: '16px' }}>Performance Over Time</div>
+                <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
+                    <Line ref={chartRef} data={chartData} options={chartOptions} />
                 </div>
             </div>
 
-            {/* ── Chart ── */}
-            <div style={{ width: '100%', height: '260px' }}>
-                <Line ref={chartRef} data={chartData} options={chartOptions} />
-            </div>
-
-            {/* ── Actions ── */}
-            <div className="flex items-center gap-4 pt-2">
+            {/* ──ACTIONS ── */}
+            <div className="flex items-center gap-3 pt-2">
                 <button
                     onClick={onRestart}
-                    className="group flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-200"
+                    className="group flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm"
                     style={{
-                        background: 'none',
-                        border: '1px solid var(--border-glass)',
-                        color: 'var(--text-main)',
+                        background: 'var(--text-accent)',
+                        color: 'var(--bg-primary)',
+                        border: 'none',
                         cursor: 'pointer',
-                        fontSize: '14px',
                         fontFamily: 'inherit',
                     }}
                     onMouseEnter={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--text-accent)';
-                        (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-primary)';
+                        (e.currentTarget as HTMLButtonElement).style.opacity = '0.9';
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.02)';
                     }}
                     onMouseLeave={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-glass)';
-                        (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-main)';
+                        (e.currentTarget as HTMLButtonElement).style.opacity = '1';
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
                     }}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.4s' }} className="group-hover:rotate-180">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                         <path d="M3 3v5h5" />
                     </svg>
@@ -401,13 +409,12 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
                 <div className="relative" ref={shareMenuRef}>
                     <button
                         onClick={() => setShowShareMenu(!showShareMenu)}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-200"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm"
                         style={{
-                            background: 'none',
+                            background: copied ? 'rgba(82, 82, 82, 0.3)' : 'none',
                             border: `1px solid ${copied ? 'var(--text-accent)' : 'var(--border-glass)'}`,
                             color: copied ? 'var(--text-accent)' : 'var(--text-main)',
                             cursor: 'pointer',
-                            fontSize: '14px',
                             fontFamily: 'inherit',
                         }}
                         onMouseEnter={e => {
@@ -424,24 +431,23 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, onRestart, timeTak
                         }}
                     >
                         {copied ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
+                            <>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Copied!
+                            </>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                                <polyline points="16 6 12 2 8 6" />
-                                <line x1="12" y1="2" x2="12" y2="15" />
-                            </svg>
+                            <>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                                    <polyline points="16 6 12 2 8 6" />
+                                    <line x1="12" y1="2" x2="12" y2="15" />
+                                </svg>
+                                Share
+                            </>
                         )}
-                        {copied ? 'Copied!' : 'Share'}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5, marginLeft: '2px' }}>
-                            <path d="m6 9 6 6 6-6" />
-                        </svg>
-                    </button>
-
-                    {/* Dropdown menu */}
-                    {showShareMenu && (
+                    </button>\n\n                    {/* Dropdown menu */}\n                    {showShareMenu && (
                         <div
                             style={{
                                 position: 'absolute',
