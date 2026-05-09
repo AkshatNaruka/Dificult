@@ -10,6 +10,7 @@ import { ThemePicker } from '../ThemePicker';
 import { SignUpPrompt } from '../SignUpPrompt';
 import { DifficultyEffects } from './DifficultyEffects';
 import { DifficultyWordEffects } from './DifficultyWordEffects';
+import { ScreensaverBounce } from './ScreensaverBounce';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AchievementBadges, achievementDefinitions, AchievementUnlockNotification } from '@/components/Gamification/AchievementBadges';
 import { CelebrationEffects, Confetti } from '@/components/Gamification/CelebrationEffects';
@@ -20,12 +21,13 @@ import { logout } from '@/app/login/actions';
 
 import Link from 'next/link';
 
-const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare', number> = {
+const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver', number> = {
     normal: 1,
     hard: 1.2,
     insane: 1.5,
     chaos: 1.9,
     nightmare: 2.4,
+    screensaver: 2.2,
 };
 
 const comboMilestones = [10, 25, 50, 75];
@@ -547,7 +549,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 <div className="flex items-center gap-2 text-xs">
                                     <span className="opacity-50 font-mono" style={{ color: 'var(--text-main)' }}>diff</span>
                                     <div className="flex gap-1.5">
-                                        {(['normal', 'hard', 'insane', 'chaos', 'nightmare'] as const).map(diff => (
+                                        {(['normal', 'hard', 'insane', 'chaos', 'nightmare', 'screensaver'] as const).map(diff => (
                                             <button
                                                 key={diff}
                                                 onClick={() => engine.setDifficulty(diff)}
@@ -560,7 +562,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                                 }}
                                                 title={diff}
                                             >
-                                                {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : '👿'}
+                                                {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : diff === 'nightmare' ? '👿' : '🌀'}
                                             </button>
                                         ))}
                                     </div>
@@ -596,14 +598,16 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             </motion.div>
 
                             {/* Words area */}
-                            <motion.div
-                                className="w-full transition-all duration-500 rounded-3xl p-8 cursor-text"
-                                ref={containerRef}
-                                onClick={focusInput}
-                                animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
-                            >
-                                <WordDisplay words={engine.words} typed={engine.typed} difficulty={engine.difficulty} />
-                            </motion.div>
+                            <ScreensaverBounce difficulty={engine.difficulty} className="w-full">
+                                <motion.div
+                                    className="w-full transition-all duration-500 rounded-3xl p-8 cursor-text"
+                                    ref={containerRef}
+                                    onClick={focusInput}
+                                    animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
+                                >
+                                    <WordDisplay words={engine.words} typed={engine.typed} difficulty={engine.difficulty} />
+                                </motion.div>
+                            </ScreensaverBounce>
 
                             <AnimatePresence>
                                 {rewardToast && (

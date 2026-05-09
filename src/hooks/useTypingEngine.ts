@@ -4,7 +4,7 @@ import { useTypingSounds } from './useTypingSounds';
 
 export type TestMode = 'time' | 'words';
 export type TestType = WordMode;
-export type DifficultyLevel = 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare';
+export type DifficultyLevel = 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver';
 
 export interface HistoryDataPoint {
     time: number; // second
