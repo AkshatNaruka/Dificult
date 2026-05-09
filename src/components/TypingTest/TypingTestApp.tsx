@@ -7,6 +7,8 @@ import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
 import { ThemePicker } from '../ThemePicker';
 import { SignUpPrompt } from '../SignUpPrompt';
+import { DifficultyEffects } from './DifficultyEffects';
+import { DifficultyWordEffects } from './DifficultyWordEffects';
 import { motion, AnimatePresence } from 'framer-motion';
 import { saveTestStats } from '@/app/actions/stats';
 import { logout } from '@/app/login/actions';
@@ -109,6 +111,10 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                 spellCheck="false"
                 readOnly
             />
+
+            {/* ── Difficulty Effects ── */}
+            <DifficultyEffects difficulty={engine.difficulty} typed={engine.typed} />
+            <DifficultyWordEffects difficulty={engine.difficulty} words={engine.words} typed={engine.typed} />
 
             {/* ── Top Navbar ── */}
             <motion.nav
@@ -330,6 +336,31 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                         </button>
                                     ))}
                                 </div>
+
+                                {/* Divider */}
+                                <div style={{ width: '1px', height: '16px', background: 'var(--text-main)', opacity: 0.25, margin: '0 4px' }} />
+
+                                {/* Difficulty options */}
+                                <div className="flex items-center gap-1 text-sm font-typing">
+                                    {(['normal', 'hard', 'insane', 'chaos', 'nightmare'] as const).map(diff => (
+                                        <button
+                                            key={diff}
+                                            onClick={() => engine.setDifficulty(diff)}
+                                            className="px-3 py-1 rounded-md transition-all duration-200"
+                                            style={{
+                                                color: engine.difficulty === diff ? 'var(--text-accent)' : 'var(--text-main)',
+                                                background: 'none',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontFamily: 'inherit',
+                                            }}
+                                            title={diff === 'normal' ? 'Normal mode' : `${diff.toUpperCase()} - Extra challenge!`}
+                                        >
+                                            {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : '👿'}
+                                        </button>
+                                    ))}
+                                </div>
                             </motion.div>
 
                             {/* Live timer / word counter — centered below nav */}
@@ -356,7 +387,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 onClick={focusInput}
                                 animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
                             >
-                                <WordDisplay words={engine.words} typed={engine.typed} />
+                                <WordDisplay words={engine.words} typed={engine.typed} difficulty={engine.difficulty} />
                             </motion.div>
 
                             {/* Combo / On Fire UI - Moved below the typing area */}

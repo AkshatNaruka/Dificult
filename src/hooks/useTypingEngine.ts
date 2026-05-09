@@ -4,6 +4,7 @@ import { useTypingSounds } from './useTypingSounds';
 
 export type TestMode = 'time' | 'words';
 export type TestType = WordMode;
+export type DifficultyLevel = 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare';
 
 export interface HistoryDataPoint {
     time: number; // second
@@ -18,6 +19,7 @@ export const useTypingEngine = () => {
     const [testType, setTestType] = useState<TestType>('words');
     const [timeConfig, setTimeConfig] = useState(30);
     const [wordConfig, setWordConfig] = useState(25);
+    const [difficulty, setDifficulty] = useState<DifficultyLevel>('normal');
 
     // Test State
     const [state, setState] = useState<'idle' | 'running' | 'finished'>('idle');
@@ -206,6 +208,7 @@ export const useTypingEngine = () => {
         testType,
         timeConfig,
         wordConfig,
+        difficulty,
         insertChar,
         deleteChar,
         restart,
@@ -213,5 +216,6 @@ export const useTypingEngine = () => {
         setTestType,
         setTimeConfig,
         setWordConfig,
+        setDifficulty,
     };
 };
