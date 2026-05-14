@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { stripe } from '@/utils/stripe';
+import { getStripeClient } from '@/utils/stripe';
 import { createServiceClient } from '@/utils/supabase/service';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? '';
@@ -20,6 +20,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event;
   try {
+    const stripe = getStripeClient();
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed', err);
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
   }
 
   if (event.type.startsWith('customer.subscription.')) {
-    const subscription = event.data.object as Stripe.Subscription;
+    const subscription = event.data.object as Stripe.Subscription & { current_period_end?: number };
     const userId = subscription.metadata?.user_id;
     const plan = subscription.metadata?.plan;
 

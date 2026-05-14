@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { stripe } from '@/utils/stripe';
+import { getStripeClient } from '@/utils/stripe';
 
 interface CheckoutRequest {
   priceId: string;
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
   }
 
   const origin = request.headers.get('origin') ?? 'http://localhost:3000';
+  const stripe = getStripeClient();
   const session = await stripe.checkout.sessions.create({
     mode: body.mode,
     line_items: [{ price: body.priceId, quantity: 1 }],
