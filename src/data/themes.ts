@@ -5,6 +5,7 @@ export const themes: Theme[] = [
     id: 'dark',
     name: 'Dark',
     description: 'Classic dark theme with blue accents',
+    access: { type: 'free' },
     colors: {
       background: '#111827',
       backgroundSecondary: '#1f2937',
@@ -32,6 +33,7 @@ export const themes: Theme[] = [
     id: 'light',
     name: 'Light Modern',
     description: 'Contemporary light theme with subtle depth',
+    access: { type: 'free' },
     colors: {
       background: '#ffffff',
       backgroundSecondary: '#f8fafc',
@@ -59,6 +61,7 @@ export const themes: Theme[] = [
     id: 'cyberpunk',
     name: 'Monochrome Pro',
     description: 'Professional monochrome with subtle accents',
+    access: { type: 'pro' },
     colors: {
       background: '#0f0f0f',
       backgroundSecondary: '#1a1a1a',
@@ -86,6 +89,7 @@ export const themes: Theme[] = [
     id: 'nord',
     name: 'Nord',
     description: 'Cool arctic color palette',
+    access: { type: 'pro' },
     colors: {
       background: '#2e3440',
       backgroundSecondary: '#3b4252',
@@ -113,6 +117,7 @@ export const themes: Theme[] = [
     id: 'dracula',
     name: 'Dracula',
     description: 'Dark theme with vibrant colors',
+    access: { type: 'purchase', entitlementKey: 'theme_dracula' },
     colors: {
       background: '#282a36',
       backgroundSecondary: '#343746',
@@ -140,6 +145,7 @@ export const themes: Theme[] = [
     id: 'tokyo-night',
     name: 'Tokyo Night',
     description: 'Modern dark theme inspired by Tokyo streets',
+    access: { type: 'purchase', entitlementKey: 'theme_tokyo_night' },
     colors: {
       background: '#1a1b26',
       backgroundSecondary: '#24283b',
@@ -167,6 +173,7 @@ export const themes: Theme[] = [
     id: 'forest',
     name: 'Slate Modern',
     description: 'Contemporary slate with cool undertones',
+    access: { type: 'pro' },
     colors: {
       background: '#0f172a',
       backgroundSecondary: '#1e293b',
@@ -194,6 +201,7 @@ export const themes: Theme[] = [
     id: 'ocean',
     name: 'Ocean',
     description: 'Deep blue ocean depths',
+    access: { type: 'purchase', entitlementKey: 'theme_ocean' },
     colors: {
       background: '#0c1844',
       backgroundSecondary: '#1e2d5f',
@@ -221,6 +229,7 @@ export const themes: Theme[] = [
     id: 'serika',
     name: 'Warm Gray',
     description: 'Sophisticated warm neutrals',
+    access: { type: 'purchase', entitlementKey: 'theme_warm_gray' },
     colors: {
       background: '#1c1917',
       backgroundSecondary: '#292524',
@@ -248,6 +257,7 @@ export const themes: Theme[] = [
     id: 'minimal',
     name: 'Pure',
     description: 'Ultra-minimal white space design',
+    access: { type: 'purchase', entitlementKey: 'theme_pure' },
     colors: {
       background: '#ffffff',
       backgroundSecondary: '#fafafa',
@@ -275,6 +285,7 @@ export const themes: Theme[] = [
     id: 'carbon',
     name: 'Carbon',
     description: 'Deep carbon black with precision',
+    access: { type: 'free' },
     colors: {
       background: '#000000',
       backgroundSecondary: '#0a0a0a',

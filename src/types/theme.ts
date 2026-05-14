@@ -2,6 +2,10 @@ export interface Theme {
   id: string;
   name: string;
   description: string;
+  access?: {
+    type: 'free' | 'pro' | 'purchase';
+    entitlementKey?: string;
+  };
   colors: {
     // Background colors
     background: string;

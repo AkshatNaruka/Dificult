@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
+import Link from 'next/link';
 import { HistoryDataPoint } from '../../hooks/useTypingEngine';
 import { Line } from 'react-chartjs-2';
 import { useMotivationalMessage, MotivationalBubble } from '@/components/Gamification/MotivationalMessages';
+import { AdBanner } from '@/components/AdBanner';
+import { useEntitlements } from '@/hooks/useEntitlements';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -44,6 +47,7 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, shareText, onResta
     const [showShareMenu, setShowShareMenu] = useState(false);
     const shareMenuRef = useRef<HTMLDivElement>(null);
     const motivationalMessage = useMotivationalMessage(wpm, accuracy);
+    const { entitlements } = useEntitlements();
 
     // Close share menu on outside click
     React.useEffect(() => {
@@ -533,6 +537,30 @@ export function StatsScreen({ wpm, rawWpm, accuracy, history, shareText, onResta
                     )}
                 </div>
             </div>
+            {!entitlements.isPro && (
+                <div className="rounded-xl border p-4 flex items-center justify-between" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}>
+                    <div>
+                        <div className="text-xs uppercase tracking-[0.2em] opacity-60" style={{ color: 'var(--text-main)' }}>
+                            Pro perk
+                        </div>
+                        <div className="text-sm font-bold">Remove ads + unlock premium themes</div>
+                    </div>
+                    <Link href="/pricing" className="px-4 py-2 rounded-xl font-bold text-sm" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
+                        Upgrade
+                    </Link>
+                </div>
+            )}
+
+            {entitlements.adsEnabled && (
+                <div className="flex justify-center">
+                    <AdBanner
+                        slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
+                        format="horizontal"
+                        className="w-full"
+                        style={{ minHeight: '90px' }}
+                    />
+                </div>
+            )}
         </div>
     );
 }

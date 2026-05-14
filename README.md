@@ -25,6 +25,26 @@ pnpm run dev
 pnpm run build
 ```
 
+## 💳 Monetization Setup
+
+To enable subscriptions, one-time cosmetics, and entitlements, apply the Supabase schema in `supabase/schema.sql`
+and configure the following environment variables:
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY`
+- `NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY`
+- `NEXT_PUBLIC_STRIPE_PRICE_THEME_TOKYO_NIGHT`
+- `NEXT_PUBLIC_STRIPE_PRICE_THEME_DRACULA`
+- `NEXT_PUBLIC_STRIPE_PRICE_THEME_OCEAN`
+- `NEXT_PUBLIC_STRIPE_PRICE_SOUND_CLICKS`
+- `NEXT_PUBLIC_STRIPE_PRICE_BORDER_PRISM`
+- `NEXT_PUBLIC_STRIPE_PRICE_CARET_NEON`
+- `NEXT_PUBLIC_ADSENSE_CLIENT` (optional)
+- `NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM` (optional)
+- `NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR` (optional)
+
 ## 📁 Project Structure
 
 ```

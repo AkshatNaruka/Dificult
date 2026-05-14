@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTypingEngine } from '../../hooks/useTypingEngine';
 import { WordDisplay } from '../TypingTest/WordDisplay';
+import { useEntitlements } from '@/hooks/useEntitlements';
 
 
 export default function MultiplayerLobby({ user }: { user: { id: string; email?: string } | null }) {
@@ -17,6 +18,7 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
 
     const [newRoomName, setNewRoomName] = useState('');
     const engine = useTypingEngine();
+    const { entitlements } = useEntitlements();
 
     // Sync game state to server
     useEffect(() => {
@@ -101,7 +103,15 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
                 <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
                     type<span style={{ color: 'var(--text-accent)' }}>warrior</span>
                 </Link>
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-4">
+                    {!entitlements.isPro && (
+                        <Link href="/pricing" className="text-xs font-bold px-3 py-1.5 rounded-lg" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
+                            Upgrade
+                        </Link>
+                    )}
+                    <Link href="/store" className="text-sm font-typing opacity-70 hover:opacity-100">Store</Link>
+                    <Link href="/gear" className="text-sm font-typing opacity-70 hover:opacity-100">Gear</Link>
+                    <Link href="/tournaments" className="text-sm font-typing opacity-70 hover:opacity-100">Tournaments</Link>
                     <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
                         <span className="text-xs font-typing text-gray-500 uppercase tracking-widest">{isConnected ? 'Server Online' : 'Connecting...'}</span>
@@ -337,4 +347,3 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
         </div>
     );
 }
-
