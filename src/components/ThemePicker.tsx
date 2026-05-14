@@ -2,9 +2,13 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useThemeStore } from '../store/themeStore';
+import { useEntitlements } from '@/hooks/useEntitlements';
+import { useRouter } from 'next/navigation';
 
 export function ThemePicker() {
     const themeStore = useThemeStore();
+    const { entitlements } = useEntitlements();
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const listRef = useRef<HTMLDivElement>(null);
@@ -12,6 +16,18 @@ export function ThemePicker() {
 
     const currentIndex = themes.findIndex(t => t.id === themeStore.currentTheme);
     const originalThemeRef = useRef(themeStore.currentTheme);
+
+    const isThemeUnlocked = useCallback((themeId: string) => {
+        const theme = themes.find(t => t.id === themeId);
+        if (!theme?.access || theme.access.type === 'free') return true;
+        if (entitlements.isPro) return true;
+        if (theme.access.type === 'purchase') {
+            return theme.access.entitlementKey
+                ? entitlements.unlockedThemes.includes(theme.access.entitlementKey)
+                : false;
+        }
+        return false;
+    }, [themes, entitlements]);
 
     const open = () => {
         originalThemeRef.current = themeStore.currentTheme;
@@ -30,15 +46,22 @@ export function ThemePicker() {
     const previewTheme = useCallback((index: number) => {
         setFocusedIndex(index);
         if (index >= 0 && index < themes.length) {
-            themeStore.setTheme(themes[index].id);
+            const target = themes[index];
+            if (isThemeUnlocked(target.id)) {
+                themeStore.setTheme(target.id);
+            }
         }
-    }, [themes, themeStore]);
+    }, [themes, themeStore, isThemeUnlocked]);
 
     const select = useCallback((id: string) => {
+        if (!isThemeUnlocked(id)) {
+            router.push('/store');
+            return;
+        }
         themeStore.setTheme(id);
         originalThemeRef.current = id;
         close(false);
-    }, [themeStore, close]);
+    }, [themeStore, close, isThemeUnlocked, router]);
 
     // Keyboard navigation
     useEffect(() => {
@@ -71,6 +94,15 @@ export function ThemePicker() {
     }, [focusedIndex, isOpen]);
 
     const currentTheme = themes.find(t => t.id === themeStore.currentTheme);
+
+    useEffect(() => {
+        if (currentTheme && !isThemeUnlocked(currentTheme.id)) {
+            const fallback = themes.find(t => t.access?.type === 'free') ?? themes[0];
+            if (fallback) {
+                themeStore.setTheme(fallback.id);
+            }
+        }
+    }, [currentTheme, isThemeUnlocked, themes, themeStore]);
 
     return (
         <div className="relative">
@@ -160,6 +192,7 @@ export function ThemePicker() {
                             {themes.map((theme, idx) => {
                                 const isActive = theme.id === themeStore.currentTheme;
                                 const isFocused = idx === focusedIndex;
+                                const unlocked = isThemeUnlocked(theme.id);
 
                                 return (
                                     <div
@@ -180,6 +213,7 @@ export function ThemePicker() {
                                                 : isActive
                                                     ? 'var(--text-accent-muted)'
                                                     : 'transparent',
+                                            opacity: unlocked ? 1 : 0.6,
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
@@ -205,6 +239,20 @@ export function ThemePicker() {
                                                     lineHeight: '1.2',
                                                 }}>
                                                     {theme.name}
+                                                    {!unlocked && (
+                                                        <span style={{
+                                                            marginLeft: '8px',
+                                                            fontSize: '10px',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '999px',
+                                                            background: 'rgba(139,92,246,0.15)',
+                                                            color: 'var(--text-accent)',
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.18em',
+                                                        }}>
+                                                            {theme.access?.type === 'purchase' ? 'Store' : 'Pro'}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div style={{
                                                     fontSize: '11px',
@@ -224,6 +272,12 @@ export function ThemePicker() {
                                         {isActive && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                                                 <polyline points="20 6 9 17 4 12" />
+                                            </svg>
+                                        )}
+                                        {!unlocked && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-main)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
+                                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                             </svg>
                                         )}
                                     </div>

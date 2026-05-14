@@ -1,0 +1,83 @@
+import { CosmeticItem, PricingPlan } from '@/types/commerce';
+
+export const pricingPlans: PricingPlan[] = [
+  {
+    id: 'pro_monthly',
+    name: 'Pro Monthly',
+    price: 7,
+    interval: 'month',
+    description: 'Unlock premium themes, remove ads, and earn boosted XP.',
+    highlight: 'Most flexible',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY,
+  },
+  {
+    id: 'pro_yearly',
+    name: 'Pro Yearly',
+    price: 60,
+    interval: 'year',
+    description: 'Best value for daily typists with full Pro perks.',
+    highlight: '2 months free',
+    badge: 'Best value',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
+  },
+];
+
+export const cosmeticItems: CosmeticItem[] = [
+  {
+    id: 'theme_tokyo_night',
+    name: 'Tokyo Night Theme',
+    type: 'theme',
+    description: 'A neon-soaked dark palette inspired by late-night Tokyo.',
+    price: 2,
+    entitlementKey: 'theme_tokyo_night',
+    previewThemeId: 'tokyo-night',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_TOKYO_NIGHT,
+  },
+  {
+    id: 'theme_dracula',
+    name: 'Dracula Theme',
+    type: 'theme',
+    description: 'A high-contrast palette with vibrant accents.',
+    price: 2,
+    entitlementKey: 'theme_dracula',
+    previewThemeId: 'dracula',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_DRACULA,
+  },
+  {
+    id: 'theme_ocean',
+    name: 'Ocean Theme',
+    type: 'theme',
+    description: 'Deep blues and cool highlights for calmer sessions.',
+    price: 2,
+    entitlementKey: 'theme_ocean',
+    previewThemeId: 'ocean',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_OCEAN,
+  },
+  {
+    id: 'sound_clicks',
+    name: 'Studio Click Pack',
+    type: 'sound',
+    description: 'Premium keystroke sounds tuned for focus.',
+    price: 3,
+    entitlementKey: 'sound_studio_clicks',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_SOUND_CLICKS,
+  },
+  {
+    id: 'border_prism',
+    name: 'Prism Profile Border',
+    type: 'border',
+    description: 'Animated border glow for your profile.',
+    price: 1,
+    entitlementKey: 'border_prism',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_BORDER_PRISM,
+  },
+  {
+    id: 'caret_neon',
+    name: 'Neon Caret',
+    type: 'caret',
+    description: 'A bright, futuristic caret for precision typing.',
+    price: 1,
+    entitlementKey: 'caret_neon',
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_CARET_NEON,
+  },
+];

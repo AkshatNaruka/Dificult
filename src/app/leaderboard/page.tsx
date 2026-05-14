@@ -1,4 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
+import { getDefaultEntitlements, getEntitlementsForUser } from '@/utils/entitlements';
+import { AdBanner } from '@/components/AdBanner';
 import Link from 'next/link';
 import { ThemePicker } from '@/components/ThemePicker';
 
@@ -10,6 +12,10 @@ interface ProfileJoin {
 export default async function LeaderboardPage() {
     const supabase = await createClient();
     const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+    const entitlements = user && supabase
+        ? await getEntitlementsForUser(supabase, user.id)
+        : getDefaultEntitlements();
+    const leaderboardLimit = entitlements.leaderboardLimit;
 
     let topXpProfiles: { id: string; email: string; xp: number; level: number }[] | null = null;
     let topWpmUsers: { id: string; email: string; wpm: number; accuracy: number }[] = [];
@@ -20,7 +26,7 @@ export default async function LeaderboardPage() {
             .from('profiles')
             .select('id, email, xp, level')
             .order('xp', { ascending: false })
-            .limit(20);
+            .limit(leaderboardLimit);
         topXpProfiles = data;
 
         // 2. Fetch Top 20 by Max WPM
@@ -28,7 +34,7 @@ export default async function LeaderboardPage() {
             .from('stats')
             .select('wpm, accuracy, profiles!inner(id, email)')
             .order('wpm', { ascending: false })
-            .limit(50);
+            .limit(Math.max(leaderboardLimit * 3, 30));
 
         const uniqueWpmMap = new Map();
         if (topStats) {
@@ -44,7 +50,7 @@ export default async function LeaderboardPage() {
                         accuracy: stat.accuracy
                     });
                 }
-                if (uniqueWpmMap.size >= 20) break;
+                if (uniqueWpmMap.size >= leaderboardLimit) break;
             }
         }
         topWpmUsers = Array.from(uniqueWpmMap.values());
@@ -57,7 +63,10 @@ export default async function LeaderboardPage() {
                 <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
                     difi<span style={{ color: 'var(--text-accent)' }}>cult</span>
                 </Link>
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-4">
+                    <Link href="/store" className="text-sm font-typing opacity-70 hover:opacity-100">Store</Link>
+                    <Link href="/gear" className="text-sm font-typing opacity-70 hover:opacity-100">Gear</Link>
+                    <Link href="/tournaments" className="text-sm font-typing opacity-70 hover:opacity-100">Tournaments</Link>
                     <ThemePicker />
                     {user ? (
                         <Link href="/profile" className="font-typing text-sm hover:opacity-80 transition-opacity">
@@ -77,6 +86,20 @@ export default async function LeaderboardPage() {
                         <h1 className="text-4xl font-bold font-typing" style={{ color: 'var(--text-accent)' }}>Global Leaderboard</h1>
                         <p className="font-typing text-sm mt-2" style={{ color: 'var(--text-main)' }}>Rank up. Dominate the boards.</p>
                     </div>
+                    {!entitlements.isPro && (
+                        <div className="flex items-center justify-between gap-4 p-6 rounded-3xl border" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
+                            <div>
+                                <div className="text-xs uppercase tracking-[0.24em] opacity-60" style={{ color: 'var(--text-main)' }}>Pro leaderboard</div>
+                                <div className="text-lg font-bold">Unlock top 50 rankings + advanced filters</div>
+                                <div className="text-sm mt-1" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
+                                    Pro members see extended rankings and sponsor-branded events.
+                                </div>
+                            </div>
+                            <Link href="/pricing" className="px-4 py-2 rounded-xl font-bold" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
+                                Upgrade to Pro
+                            </Link>
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Top WPM Board */}
@@ -138,6 +161,16 @@ export default async function LeaderboardPage() {
                             </div>
                         </div>
                     </div>
+                    {entitlements.adsEnabled && (
+                        <div className="flex justify-center">
+                            <AdBanner
+                                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
+                                format="horizontal"
+                                className="w-full"
+                                style={{ minHeight: '90px' }}
+                            />
+                        </div>
+                    )}
                 </div>
             </main>
         </div>

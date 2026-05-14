@@ -18,6 +18,7 @@ import { SpecialModeSelector, gameModesDefinitions } from '@/components/Gamifica
 import { DailyStreakWidget } from '@/components/Gamification/DailyStreakWidget';
 import { saveTestStats } from '@/app/actions/stats';
 import { logout } from '@/app/login/actions';
+import { useEntitlements } from '@/hooks/useEntitlements';
 
 import Link from 'next/link';
 
@@ -83,6 +84,7 @@ function checkAchievements(
 export default function TypingTestApp({ user }: { user: { email?: string, id: string } | null }) {
     const engine = useTypingEngine();
     const themeStore = useThemeStore();
+    const { entitlements } = useEntitlements();
     const player = usePlayerStore(state => state.player);
     const initializePlayer = usePlayerStore(state => state.initializePlayer);
     const addTestResult = usePlayerStore(state => state.addTestResult);
@@ -206,8 +208,11 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
     const currentCombo = engine.combo;
     const difficultyMultiplier = difficultyMultipliers[engine.difficulty];
     const modeMultiplier = gameModesDefinitions[specialMode].multiplier;
-    const xpReward = engine.state === 'finished'
+    const baseXpReward = engine.state === 'finished'
         ? Math.max(25, Math.round((finalWpm * 4 + accuracy * 2 + engine.maxCombo * 6 + timeTaken * 2) * difficultyMultiplier * modeMultiplier / 4))
+        : 0;
+    const xpReward = engine.state === 'finished'
+        ? Math.round(baseXpReward * entitlements.xpMultiplier)
         : 0;
 
     useEffect(() => {
@@ -260,10 +265,12 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
             });
 
             if (challengeQualified && challenge && !challenge.completed) {
-                completeDailyChallenge(challenge.mode === 'accuracy' ? accuracy : finalWpm);
+                completeDailyChallenge(challenge.mode === 'accuracy' ? accuracy : finalWpm, entitlements.dailyChallengeBonusMultiplier);
                 setRewardToast({
                     title: 'Daily challenge complete!',
-                    message: `${challenge.reward} XP added to your run.`,
+                    message: entitlements.dailyChallengeBonusMultiplier > 1
+                        ? `${Math.round(challenge.reward * entitlements.dailyChallengeBonusMultiplier)} XP added (Pro bonus).`
+                        : `${challenge.reward} XP added to your run.`,
                     accent: 'var(--text-accent)',
                 });
                 window.setTimeout(() => setRewardToast(null), 2200);
@@ -300,7 +307,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
             });
             player?.achievements && setUnlockedAchievements([...player.achievements, ...newAchs]);
         }
-    }, [engine.state, engine.history.length, engine.difficulty, engine.testMode, engine.testType, finalWpm, accuracy, timeTaken, xpReward, player, user, addTestResult, completeDailyChallenge, profileLevel, engine.typed.length]);
+    }, [engine.state, engine.history.length, engine.difficulty, engine.testMode, engine.testType, finalWpm, accuracy, timeTaken, xpReward, player, user, addTestResult, completeDailyChallenge, profileLevel, engine.typed.length, entitlements.dailyChallengeBonusMultiplier]);
 
     return (
         <div
@@ -353,6 +360,16 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
 
                 {/* Right controls */}
                 <div className="flex items-center gap-5 relative">
+                    {!entitlements.isPro && (
+                        <Link
+                            href="/pricing"
+                            className="font-typing text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
+                        >
+                            Upgrade
+                        </Link>
+                    )}
+
                     {/* Theme Picker */}
                     <ThemePicker />
 
@@ -388,6 +405,28 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             </svg>
                         )}
                     </button>
+
+                    <Link
+                        href="/store"
+                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
+                        style={{ color: 'var(--text-main)' }}
+                    >
+                        Store
+                    </Link>
+                    <Link
+                        href="/gear"
+                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
+                        style={{ color: 'var(--text-main)' }}
+                    >
+                        Gear
+                    </Link>
+                    <Link
+                        href="/tournaments"
+                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
+                        style={{ color: 'var(--text-main)' }}
+                    >
+                        Tournaments
+                    </Link>
 
                     {/* Leaderboard Link */}
                     <Link

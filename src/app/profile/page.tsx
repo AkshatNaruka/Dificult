@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { logout } from '@/app/login/actions'
 import Link from 'next/link'
 import { ThemePicker } from '@/components/ThemePicker'
+import { getDefaultEntitlements, getEntitlementsForUser } from '@/utils/entitlements'
+import { AdBanner } from '@/components/AdBanner'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
@@ -11,6 +13,10 @@ export default async function ProfilePage() {
     if (!user) {
         redirect('/login')
     }
+
+    const entitlements = user && supabase
+        ? await getEntitlementsForUser(supabase, user.id)
+        : getDefaultEntitlements()
 
     // Fetch Profile
     const { data: profile } = await supabase!
@@ -36,7 +42,12 @@ export default async function ProfilePage() {
                 <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
                     type<span style={{ color: 'var(--text-accent)' }}>warrior</span>
                 </Link>
-                <ThemePicker />
+                <div className="flex items-center gap-4">
+                    <Link href="/store" className="text-sm font-typing opacity-70 hover:opacity-100">Store</Link>
+                    <Link href="/gear" className="text-sm font-typing opacity-70 hover:opacity-100">Gear</Link>
+                    <Link href="/tournaments" className="text-sm font-typing opacity-70 hover:opacity-100">Tournaments</Link>
+                    <ThemePicker />
+                </div>
             </nav>
 
             <main className="flex-1 flex flex-col items-center py-12 px-6">
@@ -56,11 +67,39 @@ export default async function ProfilePage() {
                             </div>
                         </div>
 
-                        <form action={logout}>
-                            <button className="px-6 py-2 rounded-xl font-bold font-typing transition-all hover:bg-opacity-80" style={{ border: '2px solid var(--text-accent)', color: 'var(--text-accent)' }}>
-                                Sign Out
-                            </button>
-                        </form>
+                        <div className="flex items-center gap-3">
+                            {!entitlements.isPro && (
+                                <Link href="/pricing" className="px-6 py-2 rounded-xl font-bold font-typing transition-all hover:bg-opacity-80" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
+                                    Upgrade to Pro
+                                </Link>
+                            )}
+                            <form action={logout}>
+                                <button className="px-6 py-2 rounded-xl font-bold font-typing transition-all hover:bg-opacity-80" style={{ border: '2px solid var(--text-accent)', color: 'var(--text-accent)' }}>
+                                    Sign Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl border flex items-center justify-between" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}>
+                        <div>
+                            <div className="text-xs uppercase tracking-[0.24em] opacity-60" style={{ color: 'var(--text-main)' }}>
+                                Membership
+                            </div>
+                            <div className="text-lg font-bold mt-1">
+                                {entitlements.isPro ? 'Pro active' : 'Free tier'}
+                            </div>
+                            <div className="text-sm mt-1" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
+                                {entitlements.isPro
+                                    ? 'Ads removed, XP boosted, premium themes unlocked.'
+                                    : 'Upgrade for ad-free typing and premium cosmetics.'}
+                            </div>
+                        </div>
+                        {entitlements.isPro && entitlements.currentPeriodEnd && (
+                            <div className="text-right text-sm" style={{ color: 'var(--text-main)' }}>
+                                Renews {new Date(entitlements.currentPeriodEnd).toLocaleDateString('en-US')}
+                            </div>
+                        )}
                     </div>
 
                     {/* Stats Grid - DB integration */}
@@ -79,6 +118,17 @@ export default async function ProfilePage() {
                             </div>
                         ))}
                     </div>
+
+                    {entitlements.adsEnabled && (
+                        <div className="flex justify-center">
+                            <AdBanner
+                                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
+                                format="horizontal"
+                                className="w-full"
+                                style={{ minHeight: '90px' }}
+                            />
+                        </div>
+                    )}
 
                 </div>
             </main>

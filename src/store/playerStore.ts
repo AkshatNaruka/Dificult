@@ -65,7 +65,7 @@ interface PlayerState {
   updateStats: (newStats: Partial<PlayerStats>) => void;
   addTestResult: (result: Omit<TestHistory, 'id' | 'date'>) => void;
   unlockAchievement: (achievementId: string) => void;
-  completeDailyChallenge: (score: number) => void;
+  completeDailyChallenge: (score: number, rewardMultiplier?: number) => void;
   generateTodayChallenge: () => void;
   updatePreferences: (preferences: Partial<Player['preferences']>) => void;
 
@@ -336,7 +336,7 @@ export const usePlayerStore = create<PlayerState>()(
         });
       },
 
-      completeDailyChallenge: (score) => {
+      completeDailyChallenge: (score, rewardMultiplier = 1) => {
         const { player } = get();
         if (!player) return;
 
@@ -363,7 +363,7 @@ export const usePlayerStore = create<PlayerState>()(
 
           // Award XP
           get().updateStats({
-            xp: player.stats.xp + challenge.reward,
+            xp: player.stats.xp + Math.round(challenge.reward * rewardMultiplier),
             dailyChallengesCompleted: player.stats.dailyChallengesCompleted + 1
           });
         }
