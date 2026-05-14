@@ -95,9 +95,9 @@ export default async function ProfilePage() {
                                     : 'Upgrade for ad-free typing and premium cosmetics.'}
                             </div>
                         </div>
-                        {entitlements.isPro && entitlements.currentPeriodEnd && (
+                        {entitlements.ownedBundles.length > 0 && (
                             <div className="text-right text-sm" style={{ color: 'var(--text-main)' }}>
-                                Renews {new Date(entitlements.currentPeriodEnd).toLocaleDateString('en-US')}
+                                Owns {entitlements.ownedBundles.length} bundle{entitlements.ownedBundles.length > 1 ? 's' : ''}
                             </div>
                         )}
                     </div>

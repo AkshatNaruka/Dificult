@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { getStripeClient } from '@/utils/stripe';
+import { getDodoClient } from '@/utils/dodo';
 
 interface CheckoutRequest {
-  priceId: string;
-  mode: 'subscription' | 'payment';
+  productId: string;
+  quantity?: number;
   metadata?: Record<string, string>;
+  returnUrl?: string;
 }
 
 export async function POST(request: Request) {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+  if (!process.env.DODO_PAYMENTS_API_KEY) {
+    return NextResponse.json({ error: 'Dodo Payments not configured' }, { status: 500 });
   }
 
   const supabase = await createClient();
@@ -24,28 +25,27 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as CheckoutRequest;
-  if (!body?.priceId || !body?.mode) {
+  if (!body?.productId) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
   const origin = request.headers.get('origin') ?? 'http://localhost:3000';
-  const stripe = getStripeClient();
-  const session = await stripe.checkout.sessions.create({
-    mode: body.mode,
-    line_items: [{ price: body.priceId, quantity: 1 }],
-    success_url: `${origin}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/billing/cancel`,
-    allow_promotion_codes: true,
-    client_reference_id: user.id,
-    customer_email: user.email ?? undefined,
+  const dodo = getDodoClient();
+  const session = await (dodo as any).checkoutSessions.create({
+    product_cart: [{
+      product_id: body.productId,
+      quantity: body.quantity ?? 1,
+    }],
+    return_url: body.returnUrl ?? `${origin}/billing/success`,
     metadata: {
       user_id: user.id,
+      user_email: user.email ?? '',
       ...body.metadata,
     },
-    subscription_data: body.mode === 'subscription'
-      ? { metadata: { user_id: user.id, ...body.metadata } }
-      : undefined,
   });
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({
+    checkout_url: session.checkout_url ?? session.checkoutUrl ?? session.url,
+    session_id: session.session_id ?? session.sessionId ?? null,
+  });
 }

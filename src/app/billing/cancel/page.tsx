@@ -19,7 +19,7 @@ export default function BillingCancelPage() {
           <div className="text-4xl">🧾</div>
           <h1 className="text-3xl font-bold">Checkout canceled</h1>
           <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-            No worries — you can upgrade any time to unlock premium perks.
+            No worries — you can come back anytime and pick up a pack or bundle.
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <Link href="/pricing" className="px-4 py-2 rounded-xl font-bold" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>

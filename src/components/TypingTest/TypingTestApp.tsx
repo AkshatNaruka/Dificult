@@ -10,6 +10,7 @@ import { ThemePicker } from '../ThemePicker';
 import { SignUpPrompt } from '../SignUpPrompt';
 import { DifficultyEffects } from './DifficultyEffects';
 import { DifficultyWordEffects } from './DifficultyWordEffects';
+import { ThirdModeBackgrounds } from './ThirdModeBackgrounds';
 import { ScreensaverBounce } from './ScreensaverBounce';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AchievementBadges, achievementDefinitions, AchievementUnlockNotification } from '@/components/Gamification/AchievementBadges';
@@ -326,6 +327,8 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                 readOnly
             />
 
+            <ThirdModeBackgrounds difficulty={engine.difficulty} />
+
             {/* ── Difficulty Effects ── */}
             <DifficultyEffects difficulty={engine.difficulty} typed={engine.typed} />
             <DifficultyWordEffects difficulty={engine.difficulty} words={engine.words} typed={engine.typed} />
@@ -599,7 +602,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                                     cursor: 'pointer',
                                                     opacity: engine.difficulty === diff ? 1 : 0.6,
                                                 }}
-                                                title={diff}
+                                                title={diff === 'insane' ? 'third mode - media distractor' : diff}
                                             >
                                                 {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : diff === 'nightmare' ? '👿' : '🌀'}
                                             </button>

@@ -1,30 +1,101 @@
-import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { getStripeClient } from '@/utils/stripe';
 import { createServiceClient } from '@/utils/supabase/service';
+import { getDodoClient } from '@/utils/dodo';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? '';
+type PurchaseMetadata = {
+  user_id?: string;
+  entitlement_type?: string;
+  entitlement_key?: string;
+};
+
+function readPurchaseMetadata(payload: unknown): PurchaseMetadata {
+  const candidates: unknown[] = [];
+
+  if (payload && typeof payload === 'object') {
+    const record = payload as Record<string, unknown>;
+    candidates.push(payload, record.data, record.payment, record.checkout, record.checkout_session, record.session);
+  }
+
+  for (const candidate of candidates) {
+    if (!candidate || typeof candidate !== 'object') {
+      continue;
+    }
+
+    const record = candidate as Record<string, unknown>;
+    if (record.metadata && typeof record.metadata === 'object') {
+      return record.metadata as PurchaseMetadata;
+    }
+
+    if (record.data && typeof record.data === 'object') {
+      const nested = record.data as Record<string, unknown>;
+      if (nested.metadata && typeof nested.metadata === 'object') {
+        return nested.metadata as PurchaseMetadata;
+      }
+    }
+  }
+
+  return {};
+}
+
+function readSessionId(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  if (typeof record.session_id === 'string') {
+    return record.session_id;
+  }
+  if (typeof record.id === 'string') {
+    return record.id;
+  }
+
+  if (record.data && typeof record.data === 'object') {
+    const nested = record.data as Record<string, unknown>;
+    if (typeof nested.session_id === 'string') {
+      return nested.session_id;
+    }
+    if (typeof nested.id === 'string') {
+      return nested.id;
+    }
+  }
+
+  return null;
+}
 
 export async function POST(request: Request) {
-  if (!webhookSecret) {
-    return NextResponse.json({ error: 'Webhook secret missing' }, { status: 500 });
+  if (!process.env.DODO_PAYMENTS_API_KEY || !process.env.DODO_PAYMENTS_WEBHOOK_KEY) {
+    return NextResponse.json({ error: 'Dodo Payments webhook not configured' }, { status: 500 });
   }
 
-  const signature = (await headers()).get('stripe-signature');
-  if (!signature) {
-    return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
-  }
+  const rawBody = await request.text();
 
-  const body = await request.text();
-
-  let event: Stripe.Event;
+  let event: { type?: string; data?: unknown };
   try {
-    const stripe = getStripeClient();
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err) {
-    console.error('Webhook signature verification failed', err);
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    const dodo = getDodoClient();
+    event = dodo.webhooks.unwrap(rawBody, {
+      headers: {
+        'webhook-id': request.headers.get('webhook-id') ?? '',
+        'webhook-signature': request.headers.get('webhook-signature') ?? '',
+        'webhook-timestamp': request.headers.get('webhook-timestamp') ?? '',
+      },
+    }) as { type?: string; data?: unknown };
+  } catch (error) {
+    console.error('Dodo webhook verification failed', error);
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+
+  if (event.type !== 'payment.succeeded' && event.type !== 'checkout.session.completed') {
+    return NextResponse.json({ received: true });
+  }
+
+  const metadata = readPurchaseMetadata(event.data);
+  const userId = metadata.user_id;
+  const entitlementType = metadata.entitlement_type;
+  const entitlementKey = metadata.entitlement_key;
+
+  if (!userId || !entitlementType || !entitlementKey) {
+    return NextResponse.json({ received: true });
   }
 
   const supabase = createServiceClient();
@@ -32,53 +103,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Supabase service key missing' }, { status: 500 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const userId = session.metadata?.user_id;
-
-    if (session.mode === 'payment' && userId) {
-      const entitlementType = session.metadata?.entitlement_type;
-      const entitlementKey = session.metadata?.entitlement_key;
-
-      if (entitlementType && entitlementKey) {
-        await supabase
-          .from('entitlements')
-          .upsert({
-            user_id: userId,
-            entitlement_type: entitlementType,
-            entitlement_key: entitlementKey,
-            source: 'purchase',
-            active: true,
-            stripe_checkout_session_id: session.id,
-          }, { onConflict: 'user_id,entitlement_type,entitlement_key' });
-      }
-    }
-  }
-
-  if (event.type.startsWith('customer.subscription.')) {
-    const subscription = event.data.object as Stripe.Subscription & { current_period_end?: number };
-    const userId = subscription.metadata?.user_id;
-    const plan = subscription.metadata?.plan;
-
-    if (userId && plan) {
-      const payload = {
+  await supabase
+    .from('entitlements')
+    .upsert(
+      {
         user_id: userId,
-        plan,
-        status: subscription.status,
-        stripe_customer_id: subscription.customer?.toString() ?? null,
-        stripe_subscription_id: subscription.id,
-        current_period_end: subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : null,
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        updated_at: new Date().toISOString(),
-      };
-
-      await supabase
-        .from('subscriptions')
-        .upsert(payload, { onConflict: 'stripe_subscription_id' });
-    }
-  }
+        entitlement_type: entitlementType,
+        entitlement_key: entitlementKey,
+        source: 'purchase',
+        active: true,
+        dodo_checkout_session_id: readSessionId(event.data),
+      },
+      { onConflict: 'user_id,entitlement_type,entitlement_key' }
+    );
 
   return NextResponse.json({ received: true });
 }

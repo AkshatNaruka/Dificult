@@ -17,10 +17,10 @@ export function StoreCatalog() {
     <div className="space-y-8">
       <div className="rounded-3xl border p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}>
         <div>
-          <div className="text-xs uppercase tracking-[0.24em] opacity-60" style={{ color: 'var(--text-main)' }}>Pro bundle</div>
+          <div className="text-xs uppercase tracking-[0.24em] opacity-60" style={{ color: 'var(--text-main)' }}>One-time bundles</div>
           <h2 className="text-2xl font-bold mt-1">Unlock everything instantly</h2>
           <p className="text-sm mt-1" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-            Get all premium themes, remove ads, and boost XP — or pick cosmetics à la carte.
+            Grab a bundle once or buy individual packs for themes, sounds, cursors, and backgrounds.
           </p>
         </div>
         <Link
@@ -38,7 +38,8 @@ export function StoreCatalog() {
             || (item.type === 'theme' && entitlements.unlockedThemes.includes(item.entitlementKey))
             || (item.type === 'sound' && entitlements.unlockedSounds.includes(item.entitlementKey))
             || (item.type === 'border' && entitlements.unlockedBorders.includes(item.entitlementKey))
-            || (item.type === 'caret' && entitlements.unlockedCarets.includes(item.entitlementKey));
+            || (item.type === 'caret' && entitlements.unlockedCarets.includes(item.entitlementKey))
+            || (item.type === 'background' && entitlements.unlockedBackgrounds.includes(item.entitlementKey));
 
           const previewTheme = item.previewThemeId ? themeLookup.get(item.previewThemeId) : null;
 
@@ -64,14 +65,13 @@ export function StoreCatalog() {
                 <div className="text-lg font-bold">${item.price}</div>
                 {isUnlocked ? (
                   <span className="text-xs uppercase tracking-[0.2em] opacity-70" style={{ color: 'var(--text-accent)' }}>
-                    {entitlements.isPro ? 'Pro unlocked' : 'Owned'}
+                    {entitlements.isPro ? 'Bundle unlocked' : 'Owned'}
                   </span>
                 ) : (
                   <button
                     disabled={isLoading || !item.priceId}
                     onClick={() => item.priceId && startCheckout({
-                      priceId: item.priceId,
-                      mode: 'payment',
+                      productId: item.priceId,
                       metadata: {
                         entitlement_type: item.type,
                         entitlement_key: item.entitlementKey,

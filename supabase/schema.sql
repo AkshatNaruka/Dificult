@@ -18,12 +18,12 @@ create unique index if not exists subscriptions_stripe_id_idx on public.subscrip
 create table if not exists public.entitlements (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  entitlement_type text not null check (entitlement_type in ('theme', 'sound', 'border', 'caret')),
+  entitlement_type text not null check (entitlement_type in ('bundle', 'theme', 'sound', 'border', 'caret', 'background')),
   entitlement_key text not null,
   source text not null check (source in ('purchase', 'gift')),
   active boolean default true,
   expires_at timestamptz,
-  stripe_checkout_session_id text,
+  dodo_checkout_session_id text,
   created_at timestamptz default now()
 );
 

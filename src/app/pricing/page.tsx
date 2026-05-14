@@ -34,11 +34,11 @@ export default async function PricingPage() {
         <div className="w-full max-w-5xl space-y-10">
           <div className="text-center space-y-2">
             <div className="text-xs uppercase tracking-[0.32em] opacity-60" style={{ color: 'var(--text-main)' }}>
-              Pricing
+                One-time pricing
             </div>
-            <h1 className="text-4xl font-bold">Upgrade to Pro</h1>
+              <h1 className="text-4xl font-bold">Unlock premium packs</h1>
             <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-              Themes, XP boosts, extra leaderboard depth, and zero ads.
+                One-time purchases for packs, bundles, and distraction-heavy background modes.
             </p>
           </div>
           <PricingPlans />

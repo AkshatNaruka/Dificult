@@ -39,11 +39,11 @@ export default async function StorePage() {
         <div className="w-full max-w-5xl space-y-10">
           <div className="text-center space-y-2">
             <div className="text-xs uppercase tracking-[0.32em] opacity-60" style={{ color: 'var(--text-main)' }}>
-              Cosmetics store
+                Pack store
             </div>
-            <h1 className="text-4xl font-bold">Themes & Add-ons</h1>
+              <h1 className="text-4xl font-bold">Themes, sounds, and background packs</h1>
             <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-              Grab individual themes, sound packs, and profile cosmetics.
+                Buy individual packs or unlock larger one-time bundles.
             </p>
           </div>
           {entitlements.adsEnabled && (

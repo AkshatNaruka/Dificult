@@ -3,9 +3,10 @@
 import { useCallback, useState } from 'react';
 
 interface CheckoutPayload {
-  priceId: string;
-  mode: 'subscription' | 'payment';
+  productId: string;
+  quantity?: number;
   metadata?: Record<string, string>;
+  returnUrl?: string;
 }
 
 export function useCheckout() {
@@ -20,13 +21,13 @@ export function useCheckout() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok || !data?.url) {
+      if (!res.ok || !data?.checkout_url) {
         throw new Error(data?.error ?? 'Checkout failed');
       }
-      window.location.href = data.url;
+      window.location.href = data.checkout_url;
     } catch (error) {
       console.error(error);
-      alert('Please sign in to complete checkout.');
+      alert('Unable to start checkout right now. Please try again.');
     } finally {
       setIsLoading(false);
     }

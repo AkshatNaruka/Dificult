@@ -19,7 +19,7 @@ export default function BillingSuccessPage() {
           <div className="text-4xl">🎉</div>
           <h1 className="text-3xl font-bold">Purchase complete</h1>
           <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-            Your Pro perks and cosmetics will unlock shortly. Thanks for supporting Dificult!
+            Your packs and bundle unlocks will show up shortly. Thanks for supporting Dificult!
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <Link href="/" className="px-4 py-2 rounded-xl font-bold" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>

@@ -1,11 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { Entitlements, PlanId, SubscriptionStatus } from '@/types/entitlements';
+import { Entitlements, PlanId } from '@/types/entitlements';
 
 const defaultEntitlements: Entitlements = {
   isPro: false,
-  plan: null,
-  status: null,
-  currentPeriodEnd: null,
+  ownedBundles: [],
   adsEnabled: true,
   xpMultiplier: 1,
   dailyChallengeBonusMultiplier: 1,
@@ -14,17 +12,11 @@ const defaultEntitlements: Entitlements = {
   unlockedSounds: [],
   unlockedBorders: [],
   unlockedCarets: [],
+  unlockedBackgrounds: [],
 };
 
 export function getDefaultEntitlements(): Entitlements {
   return { ...defaultEntitlements };
-}
-
-function isSubscriptionActive(status?: SubscriptionStatus | null, currentPeriodEnd?: string | null) {
-  if (!status) return false;
-  if (status !== 'active' && status !== 'trialing') return false;
-  if (!currentPeriodEnd) return true;
-  return new Date(currentPeriodEnd).getTime() > Date.now();
 }
 
 export async function getEntitlementsForUser(
@@ -32,30 +24,6 @@ export async function getEntitlementsForUser(
   userId: string
 ): Promise<Entitlements> {
   const entitlements = getDefaultEntitlements();
-
-  const { data: subscriptionRows } = await supabase
-    .from('subscriptions')
-    .select('plan,status,current_period_end')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(1);
-
-  const subscription = subscriptionRows?.[0];
-  const isPro = isSubscriptionActive(
-    subscription?.status as SubscriptionStatus | null,
-    subscription?.current_period_end ?? null
-  );
-
-  if (isPro) {
-    entitlements.isPro = true;
-    entitlements.plan = subscription?.plan as PlanId | null;
-    entitlements.status = subscription?.status as SubscriptionStatus | null;
-    entitlements.currentPeriodEnd = subscription?.current_period_end ?? null;
-    entitlements.adsEnabled = false;
-    entitlements.xpMultiplier = 1.25;
-    entitlements.dailyChallengeBonusMultiplier = 1.25;
-    entitlements.leaderboardLimit = 50;
-  }
 
   const { data: entitlementRows } = await supabase
     .from('entitlements')
@@ -81,10 +49,28 @@ export async function getEntitlementsForUser(
       case 'caret':
         entitlements.unlockedCarets.push(row.entitlement_key);
         break;
+      case 'background':
+        entitlements.unlockedBackgrounds.push(row.entitlement_key);
+        break;
+      case 'bundle': {
+        const bundle = row.entitlement_key as PlanId;
+        if (bundle === 'pro_monthly' || bundle === 'pro_yearly') {
+          entitlements.ownedBundles.push(bundle);
+        }
+        break;
+      }
       default:
         break;
     }
   });
+
+  if (entitlements.ownedBundles.length > 0) {
+    entitlements.isPro = true;
+    entitlements.adsEnabled = false;
+    entitlements.xpMultiplier = 1.25;
+    entitlements.dailyChallengeBonusMultiplier = 1.25;
+    entitlements.leaderboardLimit = 50;
+  }
 
   return entitlements;
 }

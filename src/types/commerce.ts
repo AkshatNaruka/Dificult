@@ -4,7 +4,7 @@ export interface PricingPlan {
   id: PlanId;
   name: string;
   price: number;
-  interval: 'month' | 'year';
+  billingLabel: string;
   description: string;
   highlight?: string;
   badge?: string;
@@ -14,7 +14,7 @@ export interface PricingPlan {
 export interface CosmeticItem {
   id: string;
   name: string;
-  type: 'theme' | 'sound' | 'border' | 'caret';
+  type: 'theme' | 'sound' | 'border' | 'caret' | 'background';
   description: string;
   price: number;
   priceId?: string;

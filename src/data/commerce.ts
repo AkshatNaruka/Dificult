@@ -3,22 +3,22 @@ import { CosmeticItem, PricingPlan } from '@/types/commerce';
 export const pricingPlans: PricingPlan[] = [
   {
     id: 'pro_monthly',
-    name: 'Pro Monthly',
+    name: 'Premium Bundle',
     price: 7,
-    interval: 'month',
-    description: 'Unlock premium themes, remove ads, and earn boosted XP.',
-    highlight: 'Most flexible',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY,
+    billingLabel: 'one-time',
+    description: 'Unlock premium themes, sounds, and distraction modes in one purchase.',
+    highlight: 'Best for regular players',
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_PREMIUM_BUNDLE,
   },
   {
     id: 'pro_yearly',
-    name: 'Pro Yearly',
+    name: 'Creator Bundle',
     price: 60,
-    interval: 'year',
-    description: 'Best value for daily typists with full Pro perks.',
-    highlight: '2 months free',
+    billingLabel: 'one-time',
+    description: 'Includes every cosmetic pack plus future premium drops.',
+    highlight: 'Everything unlocked',
     badge: 'Best value',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_CREATOR_BUNDLE,
   },
 ];
 
@@ -31,7 +31,7 @@ export const cosmeticItems: CosmeticItem[] = [
     price: 2,
     entitlementKey: 'theme_tokyo_night',
     previewThemeId: 'tokyo-night',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_TOKYO_NIGHT,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_THEME_TOKYO_NIGHT,
   },
   {
     id: 'theme_dracula',
@@ -41,7 +41,7 @@ export const cosmeticItems: CosmeticItem[] = [
     price: 2,
     entitlementKey: 'theme_dracula',
     previewThemeId: 'dracula',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_DRACULA,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_THEME_DRACULA,
   },
   {
     id: 'theme_ocean',
@@ -51,7 +51,7 @@ export const cosmeticItems: CosmeticItem[] = [
     price: 2,
     entitlementKey: 'theme_ocean',
     previewThemeId: 'ocean',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_THEME_OCEAN,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_THEME_OCEAN,
   },
   {
     id: 'sound_clicks',
@@ -60,7 +60,7 @@ export const cosmeticItems: CosmeticItem[] = [
     description: 'Premium keystroke sounds tuned for focus.',
     price: 3,
     entitlementKey: 'sound_studio_clicks',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_SOUND_CLICKS,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_SOUND_CLICKS,
   },
   {
     id: 'border_prism',
@@ -69,7 +69,7 @@ export const cosmeticItems: CosmeticItem[] = [
     description: 'Animated border glow for your profile.',
     price: 1,
     entitlementKey: 'border_prism',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_BORDER_PRISM,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_BORDER_PRISM,
   },
   {
     id: 'caret_neon',
@@ -78,6 +78,24 @@ export const cosmeticItems: CosmeticItem[] = [
     description: 'A bright, futuristic caret for precision typing.',
     price: 1,
     entitlementKey: 'caret_neon',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_CARET_NEON,
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_CARET_NEON,
+  },
+  {
+    id: 'background_glitch_loop',
+    name: 'Glitch Loop Backgrounds',
+    type: 'background',
+    description: 'Flashy looping backdrops built to keep your focus under pressure.',
+    price: 4,
+    entitlementKey: 'background_glitch_loop',
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_BACKGROUND_GLITCH_LOOP,
+  },
+  {
+    id: 'background_video_noise',
+    name: 'Video Noise Backgrounds',
+    type: 'background',
+    description: 'Long-form motion backdrops that make every run feel louder.',
+    price: 5,
+    entitlementKey: 'background_video_noise',
+    priceId: process.env.NEXT_PUBLIC_DODO_PRODUCT_BACKGROUND_VIDEO_NOISE,
   },
 ];
