@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>dificult | Gear Guide</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      background-color: #131313;
+      color: #e4e2e1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-card {
+      backdrop-filter: blur(12px);
+      background: rgba(31, 32, 32, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .focus-glow:hover {
+      box-shadow: 0 0 20px rgba(173, 198, 255, 0.15);
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-tertiary-fixed-variant": "#7c2e00",
+                  "on-surface": "#e4e2e1",
+                  "on-background": "#e4e2e1",
+                  "secondary-container": "#454747",
+                  "error": "#ffb4ab",
+                  "inverse-primary": "#005bc1",
+                  "surface-bright": "#393939",
+                  "primary-fixed-dim": "#adc6ff",
+                  "surface-variant": "#353535",
+                  "tertiary-fixed": "#ffdbcc",
+                  "on-primary": "#002e69",
+                  "surface-container-high": "#2a2a2a",
+                  "secondary-fixed-dim": "#c6c6c7",
+                  "on-error-container": "#ffdad6",
+                  "on-primary-fixed": "#001a41",
+                  "surface-container-lowest": "#0e0e0e",
+                  "surface-container-highest": "#353535",
+                  "on-error": "#690005",
+                  "outline-variant": "#414755",
+                  "primary-fixed": "#d8e2ff",
+                  "surface-container-low": "#1b1c1c",
+                  "error-container": "#93000a",
+                  "surface-container": "#1f2020",
+                  "on-secondary-container": "#b4b5b5",
+                  "secondary": "#c6c6c7",
+                  "tertiary": "#ffb595",
+                  "on-tertiary-fixed": "#351000",
+                  "on-tertiary": "#571e00",
+                  "on-tertiary-container": "#4c1a00",
+                  "on-primary-fixed-variant": "#004493",
+                  "tertiary-container": "#ef6719",
+                  "on-secondary": "#2f3131",
+                  "background": "#131313",
+                  "primary": "#adc6ff",
+                  "on-surface-variant": "#c1c6d7",
+                  "on-secondary-fixed-variant": "#454747",
+                  "primary-container": "#4b8eff",
+                  "tertiary-fixed-dim": "#ffb595",
+                  "inverse-surface": "#e4e2e1",
+                  "on-primary-container": "#00285c",
+                  "outline": "#8b90a0",
+                  "on-secondary-fixed": "#1a1c1c",
+                  "surface-tint": "#adc6ff",
+                  "surface-dim": "#131313",
+                  "inverse-on-surface": "#303030",
+                  "secondary-fixed": "#e2e2e2",
+                  "surface": "#131313"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "container-max": "1100px",
+                  "unit": "4px",
+                  "margin-safe": "40px",
+                  "gutter": "24px"
+          },
+          "fontFamily": {
+                  "display-lg": ["Geist"],
+                  "code-sm": ["JetBrains Mono"],
+                  "ui-label": ["Geist"],
+                  "typing-buffer": ["JetBrains Mono"],
+                  "body-base": ["JetBrains Mono"],
+                  "headline-md": ["Geist"],
+                  "typing-buffer-mobile": ["JetBrains Mono"]
+          },
+          "fontSize": {
+                  "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                  "ui-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "typing-buffer": ["32px", {"lineHeight": "48px", "letterSpacing": "0em", "fontWeight": "400"}],
+                  "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                  "typing-buffer-mobile": ["20px", {"lineHeight": "30px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/30">
+<!-- TopNavBar Implementation -->
+<nav class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
+<div class="flex justify-between items-center w-full px-margin-safe h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-display-lg text-headline-md font-bold tracking-tighter text-on-surface">dificult</span>
+<div class="hidden md:flex gap-6">
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Test</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Leaderboard</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Store</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Tournaments</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold" href="#">Gear</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 text-on-surface-variant">
+<span class="material-symbols-outlined">palette</span>
+</button>
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 text-on-surface-variant">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="ml-2 px-4 py-2 border border-outline-variant text-on-surface font-ui-label hover:bg-surface-variant transition-all active:scale-95">Sign In</button>
+</div>
+</div>
+</nav>
+<main class="max-w-container-max mx-auto px-margin-safe py-16">
+<!-- Header Section -->
+<header class="text-center mb-24 max-w-2xl mx-auto">
+<p class="font-ui-label text-primary tracking-widest uppercase mb-4">Gear Guide</p>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-6">Recommended keyboard setups</h1>
+<p class="font-body-base text-on-surface-variant">Curated tools for speed and comfort. Affiliate links — we may earn a commission.</p>
+</header>
+<!-- Gear List Grid -->
+<div class="space-y-4">
+<!-- Keychron Q1 Pro -->
+<div class="glass-card p-8 group hover:border-primary/50 transition-all focus-glow flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-[4/3] bg-surface-container overflow-hidden">
+<img alt="Keychron Q1 Pro" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A professional studio photograph of a Keychron Q1 Pro mechanical keyboard. The device features a premium navy blue CNC aluminum body with high-quality PBT keycaps. The lighting is moody and cinematic, highlighting the metallic texture and the glowing RGB backlight. The style is minimalist and high-performance, fitting a dark-mode tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALrgvOel-LIS9agbOqRK-RsZnKL5S2BqsouT-rPyA5XhUvaczUj2RkOsHpxsXk1tqyke3sCPNZVonrTc2loqPyypRI4rAmejpiFaTn26JMS2XzlAfuYkcrNSy6q_GYsHVpTzb5fUurA8CZTNyvbVX1Cs6viqkrzX-q9isyThC_BQ1o_V26InKNRWDj5HqXo-D_okoVNdh0Tol2wZSjIQSsCGPB1DkCZ1mTW0b3rcwuC2rLjrJdQn-DHWjHkkUHrVAgPb27bV8m5qUF"/>
+</div>
+<div class="flex-1 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Keychron Q1 Pro</h2>
+<p class="font-ui-label text-primary uppercase tracking-wider">Keychron · Keyboard</p>
+</div>
+<span class="font-code-sm text-on-surface-variant px-3 py-1 border border-outline-variant/30">$169–$209</span>
+</div>
+<p class="font-body-base text-on-surface-variant leading-relaxed">Customizable mechanical keyboard with hot-swap switches and premium build quality. Perfect for those who want a heavy, stable base for high-speed typing sessions.</p>
+<a class="inline-flex items-center gap-2 font-ui-label text-primary hover:gap-4 transition-all" href="#">
+            View deal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Drop ALT V2 -->
+<div class="glass-card p-8 group hover:border-primary/50 transition-all focus-glow flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-[4/3] bg-surface-container overflow-hidden">
+<img alt="Drop ALT V2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A sleek Drop ALT V2 keyboard showcased in a minimalist desk setup. The image focuses on the low-profile aluminum frame and the vibrant under-glow lighting that casts a soft blue hue on the dark desk surface. The composition is clean and technical, emphasizing the compact 65 percent layout and premium switch details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGvdlHfToA2z8lv8TQEYPma0KUtq7L69x50BBKBmpk3PQVAQltEroO7YAFlaXzyq2TP9jSL0i6mXGNxHvaL5aoG_zX6gs5njLk2YL-qBUGvRjK6Ya5gjYi0dOwP5kvGXApIMgvOqzApkWOfmqYqGXS7HR2gLo9tUIRemeuI2N7VvhGRwBVTCgezmfKY-bwpY3r4qnoEPFgLONkJCcKsJQz7UvLvU4ZhXng5vzl6M50wONIyvQKc56ZJDxvKCMoc0fOcvKrXqzN2n2-"/>
+</div>
+<div class="flex-1 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Drop ALT V2</h2>
+<p class="font-ui-label text-primary uppercase tracking-wider">Drop · Keyboard</p>
+</div>
+<span class="font-code-sm text-on-surface-variant px-3 py-1 border border-outline-variant/30">$179–$249</span>
+</div>
+<p class="font-body-base text-on-surface-variant leading-relaxed">Compact mechanical keyboard with a crisp typing feel. Features a low-profile design that reduces wrist strain while maintaining high tactile feedback.</p>
+<a class="inline-flex items-center gap-2 font-ui-label text-primary hover:gap-4 transition-all" href="#">
+            View deal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- ZSA Moonlander -->
+<div class="glass-card p-8 group hover:border-primary/50 transition-all focus-glow flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-[4/3] bg-surface-container overflow-hidden">
+<img alt="ZSA Moonlander" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A split ergonomic Moonlander keyboard presented on a dark, textured desktop. The two halves of the keyboard are angled for maximum comfort, featuring an ortholinear key layout and customizable thumb clusters. The aesthetic is highly futuristic and clinical, with subtle glow-in-the-dark legends on the keys and a focus on ergonomic perfection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRmKIrQjWkYy0BcvoYAK5MfGjWwLBsE0vG_xidOObEUAS-D99MeNzPg5ibznP0e25i6Zp_hl8wK2GRcGt4aZXfjdPgThbdG8KsfDdxjyjGRzW2SToERgpz7zVLsK-LaFtqhKH7QDE8_BUERy6gO3bShinOZNKA5oSs8F9GpgrO8F7IEpJQpbLQv0_DywsJDQKHRUIt92FacWwd-ScGudr-s98ti_1wOSoIjtuuIyWE4mTc9B0Hob2bo9Pl4zK8DQPhswnkdv3UNmP8"/>
+</div>
+<div class="flex-1 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">ZSA Moonlander</h2>
+<p class="font-ui-label text-primary uppercase tracking-wider">ZSA · Ergonomic</p>
+</div>
+<span class="font-code-sm text-on-surface-variant px-3 py-1 border border-outline-variant/30">$365+</span>
+</div>
+<p class="font-body-base text-on-surface-variant leading-relaxed">Ergonomic split keyboard built for long sessions. The ortholinear layout and customizable thumb clusters are designed for elite typists seeking maximum efficiency.</p>
+<a class="inline-flex items-center gap-2 font-ui-label text-primary hover:gap-4 transition-all" href="#">
+            View deal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Logitech MX Keys -->
+<div class="glass-card p-8 group hover:border-primary/50 transition-all focus-glow flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-[4/3] bg-surface-container overflow-hidden">
+<img alt="Logitech MX Keys" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A top-down view of a Logitech MX Keys keyboard on a clean, modern workspace. The lighting is soft and diffused, emphasizing the spherically dished keys and the sleek dark gray finish. The background includes a professional mouse and a laptop, creating a high-end corporate productivity atmosphere with high contrast and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsCEnfm3_1g44uSKWF5JuabI-qXwsMjVfPQfQKTrnmw9JTcyYGKTYtGlhQv2IX94RMC8dvgsY1yvZcblXd2oZaNbdIqrvnE4eV3dn72bntZNWUnGjAofs6ZKiBRg5Y6KcMI6gUy1Y3ZGXEZ9ggHNko2izAMDGiSGSXSSbg1GyTmtHt1vrP-NQPK7C5Ano0tP-wSrkIi0-MMkvVh2LIdfIt4dFwZnte_Fb-W9JOS1JMQjgRDHooBVmk1M5XY8Q6LcT_WamnpUwEidce"/>
+</div>
+<div class="flex-1 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Logitech MX Keys</h2>
+<p class="font-ui-label text-primary uppercase tracking-wider">Logitech · Keyboard</p>
+</div>
+<span class="font-code-sm text-on-surface-variant px-3 py-1 border border-outline-variant/30">$99–$119</span>
+</div>
+<p class="font-body-base text-on-surface-variant leading-relaxed">Quiet, low-profile keyboard with smart backlighting. Ideal for high-speed typing in shared environments where silence is as important as speed.</p>
+<a class="inline-flex items-center gap-2 font-ui-label text-primary hover:gap-4 transition-all" href="#">
+            View deal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Desk Grip Mat -->
+<div class="glass-card p-8 group hover:border-primary/50 transition-all focus-glow flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-[4/3] bg-surface-container overflow-hidden">
+<img alt="Desk Grip Mat" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up shot of a high-quality desk mat texture. The mat is a deep obsidian black with a subtle micro-weave pattern that suggests precision and grip. The edge features high-density stitching in a matching tone. Soft overhead lighting creates a subtle gradient across the surface, highlighting its clean, non-reflective finish suited for a focused workstation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0_Ogi5LTGWgFjDVEiMBz6PeOQqjK7WYKLJR8AKvoei6UJoToNXpANa83PVPG44Eh7z2E_zXYYspfhy-W8HW7NR2SNwtC7ZPOOHXzUdfOk-JCLHQ4aaeES15kWUGbDn4MIzoTH-oIOjTXez7XHCwI6HROhaFeKd_72QR8BxMTXcKYoWnMOXoumaXRcJR3eSAhKgayzJEYqrUhvlsP7iirKKSlO7clVVU2AqJ9FOdEmsFCr8ioSFJdk86pQRpWaxyXwHIYL_ocFPbA7"/>
+</div>
+<div class="flex-1 space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Desk Grip Mat</h2>
+<p class="font-ui-label text-primary uppercase tracking-wider">Workplace Essentials · Accessories</p>
+</div>
+<span class="font-code-sm text-on-surface-variant px-3 py-1 border border-outline-variant/30">$19–$29</span>
+</div>
+<p class="font-body-base text-on-surface-variant leading-relaxed">Non-slip mat to keep your keyboard stable. A critical foundation for aggressive typing, ensuring your board never shifts mid-burst.</p>
+<a class="inline-flex items-center gap-2 font-ui-label text-primary hover:gap-4 transition-all" href="#">
+            View deal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Implementation -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/10 mt-24">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-8 px-margin-safe max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-display-lg text-body-base font-bold text-on-surface-variant">dificult</span>
+<p class="font-body-base text-on-surface-variant/60 text-sm">© 2024 dificult. Crafted for the flow state.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">GitHub</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Discord</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Privacy</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Terms</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Status</a>
+</div>
+</div>
+</footer>
+</body></html>

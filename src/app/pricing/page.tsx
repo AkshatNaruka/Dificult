@@ -17,7 +17,7 @@ export default async function PricingPage() {
         >
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1">
+            <main className="flex-1 pt-24">
                 <div className="max-w-3xl mx-auto px-5 pt-14 pb-24 flex flex-col gap-10">
                     {/* Hero */}
                     <div className="text-center space-y-3">

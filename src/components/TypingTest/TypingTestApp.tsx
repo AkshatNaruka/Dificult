@@ -352,16 +352,10 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                     extra={
                         <button
                             onClick={() => themeStore.toggleMute()}
+                            className="app-pill inline-flex h-9 w-9 items-center justify-center transition-all"
                             style={{
-                                background: 'var(--bg-secondary)',
                                 color: 'var(--text-main)',
-                                border: '1px solid var(--border-glass)',
-                                borderRadius: '8px',
-                                padding: '5px 8px',
                                 cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                transition: 'border-color 0.2s',
                             }}
                             onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-accent)')}
                             onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
@@ -444,11 +438,12 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? -4 : 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full rounded-3xl p-5 md:p-6"
+                                className="w-full rounded-2xl p-5 md:p-6"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))', 
-                                    border: '1px solid var(--border-glass)',
-                                    boxShadow: '0 18px 40px rgba(0,0,0,0.18)',
+                                    background: 'rgba(31, 32, 32, 0.7)',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                                    backdropFilter: 'blur(12px)',
                                 }}
                             >
                                 <div className="grid gap-4 md:grid-cols-[1.25fr_1fr_1fr] items-start">

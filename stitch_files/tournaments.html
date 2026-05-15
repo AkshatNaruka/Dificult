@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/geist" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "on-surface": "#e4e2e1",
+                    "on-background": "#e4e2e1",
+                    "secondary-container": "#454747",
+                    "error": "#ffb4ab",
+                    "inverse-primary": "#005bc1",
+                    "surface-bright": "#393939",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-variant": "#353535",
+                    "tertiary-fixed": "#ffdbcc",
+                    "on-primary": "#002e69",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#001a41",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-container-highest": "#353535",
+                    "on-error": "#690005",
+                    "outline-variant": "#414755",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-low": "#1b1c1c",
+                    "error-container": "#93000a",
+                    "surface-container": "#1f2020",
+                    "on-secondary-container": "#b4b5b5",
+                    "secondary": "#c6c6c7",
+                    "tertiary": "#ffb595",
+                    "on-tertiary-fixed": "#351000",
+                    "on-tertiary": "#571e00",
+                    "on-tertiary-container": "#4c1a00",
+                    "on-primary-fixed-variant": "#004493",
+                    "tertiary-container": "#ef6719",
+                    "on-secondary": "#2f3131",
+                    "background": "#131313",
+                    "primary": "#adc6ff",
+                    "on-surface-variant": "#c1c6d7",
+                    "on-secondary-fixed-variant": "#454747",
+                    "primary-container": "#4b8eff",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "inverse-surface": "#e4e2e1",
+                    "on-primary-container": "#00285c",
+                    "outline": "#8b90a0",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-tint": "#adc6ff",
+                    "surface-dim": "#131313",
+                    "inverse-on-surface": "#303030",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "container-max": "1100px",
+                    "unit": "4px",
+                    "margin-safe": "40px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Geist"],
+                    "code-sm": ["JetBrains Mono"],
+                    "ui-label": ["Geist"],
+                    "typing-buffer": ["JetBrains Mono"],
+                    "body-base": ["JetBrains Mono"],
+                    "headline-md": ["Geist"],
+                    "typing-buffer-mobile": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "ui-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "typing-buffer": ["32px", {"lineHeight": "48px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "typing-buffer-mobile": ["20px", {"lineHeight": "30px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #131313;
+            color: #e4e2e1;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(173, 198, 255, 0.3);
+        }
+        .hud-glass {
+            background: rgba(14, 14, 14, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="font-body-base text-body-base">
+<!-- TopNavBar Shell -->
+<header class="bg-background dark:bg-background border-b border-outline-variant/30 docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-safe h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-display-lg text-headline-md font-bold tracking-tighter text-on-surface dark:text-on-surface">dificult</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Test</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Leaderboard</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Store</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold" href="#">Tournaments</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Gear</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 rounded">
+<span class="material-symbols-outlined" data-icon="palette">palette</span>
+</button>
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 rounded">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="p-2 hover:bg-surface-variant/20 hover:text-primary transition-all duration-200 rounded">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-4 py-1.5 font-ui-label font-bold rounded hover:opacity-90 active:scale-95 transition-all">Sign In</button>
+</div>
+</div>
+</header>
+<main class="min-h-screen py-16">
+<!-- Hero Section -->
+<section class="max-w-container-max mx-auto px-margin-safe text-center mb-24">
+<span class="font-ui-label text-primary tracking-[0.2em] uppercase block mb-4">Tournaments</span>
+<h1 class="font-display-lg text-[64px] leading-tight font-bold text-on-surface mb-6">Branded speed events</h1>
+<p class="text-on-surface-variant max-w-2xl mx-auto font-body-base">
+                Monthly competitions with sponsor-backed prize pools and leaderboard branding. Push your typing limits in the ultimate flow state environment.
+            </p>
+</section>
+<!-- Tournament Feed -->
+<div class="max-w-container-max mx-auto px-margin-safe space-y-12">
+<!-- Event 1: Spring Sprint Championship -->
+<article class="relative group border border-outline-variant/10 bg-surface-container-lowest/50 rounded overflow-hidden">
+<div class="absolute inset-0 opacity-10 grayscale group-hover:grayscale-0 transition-all duration-700 pointer-events-none overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a high-end mechanical keyboard with custom keycaps in a clean developer aesthetic. The lighting is Moody and focused, highlighting the precise engineering and premium materials. Subtle deep blues and Obsidian blacks dominate the frame, accented by a soft primary glow from the switches underneath." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA45Iz2BLH_KCKAnjDWCtwpwEvyEkaWXg7amjQ8YnsU3a5PABdALbEItDZBTmcQIDbMPIA0sz2pexWDfw7QaCForSAfYReN4c4d82cerpQ6q77wHHrQhDwPo0I116vzIuaAMBiv9LA2jHWyuFV2x7S8EzlWfHGgZwSLF0TyBFi-coqH93bDKZ8bVh3k7nqHMZ6Rk-pC25Y5d1Fji9YKpTQF-Ekw44rKlywjXe8Fd27TQDSByXe6zBhiqzwCHFV39WWAE_UbmMC4vGS7"/>
+</div>
+<div class="relative p-8 md:p-12 z-10 flex flex-col gap-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Spring Sprint Championship</h2>
+<div class="flex gap-4 items-center">
+<span class="font-code-sm text-on-tertiary-fixed-variant uppercase tracking-widest">JUNE 1, 2026</span>
+<span class="text-outline-variant">/</span>
+<a class="text-primary font-ui-label hover:underline" href="#">by Keychron</a>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-base max-w-3xl leading-relaxed">
+                        Monthly speed tournament with a live leaderboard and qualifying rounds. Designed for maximum throughput and clinical accuracy.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-outline-variant/10">
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Entry Fee</p>
+<p class="font-headline-md text-on-surface">$5 entry or free with Pro</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Prize Pool</p>
+<p class="font-headline-md text-on-surface">$500 prize pool + sponsor gear</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Leaderboard</p>
+<p class="font-headline-md text-on-surface">Top 50 live, sponsor branding</p>
+</div>
+</div>
+<button class="w-full bg-on-surface text-surface py-4 font-ui-label font-bold uppercase tracking-widest hover:bg-primary transition-all duration-300 active:scale-[0.98]">
+                        Join waitlist
+                    </button>
+</div>
+</article>
+<!-- Event 2: Summer Precision Open -->
+<article class="relative group border border-outline-variant/10 bg-surface-container-lowest/50 rounded overflow-hidden">
+<div class="absolute inset-0 opacity-10 grayscale group-hover:grayscale-0 transition-all duration-700 pointer-events-none overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A top-down minimal desk setup featuring a premium custom mechanical keyboard on a large dark felt desk mat. The image uses a technical aesthetic with cool gray tones and a hint of warm orange light from a desk lamp. The focus is sharp on the keycaps, emphasizing the texture and clinical design of the setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANZ83T9t-CdmT4OGybnQNaQhd1DBZXMuYVKiHyVQz5y0wJhqdKTia0R5acxBg4Guu8nBPg0_zvMGVNFHQa5WA4dlot8-AU5dtJq_FOoogcS3y7Y3p7dRcqzYQoSE8MeWPb2nGCZvWO6m1SC7GTusS6HGvWBI5bPSDdRBLmUfHOCJ405nZE9eeQGK19Z2q2rcDoj8W9KQROmQiO2tPuFv5n9gH9xAEU300TQq9h0tYLPoz2_QcMS3AZPTkP_3-s8eLpXS5rdAQzi9qh"/>
+</div>
+<div class="relative p-8 md:p-12 z-10 flex flex-col gap-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Summer Precision Open</h2>
+<div class="flex gap-4 items-center">
+<span class="font-code-sm text-on-tertiary-fixed-variant uppercase tracking-widest">JULY 15, 2026</span>
+<span class="text-outline-variant">/</span>
+<a class="text-primary font-ui-label hover:underline" href="#">by Drop</a>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-base max-w-3xl leading-relaxed">
+                        Accuracy-first event with surprise daily heats. We reward the surgical precision required for perfect code execution under pressure.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-outline-variant/10">
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Entry Fee</p>
+<p class="font-headline-md text-on-surface">$4 entry or free with Pro</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Prize Pool</p>
+<p class="font-headline-md text-on-surface">$350 prize pool + limited edition keycaps</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Leaderboard</p>
+<p class="font-headline-md text-on-surface">Accuracy leaderboard with highlight cards</p>
+</div>
+</div>
+<button class="w-full bg-on-surface text-surface py-4 font-ui-label font-bold uppercase tracking-widest hover:bg-primary transition-all duration-300 active:scale-[0.98]">
+                        Join waitlist
+                    </button>
+</div>
+</article>
+<!-- Event 3: Night Owl Marathon -->
+<article class="relative group border border-outline-variant/10 bg-surface-container-lowest/50 rounded overflow-hidden">
+<div class="absolute inset-0 opacity-10 grayscale group-hover:grayscale-0 transition-all duration-700 pointer-events-none overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A futuristic ergonomic keyboard displayed in a dark room with dramatic rim lighting. The aesthetic is ultra-modern and tech-focused, utilizing deep blacks and vibrant neon accents of blue and cyan. The lighting creates a sense of high-performance hardware designed for intense nighttime coding sessions." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4wRNdBe5h_fvzuPQjCIraSEbGptklRTNGbHSWBjIZZuzQ7EXbIgfPlEHzNBtvGs2jxn2EYx-JH8lVUZl7wEhAzbO78DbEztzoitMIl12vFhROGFzN84QHjUVi_Y-cvsx-NmIjQCuD6DUjiVXqSKwHtl1v2iTLv1VrS-BvYKFl90INGYlfFsj5fcSV24oXZbi92UTNWjvjsL5BoOXnYkD4wGLXr67-aWLMt1obtqYvl-xW4_49HrNKesK0N_67BW0tUWAkP4nQzt7N"/>
+</div>
+<div class="relative p-8 md:p-12 z-10 flex flex-col gap-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Night Owl Marathon</h2>
+<div class="flex gap-4 items-center">
+<span class="font-code-sm text-on-tertiary-fixed-variant uppercase tracking-widest">AUGUST 20, 2026</span>
+<span class="text-outline-variant">/</span>
+<a class="text-primary font-ui-label hover:underline" href="#">by ZSA</a>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-base max-w-3xl leading-relaxed">
+                        Long-form endurance challenge with live shout-outs. Consistency is king in this multi-hour typing session designed for marathon performance.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-outline-variant/10">
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Entry Fee</p>
+<p class="font-headline-md text-on-surface">$6 entry or free with Pro</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Prize Pool</p>
+<p class="font-headline-md text-on-surface">$750 prize pool + ergonomic gear</p>
+</div>
+<div>
+<p class="font-ui-label text-outline uppercase tracking-wider mb-2">Leaderboard</p>
+<p class="font-headline-md text-on-surface">Endurance leaderboard plus sponsor finals</p>
+</div>
+</div>
+<button class="w-full bg-on-surface text-surface py-4 font-ui-label font-bold uppercase tracking-widest hover:bg-primary transition-all duration-300 active:scale-[0.98]">
+                        Join waitlist
+                    </button>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/10 full-width bottom-0 mt-24">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-12 px-margin-safe max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-display-lg text-body-base font-bold text-on-surface-variant">dificult</span>
+<p class="text-on-surface-variant font-ui-label opacity-60">© 2024 dificult. Crafted for the flow state.</p>
+</div>
+<nav class="flex gap-8">
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">GitHub</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Discord</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Privacy</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Terms</a>
+<a class="text-on-surface-variant font-ui-label hover:text-primary transition-colors duration-200" href="#">Status</a>
+</nav>
+</div>
+</footer>
+</body></html>

@@ -44,9 +44,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code', // Replace with actual Google verification code
-  },
 };
 
 export default function RootLayout({
@@ -85,12 +82,22 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Material Symbols Outlined */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        />
+        {/* JetBrains Mono for code/monospace */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className="antialiased font-sans transition-colors duration-300" suppressHydrationWarning>
+      <body className="antialiased transition-colors duration-300" suppressHydrationWarning>
         <SupabaseSyncProvider />
         {children}
         {/* Google AdSense - only loads if configured */}

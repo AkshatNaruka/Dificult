@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Store | dificult</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "on-surface": "#e4e2e1",
+                    "on-background": "#e4e2e1",
+                    "secondary-container": "#454747",
+                    "error": "#ffb4ab",
+                    "inverse-primary": "#005bc1",
+                    "surface-bright": "#393939",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-variant": "#353535",
+                    "tertiary-fixed": "#ffdbcc",
+                    "on-primary": "#002e69",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#001a41",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-container-highest": "#353535",
+                    "on-error": "#690005",
+                    "outline-variant": "#414755",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-low": "#1b1c1c",
+                    "error-container": "#93000a",
+                    "surface-container": "#1f2020",
+                    "on-secondary-container": "#b4b5b5",
+                    "secondary": "#c6c6c7",
+                    "tertiary": "#ffb595",
+                    "on-tertiary-fixed": "#351000",
+                    "on-tertiary": "#571e00",
+                    "on-tertiary-container": "#4c1a00",
+                    "on-primary-fixed-variant": "#004493",
+                    "tertiary-container": "#ef6719",
+                    "on-secondary": "#2f3131",
+                    "background": "#131313",
+                    "primary": "#adc6ff",
+                    "on-surface-variant": "#c1c6d7",
+                    "on-secondary-fixed-variant": "#454747",
+                    "primary-container": "#4b8eff",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "inverse-surface": "#e4e2e1",
+                    "on-primary-container": "#00285c",
+                    "outline": "#8b90a0",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-tint": "#adc6ff",
+                    "surface-dim": "#131313",
+                    "inverse-on-surface": "#303030",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "container-max": "1100px",
+                    "unit": "4px",
+                    "margin-safe": "40px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Geist"],
+                    "code-sm": ["JetBrains Mono"],
+                    "ui-label": ["Geist"],
+                    "typing-buffer": ["JetBrains Mono"],
+                    "body-base": ["JetBrains Mono"],
+                    "headline-md": ["Geist"],
+                    "typing-buffer-mobile": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "ui-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "typing-buffer": ["32px", {"lineHeight": "48px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "typing-buffer-mobile": ["20px", {"lineHeight": "30px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e4e2e1;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass-card {
+            background: rgba(31, 32, 32, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(173, 198, 255, 0.15);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-background dark:bg-background border-b border-outline-variant/30 docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-safe h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-display-lg text-headline-md font-bold tracking-tighter text-on-surface dark:text-on-surface" href="#">dificult</a>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Test</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Leaderboard</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-ui-label" href="#">Store</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Tournaments</a>
+<a class="text-on-surface-variant font-ui-label hover:text-on-surface transition-colors duration-200" href="#">Gear</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant/20 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="palette">palette</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant/20 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant/20 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<button class="px-4 py-1.5 border border-primary text-primary font-ui-label text-ui-label rounded hover:bg-primary hover:text-on-primary transition-all active:scale-95">Sign In</button>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max mx-auto w-full px-margin-safe py-16">
+<!-- Hero Section / Bundle Promotion -->
+<section class="mb-16">
+<div class="relative overflow-hidden rounded-lg bg-surface-container p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-outline-variant/20">
+<div class="relative z-10 max-w-xl">
+<span class="inline-block px-2 py-1 bg-primary/10 text-primary font-code-sm text-code-sm border border-primary/20 mb-4 tracking-widest uppercase">Limited Offer</span>
+<h1 class="font-display-lg text-display-lg mb-4 text-on-surface">One-time Bundles</h1>
+<p class="font-body-base text-body-base text-on-surface-variant mb-8 leading-relaxed">
+                        Elevate your flow state. Unlock all current and future themes, sound packs, and cosmetic modifiers in a single lifetime transaction.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-3 bg-primary text-on-primary font-ui-label font-bold rounded flex items-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                            Unlock Everything — $19.99
+                        </button>
+<button class="px-8 py-3 border border-outline-variant text-on-surface font-ui-label hover:bg-surface-variant/20 transition-all">
+                            View Bundle Details
+                        </button>
+</div>
+</div>
+<div class="relative w-full md:w-1/3 aspect-square max-w-[300px]">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl opacity-50"></div>
+<img alt="Abstract digital art" class="w-full h-full object-cover rounded-lg border border-primary/30 rotate-3 transform hover:rotate-0 transition-transform duration-500" data-alt="A sophisticated digital rendering of abstract geometric glass structures refracting light in a dark, minimalist environment. The scene features deep obsidian backgrounds contrasted with subtle neon blue and violet glows from the glass edges. The lighting is focused and clinical, emphasizing the sharp lines and high-performance technical aesthetic of the brand dificult." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiXPgupYOAWHqgZ5KsqAeUiZ5YAuyrUsG0XjfVSTGeEzXv5MD_gEjECnF8zYKYQ7HPtXHoagp7eu2xHqz_afplKcBJzOH7GoZq07QvZkSNSoG_ydhMa7-m33oMA0ZFRs0XMTCEWfdL5WqIPsJGr19LiBTpYGZlKbsYsSW6vsb5BpPa0za9HRLQXahjJ9V82WB7GouDXgI-XuuMWJn5itkgYfUzzx820BT3lHUqrLjCt1fGMZlQcfuIBFRNAMcVsUuIXKPxnno-3h0F"/>
+</div>
+</div>
+</section>
+<!-- Individual Packs Section -->
+<section>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-display-lg text-headline-md text-on-surface mb-1">Individual Packs</h2>
+<p class="font-body-base text-body-base text-on-surface-variant">Customize your terminal experience piece by piece.</p>
+</div>
+<div class="flex gap-2 p-1 bg-surface-container rounded border border-outline-variant/20">
+<button class="px-4 py-1 text-on-surface bg-surface-variant/40 font-ui-label text-ui-label rounded">All</button>
+<button class="px-4 py-1 text-on-surface-variant hover:text-on-surface font-ui-label text-ui-label transition-colors">Themes</button>
+<button class="px-4 py-1 text-on-surface-variant hover:text-on-surface font-ui-label text-ui-label transition-colors">Sounds</button>
+<button class="px-4 py-1 text-on-surface-variant hover:text-on-surface font-ui-label text-ui-label transition-colors">Cosmetics</button>
+</div>
+</div>
+<!-- Products Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Tokyo Night Theme -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 relative">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-primary/10 font-display-lg opacity-10">THEME</span>
+</div>
+<img alt="Tokyo Night Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A moody, high-contrast digital preview of a coding environment inspired by Tokyo nightlife. The color palette consists of deep indigos and rich purples, with neon cyan and magenta syntax highlighting. The visual style is clinical and sleek, mirroring the professional aesthetic of high-end developer tools. Soft glows emanate from key interface elements against a solid black background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgei76qd4bxgF3NyrtnjYyUA0TkaKDJCGYOor6VBQGOnLg264WKFeizqDw9qEy5k-JG_xj7IZtFQN2GIeE6mZo41BBLKEQxYa1cHAhYiM1ttAADis7FK4foa-jYVjzXE9Mvv0zr0wJc2MaIoIb7Sjrp2MaqR0HOBFhRxTgg_q2tKBhp430lJaA-PSTv0hU7Gh5tuT98RYEc2iom_VotC8aoumoHysmpZiTxdZDwHY1ZbzfvcJLhJSVg8L9VGfHJtivgEykDM6SeuAO"/>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Tokyo Night Theme</h3>
+<span class="font-code-sm text-code-sm text-primary px-2 py-0.5 bg-primary/10 border border-primary/20">THEME</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">A deep, moody aesthetic with neon accents inspired by the streets of Shinjuku.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$2.99</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+<!-- Dracula Theme -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 relative">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-on-tertiary-fixed-variant/10 font-display-lg opacity-10">THEME</span>
+</div>
+<img alt="Dracula Theme Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A dark and sophisticated software interface theme featuring a palette of deep purples, vibrant pinks, and lime greens. The aesthetic is clean and modern, designed for long hours of focused typing. The background is a rich, matte dark grey, ensuring high visibility and reduced eye strain. The lighting is uniform and soft, maintaining a premium HUD feel throughout the layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnxEcw6ewwGP0uFjAjb5Jhoj5omvjbcnFI2ybS76AJEcqITHFCq2kqWwf1rzzH-2p_S27D7t-QF6q4Ek0r6hYRKKRIi3m1eOrrYD5NcIFJ9QRKTK7VU-Z2GC-0EBNwXNjMFd0_Wss98yVjxD9c2vS24eq0wYTV3cgyRDdEiyjegRXQsIO5YyA6gZycnGs3-LSTaac7ST8r96AUqswuMPul-kMRdz4VoiO3SRHQzKqL7ZErANHHvRdsTgJnB8HMNwwtuVEe_B9H-8HV"/>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Dracula Theme</h3>
+<span class="font-code-sm text-code-sm text-primary px-2 py-0.5 bg-primary/10 border border-primary/20">THEME</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">The legendary dark theme for dedicated developers. High contrast, high focus.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$2.99</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+<!-- Studio Click Pack -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 flex items-center justify-center bg-gradient-to-br from-surface-container-low to-background">
+<span class="material-symbols-outlined text-primary text-6xl opacity-50" data-icon="graphic_eq">graphic_eq</span>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Studio Click Pack</h3>
+<span class="font-code-sm text-code-sm text-tertiary px-2 py-0.5 bg-tertiary/10 border border-tertiary/20">SOUND</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">Crisp, professional mechanical switch sounds recorded in a studio environment.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$1.49</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+<!-- Ocean Theme -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 relative">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-primary-container/10 font-display-lg opacity-10">THEME</span>
+</div>
+<img alt="Ocean Theme Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A serene and cool digital interface theme inspired by the deep ocean. The palette utilizes varying shades of navy, teal, and soft aquamarine. The layout is minimalist and airy, providing a calm atmosphere for focused typing sessions. Subtle glassmorphic effects on the UI components add depth without clutter, adhering to a modern corporate aesthetic with a clinical touch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtdUuefOCrtVsXhQErm_5QpTWz9BK31LGiLMOc9Fs6yVFn0ioqzB7sA8pDm-0-8XgiXYGW5pzLnqdGiFNzcyNPQLN5A6Cnu0bDQaDbCY-aXSh9MGnNd7fQAOw_Y7YVZApEc8ncFOMCsr6VxpqTVpZMvoLvf-v-MiDMXGMNjo-NNfBiS2jGGMHsx3ON9xy1LZ67V2upE1xxWCgxHUVVJUZ9odDeU_tlrUV4NJzGSjxwpPQSxBxDncQCDBqkllTqmlP9ql5aBDUfJ-76"/>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Ocean Theme</h3>
+<span class="font-code-sm text-code-sm text-primary px-2 py-0.5 bg-primary/10 border border-primary/20">THEME</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">Deep blues and teal highlights for a calm, submerged typing experience.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$2.99</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+<!-- Prism Profile Border -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 flex items-center justify-center bg-gradient-to-tr from-primary/10 to-tertiary/10">
+<div class="w-24 h-24 rounded-full border-4 border-dashed border-primary animate-pulse flex items-center justify-center bg-surface-container">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl" data-icon="person">person</span>
+</div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Prism Border</h3>
+<span class="font-code-sm text-code-sm text-secondary-fixed-dim px-2 py-0.5 bg-secondary-container/20 border border-secondary-container/40">COSMETIC</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">An animated, multi-chromatic border for your profile avatar in leaderboards.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$1.99</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+<!-- Neon Caret -->
+<div class="glass-card glow-hover p-6 rounded-lg flex flex-col transition-all group">
+<div class="aspect-video bg-surface-container-highest rounded mb-4 overflow-hidden border border-outline-variant/10 flex items-center justify-center">
+<div class="w-1 h-12 bg-primary shadow-[0_0_15px_rgba(173,198,255,0.8)]"></div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-on-surface text-body-base font-bold">Neon Caret</h3>
+<span class="font-code-sm text-code-sm text-secondary-fixed-dim px-2 py-0.5 bg-secondary-container/20 border border-secondary-container/40">COSMETIC</span>
+</div>
+<p class="font-body-base text-body-base text-on-surface-variant mb-6 flex-grow">A vibrant, glowing cursor that leaves a faint trail as you type at high speeds.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-code-sm text-headline-md text-on-surface">$0.99</span>
+<button class="px-4 py-2 border border-outline text-on-surface font-ui-label text-ui-label hover:bg-primary hover:text-on-primary hover:border-primary transition-all active:scale-95">Buy now</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/10 full-width bottom-0 mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-8 px-margin-safe max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col md:flex-row items-center gap-6">
+<span class="font-display-lg text-body-base font-bold text-on-surface-variant">dificult</span>
+<p class="font-body-base text-body-base text-on-surface-variant/60">© 2024 dificult. Crafted for the flow state.</p>
+</div>
+<div class="flex gap-6 items-center">
+<a class="text-on-surface-variant font-ui-label text-ui-label hover:text-primary transition-colors duration-200" href="#">GitHub</a>
+<a class="text-on-surface-variant font-ui-label text-ui-label hover:text-primary transition-colors duration-200" href="#">Discord</a>
+<a class="text-on-surface-variant font-ui-label text-ui-label hover:text-primary transition-colors duration-200" href="#">Privacy</a>
+<a class="text-on-surface-variant font-ui-label text-ui-label hover:text-primary transition-colors duration-200" href="#">Terms</a>
+<a class="text-on-surface-variant font-ui-label text-ui-label hover:text-primary transition-colors duration-200" href="#">Status</a>
+</div>
+</div>
+</footer>
+</body></html>

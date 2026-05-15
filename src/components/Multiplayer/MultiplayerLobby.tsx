@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useMultiplayer } from '../../hooks/useMultiplayer';
-import { ThemePicker } from '../ThemePicker';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTypingEngine } from '../../hooks/useTypingEngine';
 import { WordDisplay } from '../TypingTest/WordDisplay';
 import { useEntitlements } from '@/hooks/useEntitlements';
+import { Navbar } from '../Navbar';
 
 
 export default function MultiplayerLobby({ user }: { user: { id: string; email?: string } | null }) {
@@ -86,47 +86,36 @@ export default function MultiplayerLobby({ user }: { user: { id: string; email?:
 
     if (!user) {
         return (
-            <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-                <div className="p-8 text-center bg-red-500/10 rounded-2xl border border-red-500/20">
+            <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+                <Navbar />
+                <main className="flex flex-1 items-center justify-center px-6 py-16 pt-24">
+                    <div className="app-surface max-w-sm rounded-3xl p-8 text-center">
                     <h2 className="text-xl font-bold text-red-400 mb-4 font-typing">Authentication Required</h2>
                     <p className="mb-6 text-sm">You must be logged in to access multiplayer.</p>
-                    <Link href="/login" className="px-6 py-2 bg-red-500 text-white rounded-lg font-bold">Log In</Link>
-                </div>
+                    <Link href="/login" className="inline-flex rounded-full px-6 py-2 font-bold" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>Log In</Link>
+                    </div>
+                </main>
             </div>
         );
     }
 
     return (
         <div className="min-h-screen flex flex-col transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-            {/* Navbar */}
-            <nav className="w-full flex items-center justify-between px-10 py-5" style={{ borderBottom: '1px solid var(--border-glass)' }}>
-                <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
-                    type<span style={{ color: 'var(--text-accent)' }}>warrior</span>
-                </Link>
-                <div className="flex items-center gap-4">
-                    {!entitlements.isPro && (
-                        <Link href="/pricing" className="text-xs font-bold px-3 py-1.5 rounded-lg" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
-                            Upgrade
-                        </Link>
-                    )}
-                    <Link href="/store" className="text-sm font-typing opacity-70 hover:opacity-100">Store</Link>
-                    <Link href="/gear" className="text-sm font-typing opacity-70 hover:opacity-100">Gear</Link>
-                    <Link href="/tournaments" className="text-sm font-typing opacity-70 hover:opacity-100">Tournaments</Link>
-                    <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
-                        <span className="text-xs font-typing text-gray-500 uppercase tracking-widest">{isConnected ? 'Server Online' : 'Connecting...'}</span>
+            <Navbar
+                user={user}
+                isPro={entitlements.isPro}
+                extra={(
+                    <div className="app-pill flex items-center gap-2 px-3 py-1.5 text-xs font-typing uppercase tracking-[0.18em]" style={{ color: 'var(--text-main)' }}>
+                        <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'} animate-pulse`} />
+                        <span>{isConnected ? 'Server Online' : 'Connecting'}</span>
                     </div>
-                    <ThemePicker />
-                    <Link href="/profile" className="font-typing text-sm hover:opacity-80 transition-opacity flex items-center gap-2">
-                        <span>{user.email?.split('@')[0]}</span>
-                    </Link>
-                </div>
-            </nav>
+                )}
+            />
 
-            <main className="flex-1 flex flex-col items-center py-10 px-6">
+            <main className="flex flex-1 flex-col items-center px-6 py-10 pt-24">
 
                 {error && (
-                    <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm w-full max-w-4xl">
+                    <div className="app-surface mb-6 w-full max-w-4xl rounded-2xl px-4 py-3 text-sm text-red-500">
                         {error}
                     </div>
                 )}

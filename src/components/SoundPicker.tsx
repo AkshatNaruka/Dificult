@@ -71,20 +71,10 @@ export function SoundPicker() {
         <div className="relative">
             <button
                 onClick={open}
+                className="app-pill flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 font-[inherit] text-[13px] transition-all"
                 style={{
-                    background: 'var(--bg-secondary)',
                     color: 'var(--text-main)',
-                    border: '1px solid var(--border-glass)',
-                    borderRadius: '8px',
-                    padding: '5px 12px',
-                    fontSize: '13px',
-                    fontFamily: 'inherit',
                     cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'border-color 0.2s',
-                    whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-accent)')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
@@ -105,17 +95,15 @@ export function SoundPicker() {
                 <>
                     <div style={{ position: 'fixed', inset: 0, zIndex: 9998 }} onClick={close} />
                     <div
+                        className="app-surface-strong"
                         style={{
                             position: 'absolute',
                             top: 'calc(100% + 8px)',
                             right: 0,
                             zIndex: 9999,
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-glass)',
                             borderRadius: '16px',
                             padding: '12px',
                             width: '280px',
-                            boxShadow: '0 24px 48px rgba(0,0,0,0.4)',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2px',

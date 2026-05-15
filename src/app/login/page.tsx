@@ -18,7 +18,7 @@ export default async function LoginPage({
         >
             <Navbar />
 
-            <main className="flex-1 flex items-center justify-center px-5 py-16">
+            <main className="flex-1 flex items-center justify-center px-5 py-16 pt-24">
                 <div
                     className="w-full max-w-sm rounded-2xl p-8 space-y-6"
                     style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}

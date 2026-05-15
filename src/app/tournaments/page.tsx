@@ -18,7 +18,7 @@ export default async function TournamentsPage() {
         >
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1">
+            <main className="flex-1 pt-24">
                 <div className="max-w-3xl mx-auto px-5 pt-12 pb-24 flex flex-col gap-10">
                     {/* Header */}
                     <div className="text-center space-y-3">

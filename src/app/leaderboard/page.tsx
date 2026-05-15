@@ -63,12 +63,12 @@ export default async function LeaderboardPage() {
 
     return (
         <div
-            className="min-h-screen flex flex-col transition-colors duration-300"
+            className="min-h-screen flex flex-col"
             style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
         >
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1">
+            <main className="flex-1 pt-24">
                 <div className="max-w-5xl mx-auto px-5 pt-12 pb-24 flex flex-col gap-10">
                     {/* Header */}
                     <div className="text-center space-y-2">
