@@ -440,103 +440,92 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             exit={{ opacity: 0 }}
                             className="w-[60vw] min-w-[320px] max-w-[800px] flex flex-col items-center gap-4"
                         >
-                            {/* ═════ MINIMAL CONTROLS BAR (MonkeyType Style) ═════ */}
+                            {/* ═════ TEST SETTINGS PANEL ═════ */}
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? -4 : 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full flex items-center gap-3 rounded-xl px-4 py-2.5"
+                                className="w-full rounded-3xl p-5 md:p-6"
                                 style={{
-                                    background: 'var(--bg-secondary)',
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))', 
                                     border: '1px solid var(--border-glass)',
+                                    boxShadow: '0 18px 40px rgba(0,0,0,0.18)',
                                 }}
                             >
-                                {/* Test Type */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] uppercase tracking-widest font-mono opacity-40" style={{ color: 'var(--text-main)' }}>type</span>
-                                    <div className="flex gap-0.5">
-                                        {(['words', 'numbers', 'symbols', 'javascript', 'python'] as const).map(type => (
-                                            <button
-                                                key={type}
-                                                onClick={() => engine.setTestType(type)}
-                                                className="px-2.5 py-1 rounded-md transition-all duration-150 text-[11px] font-mono"
-                                                style={{
-                                                    color: engine.testType === type ? 'var(--text-accent)' : 'var(--text-main)',
-                                                    background: engine.testType === type ? 'rgba(255,255,255,0.06)' : 'transparent',
-                                                    fontWeight: engine.testType === type ? 600 : 400,
-                                                    opacity: engine.testType === type ? 1 : 0.5,
-                                                    cursor: 'pointer',
-                                                    border: 'none',
-                                                    outline: 'none',
-                                                }}
-                                            >
-                                                {type === 'javascript' ? 'js' : type === 'python' ? 'py' : type}
-                                            </button>
-                                        ))}
+                                <div className="grid gap-4 md:grid-cols-[1.25fr_1fr_1fr] items-start">
+                                    <div className="space-y-2">
+                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Type</div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {(['words', 'numbers', 'symbols', 'javascript', 'python'] as const).map(type => (
+                                                <button
+                                                    key={type}
+                                                    onClick={() => engine.setTestType(type)}
+                                                    className="min-w-[5rem] px-4 py-2.5 rounded-2xl transition-all duration-150 text-sm font-medium"
+                                                    style={{
+                                                        color: engine.testType === type ? 'var(--text-accent)' : 'var(--text-main)',
+                                                        background: engine.testType === type ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
+                                                        cursor: 'pointer',
+                                                        opacity: engine.testType === type ? 1 : 0.85,
+                                                        border: engine.testType === type ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
+                                                    }}
+                                                >
+                                                    {type === 'javascript' ? 'js' : type === 'python' ? 'py' : type}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
+
+                                    <div className="space-y-2">
+                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Time</div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {(engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]).map(val => (
+                                                <button
+                                                    key={val}
+                                                    onClick={() => engine.testMode === 'time' ? engine.setTimeConfig(val) : engine.setWordConfig(val)}
+                                                    className="min-w-[4.5rem] px-4 py-2.5 rounded-2xl transition-all duration-150 text-sm font-semibold font-mono"
+                                                    style={{
+                                                        color: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'var(--text-accent)' : 'var(--text-main)',
+                                                        background: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
+                                                        cursor: 'pointer',
+                                                        opacity: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 1 : 0.85,
+                                                        border: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
+                                                    }}
+                                                >
+                                                    {val}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Difficulty</div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {(['normal', 'hard', 'insane', 'chaos', 'nightmare', 'screensaver'] as const).map(diff => (
+                                                <button
+                                                    key={diff}
+                                                    onClick={() => engine.setDifficulty(diff)}
+                                                    className="min-w-[3.5rem] px-3 py-2.5 rounded-2xl transition-all duration-150 text-sm"
+                                                    style={{
+                                                        background: engine.difficulty === diff ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
+                                                        border: engine.difficulty === diff ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
+                                                        cursor: 'pointer',
+                                                        opacity: engine.difficulty === diff ? 1 : 0.8,
+                                                    }}
+                                                    title={diff}
+                                                >
+                                                    {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : diff === 'nightmare' ? '👿' : '🌀'}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {player && (
+                                        <div className="md:col-span-3 flex items-center justify-between gap-3 rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)' }}>
+                                            <div className="text-xs uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Current level</div>
+                                            <div className="text-lg font-bold" style={{ color: 'var(--text-accent)' }}>{profileLevel}</div>
+                                        </div>
+                                    )}
                                 </div>
-
-                                {/* Divider */}
-                                <div style={{ width: '1px', height: '16px', background: 'var(--border-glass)', opacity: 0.4, flexShrink: 0 }} />
-
-                                {/* Duration */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] uppercase tracking-widest font-mono opacity-40" style={{ color: 'var(--text-main)' }}>
-                                        {engine.testMode === 'time' ? 'time' : 'words'}
-                                    </span>
-                                    <div className="flex gap-0.5">
-                                        {(engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]).map(val => (
-                                            <button
-                                                key={val}
-                                                onClick={() => engine.testMode === 'time' ? engine.setTimeConfig(val) : engine.setWordConfig(val)}
-                                                className="px-2.5 py-1 rounded-md transition-all duration-150 text-[11px] font-mono"
-                                                style={{
-                                                    color: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'var(--text-accent)' : 'var(--text-main)',
-                                                    background: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'rgba(255,255,255,0.06)' : 'transparent',
-                                                    fontWeight: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 600 : 400,
-                                                    opacity: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 1 : 0.5,
-                                                    cursor: 'pointer',
-                                                    border: 'none',
-                                                    outline: 'none',
-                                                }}
-                                            >
-                                                {val}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Spacer */}
-                                <div className="flex-1" />
-
-                                {/* Level Badge */}
-                                {player && (
-                                    <div
-                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}
-                                    >
-                                        <span className="text-[10px] font-mono opacity-50" style={{ color: 'var(--text-main)' }}>lvl</span>
-                                        <span className="text-xs font-bold font-mono" style={{ color: 'var(--text-accent)' }}>{profileLevel}</span>
-                                    </div>
-                                )}
                             </motion.div>
-
-                            {/* Live timer / word counter — centered below nav */}
-                            <motion.div
-                                animate={{ opacity: isFocused ? 1 : 0 }}
-                                transition={{ duration: 0.25 }}
-                                className="w-full flex justify-center select-none pointer-events-none relative mb-6"
-                                style={{ minHeight: '72px' }}
-                            >
-                                <span
-                                    className="font-typing font-bold"
-                                    style={{ color: 'var(--text-accent)', fontSize: '72px', lineHeight: 1, letterSpacing: '-0.03em' }}
-                                >
-                                    {engine.testMode === 'time'
-                                        ? engine.timeLeft
-                                        : `${engine.typed.split(' ').filter(Boolean).length}/${engine.wordConfig}`}
-                                </span>
-                            </motion.div>
-
                             {/* Words area */}
                             <ScreensaverBounce difficulty={engine.difficulty} className="w-full">
                                 <motion.div
@@ -549,13 +538,14 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 </motion.div>
                             </ScreensaverBounce>
 
+                            {/* Reward toast lives under the words area so it reads with the test flow */}
                             <AnimatePresence>
                                 {rewardToast && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 10, scale: 0.96 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                                        className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 border backdrop-blur-md shadow-2xl"
+                                        className="w-full max-w-3xl rounded-2xl px-5 py-4 border backdrop-blur-md shadow-2xl"
                                         style={{
                                             background: 'rgba(10,10,10,0.88)',
                                             borderColor: 'var(--border-glass)',
@@ -564,7 +554,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                         }}
                                     >
                                         <div className="text-xs uppercase tracking-[0.22em] opacity-60 mb-1" style={{ color: rewardToast.accent }}>{rewardToast.title}</div>
-                                        <div className="text-sm" style={{ color: 'var(--text-main)' }}>{rewardToast.message}</div>
+                                        <div className="text-base md:text-lg leading-relaxed" style={{ color: 'var(--text-main)' }}>{rewardToast.message}</div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
