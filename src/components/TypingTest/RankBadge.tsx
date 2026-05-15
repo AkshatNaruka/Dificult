@@ -25,7 +25,6 @@ const themeColorMap: Record<string, {
   groupBg: string; mutedText: string; accent: string; text: string;
 }> = {
   dark:          { groupBg: '#1f2937', mutedText: '#6b7280', accent: '#8b5cf6', text: '#f9fafb' },
-  light:         { groupBg: '#e2e8f0', mutedText: '#94a3b8', accent: '#0ea5e9', text: '#1e293b' },
   cyberpunk:     { groupBg: '#1a1a1a', mutedText: '#525252', accent: '#8b5cf6', text: '#ffffff' },
   nord:          { groupBg: '#3b4252', mutedText: '#4c566a', accent: '#88c0d0', text: '#eceff4' },
   dracula:       { groupBg: '#44475a', mutedText: '#6272a4', accent: '#bd93f9', text: '#f8f8f2' },
@@ -33,7 +32,6 @@ const themeColorMap: Record<string, {
   forest:        { groupBg: '#1e293b', mutedText: '#64748b', accent: '#0ea5e9', text: '#f8fafc' },
   ocean:         { groupBg: '#1e2d5f', mutedText: '#3c5888', accent: '#0ea5e9', text: '#e0f0ff' },
   serika:        { groupBg: '#292524', mutedText: '#78716c', accent: '#f97316', text: '#fafaf9' },
-  minimal:       { groupBg: '#f1f5f9', mutedText: '#cbd5e1', accent: '#171717', text: '#171717' },
   carbon:        { groupBg: '#141414', mutedText: '#404040', accent: '#e5e5e5', text: '#fafafa' },
 };
 
