@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useThemeStore } from '@/store/themeStore';
+import { useBackgroundStore, backgrounds } from '@/store/backgroundStore';
 
 /* ─── Theme-aware color map ─────────────────────────────────────── */
 const themeColorMap: Record<string, {
@@ -34,7 +35,6 @@ interface OptionGroupProps {
 function OptionGroup({ label, options, active, onChange, colors }: OptionGroupProps) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      {/* Group Label */}
       <span
         style={{
           fontFamily: "'JetBrains Mono', monospace",
@@ -51,7 +51,6 @@ function OptionGroup({ label, options, active, onChange, colors }: OptionGroupPr
         {label}
       </span>
 
-      {/* Pill Container */}
       <div
         style={{
           display: 'flex',
@@ -78,13 +77,13 @@ function OptionGroup({ label, options, active, onChange, colors }: OptionGroupPr
                 outline: 'none',
                 cursor: 'pointer',
                 color: isActive ? colors.accent : colors.mutedText,
-                background: isActive ? `${colors.accent}1F` : 'transparent', // 12% opacity
+                background: isActive ? `${colors.accent}1F` : 'transparent',
                 transition: 'color 150ms ease, background 150ms ease',
                 whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => {
                 if (!isActive) {
-                  (e.target as HTMLElement).style.color = `${colors.accent}99`; // 60%
+                  (e.target as HTMLElement).style.color = `${colors.accent}99`;
                 }
               }}
               onMouseLeave={e => {
@@ -94,6 +93,66 @@ function OptionGroup({ label, options, active, onChange, colors }: OptionGroupPr
               }}
             >
               {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── BG Picker (emoji buttons) ─────────────────────────────────── */
+function BgPicker({ colors }: { colors: typeof fallback }) {
+  const { activeBackgroundId, setBackground } = useBackgroundStore();
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+      <span
+        style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 10,
+          fontWeight: 600,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase' as const,
+          color: colors.mutedText,
+          marginRight: 10,
+          userSelect: 'none',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        BG
+      </span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          background: colors.groupBg,
+          borderRadius: 8,
+          padding: '4px 6px',
+        }}
+      >
+        {backgrounds.map(bg => {
+          const isActive = activeBackgroundId === bg.id;
+          return (
+            <button
+              key={bg.id}
+              onClick={() => setBackground(bg.id)}
+              title={bg.name}
+              style={{
+                fontSize: 14,
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: 'none',
+                outline: 'none',
+                cursor: 'pointer',
+                background: isActive ? `${colors.accent}1F` : 'transparent',
+                boxShadow: isActive ? `0 0 0 1.5px ${colors.accent}66` : 'none',
+                transition: 'all 150ms ease',
+                lineHeight: 1,
+              }}
+            >
+              {bg.preview}
             </button>
           );
         })}
@@ -179,6 +238,7 @@ export default function SettingsBar({
         onChange={onDiffChange}
         colors={colors}
       />
+      <BgPicker colors={colors} />
     </div>
   );
 }

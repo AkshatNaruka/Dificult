@@ -25,6 +25,7 @@ import { Navbar } from '../Navbar';
 import { Footer } from '../Footer';
 import SettingsBar from './SettingsBar';
 import RankBadge from './RankBadge';
+import { TypingBackground } from './TypingBackground';
 
 const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver', number> = {
     normal: 1,
@@ -329,6 +330,9 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                 spellCheck="false"
                 readOnly
             />
+
+            {/* ── User-selected aesthetic background ── */}
+            <TypingBackground />
 
             <ThirdModeBackgrounds difficulty={engine.difficulty} />
 
