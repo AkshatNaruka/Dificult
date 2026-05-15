@@ -25,16 +25,31 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Outfit', sans-serif;
-    font-size: 1.5rem;
-    overflow: hidden;
+    font-size: 1rem;
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
   }
 
-  /* Custom Scrollbar for sleek UI */
+  html, body {
+    height: 100%;
+  }
+
+  /* Thin custom scrollbar */
   ::-webkit-scrollbar {
-    width: 0px;
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
     background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-glass);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-main);
+    opacity: 0.4;
   }
 }
 

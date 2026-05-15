@@ -6,7 +6,6 @@ import { useThemeStore } from '../../store/themeStore';
 import { usePlayerStore } from '@/store/playerStore';
 import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
-import { ThemePicker } from '../ThemePicker';
 import { SignUpPrompt } from '../SignUpPrompt';
 import { DifficultyEffects } from './DifficultyEffects';
 import { DifficultyWordEffects } from './DifficultyWordEffects';
@@ -22,6 +21,7 @@ import { logout } from '@/app/login/actions';
 import { useEntitlements } from '@/hooks/useEntitlements';
 
 import Link from 'next/link';
+import { Navbar } from '../Navbar';
 
 const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver', number> = {
     normal: 1,
@@ -312,7 +312,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
 
     return (
         <div
-            className="min-h-screen flex flex-col transition-colors duration-300"
+            className="h-screen flex flex-col transition-colors duration-300 overflow-hidden"
             style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
         >
             <input
@@ -342,144 +342,59 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
             </AnimatePresence>
 
             {/* ── Top Navbar ── */}
-            <motion.nav
+            <motion.div
                 animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? -10 : 0 }}
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
-                className="w-full flex items-center justify-between px-10 py-5"
-                style={{ borderBottom: '1px solid var(--border-glass)' }}
             >
-                {/* Logo */}
-                <Link
-                    href="/"
-                    onClick={() => {
-                        engine.restart();
-                        focusInput();
-                    }}
-                    className="text-2xl font-bold tracking-tight select-none font-typing hover:opacity-80 transition-opacity decoration-transparent"
-                    style={{ color: 'var(--text-primary)' }}
-                >
-                    difi<span style={{ color: 'var(--text-accent)' }}>cult</span>
-                </Link>
-
-                {/* Right controls */}
-                <div className="flex items-center gap-5 relative">
-                    {!entitlements.isPro && (
-                        <Link
-                            href="/pricing"
-                            className="font-typing text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
+                <Navbar
+                    user={user}
+                    isPro={entitlements.isPro}
+                    extra={
+                        <button
+                            onClick={() => themeStore.toggleMute()}
+                            style={{
+                                background: 'var(--bg-secondary)',
+                                color: 'var(--text-main)',
+                                border: '1px solid var(--border-glass)',
+                                borderRadius: '8px',
+                                padding: '5px 8px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                transition: 'border-color 0.2s',
+                            }}
+                            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-accent)')}
+                            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
+                            title={themeStore.isMuted ? 'Unmute' : 'Mute'}
                         >
-                            Upgrade
-                        </Link>
-                    )}
-
-                    {/* Theme Picker */}
-                    <ThemePicker />
-
-                    {/* Mute Button */}
-                    <button
-                        onClick={() => themeStore.toggleMute()}
-                        style={{
-                            background: 'var(--bg-secondary)',
-                            color: 'var(--text-main)',
-                            border: '1px solid var(--border-glass)',
-                            borderRadius: '8px',
-                            padding: '5px 8px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            transition: 'border-color 0.2s',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-accent)')}
-                        onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
-                        title={themeStore.isMuted ? 'Unmute' : 'Mute'}
-                    >
-                        {themeStore.isMuted ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                                <line x1="23" y1="9" x2="17" y2="15" />
-                                <line x1="17" y1="9" x2="23" y2="15" />
-                            </svg>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                            </svg>
-                        )}
-                    </button>
-
-                    <Link
-                        href="/store"
-                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
-                        style={{ color: 'var(--text-main)' }}
-                    >
-                        Store
-                    </Link>
-                    <Link
-                        href="/gear"
-                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
-                        style={{ color: 'var(--text-main)' }}
-                    >
-                        Gear
-                    </Link>
-                    <Link
-                        href="/tournaments"
-                        className="font-typing text-sm hover:opacity-80 transition-opacity decoration-transparent"
-                        style={{ color: 'var(--text-main)' }}
-                    >
-                        Tournaments
-                    </Link>
-
-                    {/* Leaderboard Link */}
-                    <Link
-                        href="/leaderboard"
-                        className="font-typing text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity decoration-transparent"
-                        style={{ color: 'var(--text-main)' }}
-                        title="Leaderboard"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2 20h20"></path>
-                            <path d="M5 20v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5"></path>
-                            <path d="M13 20v-9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v9"></path>
-                        </svg>
-                    </Link>
-
-                    {/* User Auth */}
-                    {user ? (
-                        <div className="flex items-center gap-3">
-                            <Link
-                                href="/profile"
-                                className="font-typing text-sm flex items-center gap-2 hover:opacity-80 transition-opacity decoration-transparent"
-                                style={{ color: 'var(--text-main)' }}
-                                title="Profile"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
+                            {themeStore.isMuted ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                    <line x1="23" y1="9" x2="17" y2="15" />
+                                    <line x1="17" y1="9" x2="23" y2="15" />
                                 </svg>
-                            </Link>
-                            <form>
-                                <button
-                                    formAction={logout}
-                                    className="font-typing text-xs px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
-                                    style={{ color: 'var(--text-main)', background: 'none', border: '1px solid var(--border-glass)', cursor: 'pointer', opacity: 0.6 }}
-                                >
-                                    Log out
-                                </button>
-                            </form>
-                        </div>
-                    ) : (
-                        <Link
-                            href="/login"
-                            className="font-typing text-sm font-bold px-4 py-1.5 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] decoration-transparent"
-                            style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
-                        >
-                            Sign In
-                        </Link>
-                    )}
-                </div>
-            </motion.nav>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                                </svg>
+                            )}
+                        </button>
+                    }
+                    logoutSlot={
+                        <form>
+                            <button
+                                formAction={logout}
+                                className="font-typing text-xs px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
+                                style={{ color: 'var(--text-main)', background: 'none', border: '1px solid var(--border-glass)', cursor: 'pointer', opacity: 0.55 }}
+                            >
+                                Log out
+                            </button>
+                        </form>
+                    }
+                />
+            </motion.div>
 
             {/* ── Main centered content ── */}
             <main className="flex flex-col items-center justify-center flex-1 w-full px-6 pb-12">
@@ -529,26 +444,29 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? -4 : 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full flex items-center gap-4 rounded-lg p-3"
-                                style={{ 
-                                    background: 'rgba(255,255,255,0.02)', 
-                                    border: '1px solid var(--border-glass)'
+                                className="w-full flex items-center gap-3 rounded-xl px-4 py-2.5"
+                                style={{
+                                    background: 'var(--bg-secondary)',
+                                    border: '1px solid var(--border-glass)',
                                 }}
                             >
-                                {/* Test Type - Compact */}
-                                <div className="flex items-center gap-1.5 text-xs">
-                                    <span className="opacity-50 font-mono" style={{ color: 'var(--text-main)' }}>type</span>
-                                    <div className="flex gap-1">
+                                {/* Test Type */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] uppercase tracking-widest font-mono opacity-40" style={{ color: 'var(--text-main)' }}>type</span>
+                                    <div className="flex gap-0.5">
                                         {(['words', 'numbers', 'symbols', 'javascript', 'python'] as const).map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => engine.setTestType(type)}
-                                                className="px-1.5 py-0.5 rounded transition-all duration-150 text-[10px]"
+                                                className="px-2.5 py-1 rounded-md transition-all duration-150 text-[11px] font-mono"
                                                 style={{
                                                     color: engine.testType === type ? 'var(--text-accent)' : 'var(--text-main)',
-                                                    background: engine.testType === type ? 'rgba(82, 82, 82, 0.3)' : 'transparent',
+                                                    background: engine.testType === type ? 'rgba(255,255,255,0.06)' : 'transparent',
+                                                    fontWeight: engine.testType === type ? 600 : 400,
+                                                    opacity: engine.testType === type ? 1 : 0.5,
                                                     cursor: 'pointer',
-                                                    opacity: engine.testType === type ? 1 : 0.6,
+                                                    border: 'none',
+                                                    outline: 'none',
                                                 }}
                                             >
                                                 {type === 'javascript' ? 'js' : type === 'python' ? 'py' : type}
@@ -558,24 +476,27 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                 </div>
 
                                 {/* Divider */}
-                                <div style={{ width: '1px', height: '20px', background: 'var(--border-glass)', opacity: 0.3 }} />
+                                <div style={{ width: '1px', height: '16px', background: 'var(--border-glass)', opacity: 0.4, flexShrink: 0 }} />
 
-                                {/* Duration - Compact */}
-                                <div className="flex items-center gap-1.5 text-xs">
-                                    <span className="opacity-50 font-mono" style={{ color: 'var(--text-main)' }}>
-                                        {engine.testMode === 'time' ? '⏱️' : '📖'}
+                                {/* Duration */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] uppercase tracking-widest font-mono opacity-40" style={{ color: 'var(--text-main)' }}>
+                                        {engine.testMode === 'time' ? 'time' : 'words'}
                                     </span>
-                                    <div className="flex gap-1">
+                                    <div className="flex gap-0.5">
                                         {(engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]).map(val => (
                                             <button
                                                 key={val}
                                                 onClick={() => engine.testMode === 'time' ? engine.setTimeConfig(val) : engine.setWordConfig(val)}
-                                                className="px-1.5 py-0.5 rounded transition-all duration-150 text-[10px] font-mono"
+                                                className="px-2.5 py-1 rounded-md transition-all duration-150 text-[11px] font-mono"
                                                 style={{
                                                     color: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'var(--text-accent)' : 'var(--text-main)',
-                                                    background: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'rgba(82, 82, 82, 0.3)' : 'transparent',
+                                                    background: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'rgba(255,255,255,0.06)' : 'transparent',
+                                                    fontWeight: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 600 : 400,
+                                                    opacity: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 1 : 0.5,
                                                     cursor: 'pointer',
-                                                    opacity: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 1 : 0.6,
+                                                    border: 'none',
+                                                    outline: 'none',
                                                 }}
                                             >
                                                 {val}
@@ -584,40 +505,17 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                     </div>
                                 </div>
 
-                                {/* Divider */}
-                                <div style={{ width: '1px', height: '20px', background: 'var(--border-glass)', opacity: 0.3 }} />
-
-                                {/* Difficulty - Compact Icons Only */}
-                                <div className="flex items-center gap-2 text-xs">
-                                    <span className="opacity-50 font-mono" style={{ color: 'var(--text-main)' }}>diff</span>
-                                    <div className="flex gap-1.5">
-                                        {(['normal', 'hard', 'insane', 'chaos', 'nightmare', 'screensaver'] as const).map(diff => (
-                                            <button
-                                                key={diff}
-                                                onClick={() => engine.setDifficulty(diff)}
-                                                className="w-6 h-6 flex items-center justify-center rounded transition-all duration-150 text-sm"
-                                                style={{
-                                                    background: engine.difficulty === diff ? 'rgba(82, 82, 82, 0.3)' : 'transparent',
-                                                    border: engine.difficulty === diff ? '1px solid var(--text-accent)' : '1px solid transparent',
-                                                    cursor: 'pointer',
-                                                    opacity: engine.difficulty === diff ? 1 : 0.6,
-                                                }}
-                                                title={diff === 'insane' ? 'third mode - media distractor' : diff}
-                                            >
-                                                {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : diff === 'nightmare' ? '👿' : '🌀'}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
                                 {/* Spacer */}
                                 <div className="flex-1" />
 
-                                {/* Level Badge - Right Side */}
+                                {/* Level Badge */}
                                 {player && (
-                                    <div className="flex items-center gap-2 px-2 py-1 rounded" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
-                                        <span className="text-xs opacity-60">lvl</span>
-                                        <span className="text-sm font-bold" style={{ color: 'var(--text-accent)' }}>{profileLevel}</span>
+                                    <div
+                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}
+                                    >
+                                        <span className="text-[10px] font-mono opacity-50" style={{ color: 'var(--text-main)' }}>lvl</span>
+                                        <span className="text-xs font-bold font-mono" style={{ color: 'var(--text-accent)' }}>{profileLevel}</span>
                                     </div>
                                 )}
                             </motion.div>

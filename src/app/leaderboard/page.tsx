@@ -2,12 +2,19 @@ import { createClient } from '@/utils/supabase/server';
 import { getDefaultEntitlements, getEntitlementsForUser } from '@/utils/entitlements';
 import { AdBanner } from '@/components/AdBanner';
 import Link from 'next/link';
-import { ThemePicker } from '@/components/ThemePicker';
+import { Navbar } from '@/components/Navbar';
 
 interface ProfileJoin {
     id: string;
     email?: string;
 }
+
+const rankLabel = (i: number) => {
+    if (i === 0) return '🥇';
+    if (i === 1) return '🥈';
+    if (i === 2) return '🥉';
+    return `#${i + 1}`;
+};
 
 export default async function LeaderboardPage() {
     const supabase = await createClient();
@@ -21,7 +28,6 @@ export default async function LeaderboardPage() {
     let topWpmUsers: { id: string; email: string; wpm: number; accuracy: number }[] = [];
 
     if (supabase) {
-        // 1. Fetch Top 20 by XP
         const { data } = await supabase
             .from('profiles')
             .select('id, email, xp, level')
@@ -29,7 +35,6 @@ export default async function LeaderboardPage() {
             .limit(leaderboardLimit);
         topXpProfiles = data;
 
-        // 2. Fetch Top 20 by Max WPM
         const { data: topStats } = await supabase
             .from('stats')
             .select('wpm, accuracy, profiles!inner(id, email)')
@@ -57,110 +62,165 @@ export default async function LeaderboardPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-            {/* Navbar */}
-            <nav className="w-full flex items-center justify-between px-10 py-5" style={{ borderBottom: '1px solid var(--border-glass)' }}>
-                <Link href="/" className="text-2xl font-bold tracking-tight select-none font-typing" style={{ color: 'var(--text-primary)' }}>
-                    difi<span style={{ color: 'var(--text-accent)' }}>cult</span>
-                </Link>
-                <div className="flex items-center gap-4">
-                    <Link href="/store" className="text-sm font-typing opacity-70 hover:opacity-100">Store</Link>
-                    <Link href="/gear" className="text-sm font-typing opacity-70 hover:opacity-100">Gear</Link>
-                    <Link href="/tournaments" className="text-sm font-typing opacity-70 hover:opacity-100">Tournaments</Link>
-                    <ThemePicker />
-                    {user ? (
-                        <Link href="/profile" className="font-typing text-sm hover:opacity-80 transition-opacity">
-                            {user.email?.split('@')[0]}
-                        </Link>
-                    ) : (
-                        <Link href="/login" className="px-4 py-1.5 rounded-full text-sm font-bold font-typing transition-all hover:bg-opacity-80" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
-                            Log In
-                        </Link>
-                    )}
-                </div>
-            </nav>
+        <div
+            className="min-h-screen flex flex-col transition-colors duration-300"
+            style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+        >
+            <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1 flex flex-col items-center py-12 px-6">
-                <div className="w-full max-w-5xl flex flex-col gap-12">
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold font-typing" style={{ color: 'var(--text-accent)' }}>Global Leaderboard</h1>
-                        <p className="font-typing text-sm mt-2" style={{ color: 'var(--text-main)' }}>Rank up. Dominate the boards.</p>
+            <main className="flex-1">
+                <div className="max-w-5xl mx-auto px-5 pt-12 pb-24 flex flex-col gap-10">
+                    {/* Header */}
+                    <div className="text-center space-y-2">
+                        <div className="text-xs uppercase tracking-[0.32em]" style={{ color: 'var(--text-main)', opacity: 0.5 }}>
+                            Global rankings
+                        </div>
+                        <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                            Leaderboard
+                        </h1>
+                        <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.6 }}>
+                            Rank up. Dominate the boards.
+                        </p>
                     </div>
+
+                    {/* Upsell banner */}
                     {!entitlements.isPro && (
-                        <div className="flex items-center justify-between gap-4 p-6 rounded-3xl border" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
-                            <div>
-                                <div className="text-xs uppercase tracking-[0.24em] opacity-60" style={{ color: 'var(--text-main)' }}>Pro leaderboard</div>
-                                <div className="text-lg font-bold">Unlock top 50 rankings + advanced filters</div>
-                                <div className="text-sm mt-1" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-                                    Pro members see extended rankings and sponsor-branded events.
+                        <div
+                            className="flex items-center justify-between gap-4 p-5 rounded-2xl border"
+                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
+                        >
+                            <div className="space-y-0.5">
+                                <div className="text-xs uppercase tracking-[0.2em] opacity-50" style={{ color: 'var(--text-main)' }}>
+                                    Pro leaderboard
+                                </div>
+                                <div className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>
+                                    Unlock top 50 rankings + advanced filters
                                 </div>
                             </div>
-                            <Link href="/pricing" className="px-4 py-2 rounded-xl font-bold" style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
-                                Upgrade to Pro
+                            <Link
+                                href="/pricing"
+                                className="shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all hover:opacity-90"
+                                style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
+                            >
+                                Upgrade
                             </Link>
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Top WPM Board */}
-                        <div className="p-8 rounded-3xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
-                            <h2 className="text-2xl font-bold font-typing mb-6 flex items-center gap-2">
-                                <span className="text-3xl">⚡</span> Highest WPM
-                            </h2>
-                            <div className="flex flex-col gap-3">
+                    {/* Tables */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* WPM board */}
+                        <div
+                            className="rounded-2xl border overflow-hidden"
+                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
+                        >
+                            <div className="px-6 py-4 border-b flex items-center gap-2" style={{ borderColor: 'var(--border-glass)' }}>
+                                <span className="text-lg">⚡</span>
+                                <h2 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Highest WPM</h2>
+                            </div>
+                            <div className="divide-y" style={{ borderColor: 'var(--border-glass)' }}>
                                 {topWpmUsers.length === 0 ? (
-                                    <div className="text-sm font-typing opacity-50">No stats recorded yet.</div>
-                                ) : (
-                                    topWpmUsers.map((p, idx) => (
-                                        <div key={`wpm-${p.id}`} className="flex items-center justify-between p-4 rounded-xl transition-transform hover:scale-[1.02]" style={{ background: user?.id === p.id ? 'var(--text-accent)' : 'black', color: user?.id === p.id ? 'var(--bg-primary)' : 'inherit', border: '1px solid var(--border-glass)' }}>
-                                            <div className="flex items-center gap-4">
-                                                <span className="font-bold font-typing" style={{ opacity: 0.5, width: '20px' }}>#{idx + 1}</span>
-                                                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-                                                    {p.email?.[0].toUpperCase()}
-                                                </div>
-                                                <span className="font-bold truncate max-w-[120px]">{p.email?.split('@')[0]}</span>
+                                    <div className="px-6 py-8 text-sm opacity-40 text-center" style={{ color: 'var(--text-main)' }}>
+                                        No stats recorded yet.
+                                    </div>
+                                ) : topWpmUsers.map((p, idx) => {
+                                    const isMe = user?.id === p.id;
+                                    return (
+                                        <div
+                                            key={`wpm-${p.id}`}
+                                            className="flex items-center px-5 py-3.5 gap-3 transition-colors"
+                                            style={{
+                                                background: isMe ? 'color-mix(in srgb, var(--text-accent) 10%, transparent)' : 'transparent',
+                                            }}
+                                        >
+                                            <span
+                                                className="text-sm font-bold w-8 shrink-0 text-center"
+                                                style={{ color: idx < 3 ? 'var(--text-accent)' : 'var(--text-main)', opacity: idx < 3 ? 1 : 0.45 }}
+                                            >
+                                                {rankLabel(idx)}
+                                            </span>
+                                            <div
+                                                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                                                style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                                            >
+                                                {p.email?.[0]?.toUpperCase() ?? '?'}
                                             </div>
-                                            <div className="flex flex-col items-end">
-                                                <span className="font-bold text-xl font-typing">{p.wpm}</span>
-                                                <span className="text-xs opacity-70 font-typing">{p.accuracy}% acc</span>
+                                            <span
+                                                className="flex-1 font-medium text-sm truncate"
+                                                style={{ color: isMe ? 'var(--text-accent)' : 'var(--text-primary)' }}
+                                            >
+                                                {p.email?.split('@')[0]}
+                                                {isMe && <span className="ml-2 text-[10px] opacity-60">(you)</span>}
+                                            </span>
+                                            <div className="text-right shrink-0">
+                                                <div className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>{p.wpm}</div>
+                                                <div className="text-[10px] opacity-50" style={{ color: 'var(--text-main)' }}>{p.accuracy}% acc</div>
                                             </div>
                                         </div>
-                                    ))
-                                )}
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Top XP Board */}
-                        <div className="p-8 rounded-3xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)' }}>
-                            <h2 className="text-2xl font-bold font-typing mb-6 flex items-center gap-2">
-                                <span className="text-3xl">⭐</span> Highest Level (XP)
-                            </h2>
-                            <div className="flex flex-col gap-3">
+                        {/* XP board */}
+                        <div
+                            className="rounded-2xl border overflow-hidden"
+                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
+                        >
+                            <div className="px-6 py-4 border-b flex items-center gap-2" style={{ borderColor: 'var(--border-glass)' }}>
+                                <span className="text-lg">⭐</span>
+                                <h2 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Highest Level</h2>
+                            </div>
+                            <div className="divide-y" style={{ borderColor: 'var(--border-glass)' }}>
                                 {!topXpProfiles || topXpProfiles.length === 0 ? (
-                                    <div className="text-sm font-typing opacity-50">No profiles found.</div>
-                                ) : (
-                                    topXpProfiles.map((p, idx) => (
-                                        <div key={`xp-${p.id}`} className="flex items-center justify-between p-4 rounded-xl transition-transform hover:scale-[1.02]" style={{ background: user?.id === p.id ? 'var(--text-accent)' : 'black', color: user?.id === p.id ? 'var(--bg-primary)' : 'inherit', border: '1px solid var(--border-glass)' }}>
-                                            <div className="flex items-center gap-4">
-                                                <span className="font-bold font-typing" style={{ opacity: 0.5, width: '20px' }}>#{idx + 1}</span>
-                                                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-                                                    {p.email?.[0].toUpperCase()}
+                                    <div className="px-6 py-8 text-sm opacity-40 text-center" style={{ color: 'var(--text-main)' }}>
+                                        No profiles found.
+                                    </div>
+                                ) : topXpProfiles.map((p, idx) => {
+                                    const isMe = user?.id === p.id;
+                                    return (
+                                        <div
+                                            key={`xp-${p.id}`}
+                                            className="flex items-center px-5 py-3.5 gap-3 transition-colors"
+                                            style={{
+                                                background: isMe ? 'color-mix(in srgb, var(--text-accent) 10%, transparent)' : 'transparent',
+                                            }}
+                                        >
+                                            <span
+                                                className="text-sm font-bold w-8 shrink-0 text-center"
+                                                style={{ color: idx < 3 ? 'var(--text-accent)' : 'var(--text-main)', opacity: idx < 3 ? 1 : 0.45 }}
+                                            >
+                                                {rankLabel(idx)}
+                                            </span>
+                                            <div
+                                                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                                                style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                                            >
+                                                {p.email?.[0]?.toUpperCase() ?? '?'}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div
+                                                    className="font-medium text-sm truncate"
+                                                    style={{ color: isMe ? 'var(--text-accent)' : 'var(--text-primary)' }}
+                                                >
+                                                    {p.email?.split('@')[0]}
+                                                    {isMe && <span className="ml-2 text-[10px] opacity-60">(you)</span>}
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold truncate max-w-[120px]">{p.email?.split('@')[0]}</span>
-                                                    <span className="text-xs opacity-70 font-typing">Lvl {p.level || 1}</span>
+                                                <div className="text-[10px] opacity-45" style={{ color: 'var(--text-main)' }}>
+                                                    Level {p.level || 1}
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col items-end">
-                                                <span className="font-bold text-xl font-typing">{p.xp || 0}</span>
-                                                <span className="text-xs opacity-70 font-typing">XP</span>
+                                            <div className="text-right shrink-0">
+                                                <div className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>{p.xp || 0}</div>
+                                                <div className="text-[10px] opacity-50" style={{ color: 'var(--text-main)' }}>XP</div>
                                             </div>
                                         </div>
-                                    ))
-                                )}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
+
                     {entitlements.adsEnabled && (
                         <div className="flex justify-center">
                             <AdBanner

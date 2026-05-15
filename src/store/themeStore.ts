@@ -2,26 +2,24 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Theme, ThemeConfig } from '@/types/theme';
 import { themes, getThemeById, getDefaultTheme } from '@/data/themes';
+import type { SoundProfile } from '@/hooks/useTypingSounds';
 
 interface ThemeState extends ThemeConfig {
-  // Available themes
   availableThemes: Theme[];
-
-  // Current active theme object
   activeTheme: Theme;
 
-  // Actions
   setTheme: (themeId: string) => void;
   setFontSize: (size: number) => void;
   setFontFamily: (family: string) => void;
   setSmoothCaret: (smooth: boolean) => void;
   setShowKeyboard: (show: boolean) => void;
 
-  // Sound
   isMuted: boolean;
   toggleMute: () => void;
 
-  // Theme utilities
+  currentSound: SoundProfile;
+  setSound: (id: SoundProfile) => void;
+
   applyTheme: () => void;
   resetToDefault: () => void;
 }
@@ -76,6 +74,9 @@ export const useThemeStore = create<ThemeState>()(
         set(state => ({ isMuted: !state.isMuted }));
       },
 
+      currentSound: 'default' as SoundProfile,
+      setSound: (id: SoundProfile) => set({ currentSound: id }),
+
       applyTheme: () => {
         const state = get();
         const { activeTheme } = state;
@@ -118,6 +119,7 @@ export const useThemeStore = create<ThemeState>()(
         smoothCaret: state.smoothCaret,
         showKeyboard: state.showKeyboard,
         isMuted: state.isMuted,
+        currentSound: state.currentSound,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
