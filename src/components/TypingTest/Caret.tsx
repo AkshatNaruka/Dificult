@@ -13,13 +13,9 @@ export function Caret({ top, left }: CaretProps) {
             initial={false}
             animate={{ top, left }}
             transition={{ type: "spring", stiffness: 1000, damping: 50, mass: 0.1 }}
-            className="absolute w-[2px] h-[1.2em] bg-[var(--text-accent)] rounded-sm z-20"
+            className="absolute z-20"
         >
-            <motion.div
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ repeat: Infinity, duration: 1, ease: "easeInOut" }}
-                className="w-full h-full bg-[var(--text-accent)] rounded-sm"
-            />
+            <div className="caret-pulse" />
         </motion.div>
     );
 }

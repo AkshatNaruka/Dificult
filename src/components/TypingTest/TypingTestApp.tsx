@@ -22,6 +22,9 @@ import { useEntitlements } from '@/hooks/useEntitlements';
 
 import Link from 'next/link';
 import { Navbar } from '../Navbar';
+import { Footer } from '../Footer';
+import SettingsBar from './SettingsBar';
+import RankBadge from './RankBadge';
 
 const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver', number> = {
     normal: 1,
@@ -391,7 +394,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
             </motion.div>
 
             {/* ── Main centered content ── */}
-            <main className="flex flex-col items-center justify-center flex-1 w-full px-6 pb-12">
+            <main className="flex flex-col items-center justify-center flex-1 w-full px-6 pb-4">
                 <AnimatePresence mode="wait">
                     {engine.state === 'finished' ? (
                         <motion.div
@@ -432,99 +435,30 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="w-[60vw] min-w-[320px] max-w-[800px] flex flex-col items-center gap-4"
+                            className="w-[60vw] min-w-[320px] max-w-[800px] flex flex-col items-center"
+                            style={{ gap: '36px' }}
                         >
                             {/* ═════ TEST SETTINGS PANEL ═════ */}
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? -4 : 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full rounded-2xl p-5 md:p-6"
-                                style={{
-                                    background: 'rgba(31, 32, 32, 0.7)',
-                                    border: '1px solid rgba(255,255,255,0.05)',
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                                    backdropFilter: 'blur(12px)',
-                                }}
+                                className="w-full flex flex-col items-center"
+                                style={{ gap: 16 }}
                             >
-                                <div className="grid gap-4 md:grid-cols-[1.25fr_1fr_1fr] items-start">
-                                    <div className="space-y-2">
-                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Type</div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {(['words', 'numbers', 'symbols', 'javascript', 'python'] as const).map(type => (
-                                                <button
-                                                    key={type}
-                                                    onClick={() => engine.setTestType(type)}
-                                                    className="min-w-[5rem] px-4 py-2.5 rounded-2xl transition-all duration-150 text-sm font-medium"
-                                                    style={{
-                                                        color: engine.testType === type ? 'var(--text-accent)' : 'var(--text-main)',
-                                                        background: engine.testType === type ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
-                                                        cursor: 'pointer',
-                                                        opacity: engine.testType === type ? 1 : 0.85,
-                                                        border: engine.testType === type ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
-                                                    }}
-                                                >
-                                                    {type === 'javascript' ? 'js' : type === 'python' ? 'py' : type}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Time</div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {(engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]).map(val => (
-                                                <button
-                                                    key={val}
-                                                    onClick={() => engine.testMode === 'time' ? engine.setTimeConfig(val) : engine.setWordConfig(val)}
-                                                    className="min-w-[4.5rem] px-4 py-2.5 rounded-2xl transition-all duration-150 text-sm font-semibold font-mono"
-                                                    style={{
-                                                        color: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'var(--text-accent)' : 'var(--text-main)',
-                                                        background: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
-                                                        cursor: 'pointer',
-                                                        opacity: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? 1 : 0.85,
-                                                        border: (engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig) === val ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
-                                                    }}
-                                                >
-                                                    {val}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Difficulty</div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {(['normal', 'hard', 'insane', 'chaos', 'nightmare', 'screensaver'] as const).map(diff => (
-                                                <button
-                                                    key={diff}
-                                                    onClick={() => engine.setDifficulty(diff)}
-                                                    className="min-w-[3.5rem] px-3 py-2.5 rounded-2xl transition-all duration-150 text-sm"
-                                                    style={{
-                                                        background: engine.difficulty === diff ? 'rgba(82, 82, 82, 0.34)' : 'rgba(255,255,255,0.02)',
-                                                        border: engine.difficulty === diff ? '1px solid var(--text-accent)' : '1px solid var(--border-glass)',
-                                                        cursor: 'pointer',
-                                                        opacity: engine.difficulty === diff ? 1 : 0.8,
-                                                    }}
-                                                    title={diff}
-                                                >
-                                                    {diff === 'normal' ? '🎯' : diff === 'hard' ? '😤' : diff === 'insane' ? '🤪' : diff === 'chaos' ? '🌪️' : diff === 'nightmare' ? '👿' : '🌀'}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {player && (
-                                        <div className="md:col-span-3 flex items-center justify-between gap-3 rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)' }}>
-                                            <div className="text-xs uppercase tracking-[0.18em] opacity-60" style={{ color: 'var(--text-main)' }}>Current level</div>
-                                            <div className="text-lg font-bold" style={{ color: 'var(--text-accent)' }}>{profileLevel}</div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SettingsBar
+                                    testType={engine.testType}
+                                    onTypeChange={(t) => engine.setTestType(t as 'words' | 'numbers' | 'symbols' | 'javascript' | 'python')}
+                                    timeValue={engine.testMode === 'time' ? engine.timeConfig : engine.wordConfig}
+                                    onTimeChange={(v) => engine.testMode === 'time' ? engine.setTimeConfig(v) : engine.setWordConfig(v)}
+                                    timeOptions={engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]}
+                                    difficulty={engine.difficulty}
+                                    onDiffChange={(d) => engine.setDifficulty(d as 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver')}
+                                />
                             </motion.div>
                             {/* Words area */}
                             <ScreensaverBounce difficulty={engine.difficulty} className="w-full">
                                 <motion.div
-                                    className="w-full transition-all duration-500 rounded-3xl p-8 cursor-text"
+                                    className="w-full transition-all duration-500 rounded-3xl py-4 px-8 cursor-text"
                                     ref={containerRef}
                                     onClick={focusInput}
                                     animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
@@ -532,6 +466,17 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                     <WordDisplay words={engine.words} typed={engine.typed} difficulty={engine.difficulty} />
                                 </motion.div>
                             </ScreensaverBounce>
+
+                            {/* ═════ RANK BADGE (below typing area) ═════ */}
+                            {player && (
+                                <motion.div
+                                    animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? 4 : 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    style={{ display: 'flex', justifyContent: 'center', marginTop: 0 }}
+                                >
+                                    <RankBadge xp={player.stats.xp} />
+                                </motion.div>
+                            )}
 
                             {/* Reward toast lives under the words area so it reads with the test flow */}
                             <AnimatePresence>
@@ -555,7 +500,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             </AnimatePresence>
 
                             {/* Combo / On Fire UI - Moved below the typing area */}
-                            <div className="h-12 flex items-center justify-center w-full mt-[120px]">
+                            <div className="h-12 flex items-center justify-center w-full">
                                 <AnimatePresence>
                                     {engine.combo >= 20 && engine.state === 'running' && (
                                         <motion.div
@@ -577,7 +522,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             <motion.div
                                 animate={{ opacity: isFocused ? 0 : 0.5 }}
                                 transition={{ duration: 0.3 }}
-                                className="flex items-center gap-2 text-sm font-typing mt-[120px]"
+                                className="flex items-center gap-2 text-sm font-typing"
                                 style={{ color: 'var(--text-main)' }}
                             >
                                 <span
@@ -599,6 +544,14 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                     )}
                 </AnimatePresence>
             </main>
+
+            {/* ── Footer ── */}
+            <motion.div
+                animate={{ opacity: isFocused ? 0 : 1, y: isFocused ? 10 : 0 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+            >
+                <Footer />
+            </motion.div>
         </div>
     );
 }

@@ -6,4 +6,6 @@ export interface GearItem {
   category: string;
   priceRange: string;
   url: string;
+  image?: string;
+  imageAlt?: string;
 }
