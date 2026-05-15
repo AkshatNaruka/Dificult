@@ -69,7 +69,7 @@ export function WordDisplay({ words, typed, difficulty = 'normal' }: WordDisplay
     };
 
     return (
-        <div className="typing-mask relative w-[60vw] min-w-[320px] max-w-[800px] mx-auto h-[160px] overflow-hidden text-[32px] md:text-[38px] font-typing-buffer leading-relaxed tracking-tight px-4" style={{ color: 'var(--on-surface-variant)' }}>
+        <div className="typing-mask relative w-[60vw] min-w-[320px] max-w-[800px] mx-auto h-[160px] overflow-hidden text-[32px] md:text-[38px] font-typing-buffer leading-relaxed tracking-tight px-4 mt-8" style={{ color: 'var(--on-surface-variant)' }}>
 
             <div
                 ref={containerRef}

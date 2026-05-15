@@ -26,7 +26,7 @@ export default function LandingPage() {
                         Master your keyboard with difficulty modes, real-time races, and tournaments. Track every keystroke. Climb the global leaderboard.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/test" className="btn-primary !px-8 !py-3.5 !text-xs" style={{ textDecoration: 'none' }}>
+                        <Link href="/" className="btn-primary !px-8 !py-3.5 !text-xs" style={{ textDecoration: 'none' }}>
                             Start Typing
                         </Link>
                         <Link href="/login" className="btn-secondary !px-8 !py-3.5 !text-xs" style={{ textDecoration: 'none' }}>
@@ -51,7 +51,11 @@ export default function LandingPage() {
                 <div className="max-w-[1100px] mx-auto">
                     <SectionHeader label="Why Dificult" heading="Built for speed demons" subtitle="Not just another typing test. A competitive arena with real progression." />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: 24,
+                    }}>
                         {[
                             { icon: 'speed', title: 'Difficulty Modes', desc: 'From Normal to Nightmare. Each mode adds visual chaos, faster words, and multiplied XP rewards.' },
                             { icon: 'groups', title: 'Multiplayer Races', desc: 'Race friends or strangers in real-time. Watch their cursor advance as you type.' },
@@ -74,7 +78,7 @@ export default function LandingPage() {
             <section className="py-24 px-6 text-center">
                 <h2 className="heading-display text-3xl md:text-5xl mb-4">Join the arena</h2>
                 <p className="text-body mb-8">Free to play. No login required to start.</p>
-                <Link href="/test" className="btn-primary !px-10 !py-4 !text-xs" style={{ textDecoration: 'none' }}>
+                <Link href="/" className="btn-primary !px-10 !py-4 !text-xs" style={{ textDecoration: 'none' }}>
                     Start Your First Test
                 </Link>
             </section>

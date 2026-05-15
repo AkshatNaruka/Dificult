@@ -9,7 +9,7 @@ export default function BillingCancelPage() {
         >
             <Navbar />
 
-            <main className="flex-1 flex items-center justify-center px-5 py-16 pt-24">
+            <main className="flex-1 flex items-center justify-center px-5 py-16">
                 <div
                     className="max-w-md w-full text-center space-y-5 p-10 rounded-2xl border"
                     style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}

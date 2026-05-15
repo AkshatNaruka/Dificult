@@ -109,13 +109,16 @@ export function ThemePicker() {
             {/* Trigger button */}
             <button
                 onClick={open}
-                className="app-pill flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 font-[inherit] text-[13px] transition-all"
+                className="flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 font-[inherit] text-[13px] transition-all"
                 style={{
                     color: 'var(--text-main)',
                     cursor: 'pointer',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: 6,
                 }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-accent)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-main)')}
             >
                 {/* Color swatch */}
                 <span
@@ -130,7 +133,7 @@ export function ThemePicker() {
                 />
                 <span>{currentTheme?.name ?? 'Theme'}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
-                    <path d="m6 9 6 6 6-6" />
+                    <path d="m6 15 6-6 6 6" />
                 </svg>
             </button>
 
@@ -147,7 +150,7 @@ export function ThemePicker() {
                         className="app-surface-strong"
                         style={{
                             position: 'absolute',
-                            top: 'calc(100% + 8px)',
+                            bottom: 'calc(100% + 8px)',
                             right: 0,
                             zIndex: 9999,
                             borderRadius: '16px',
@@ -156,6 +159,9 @@ export function ThemePicker() {
                             maxHeight: '70vh',
                             display: 'flex',
                             flexDirection: 'column',
+                            background: 'var(--bg-base)',
+                            border: '1px solid var(--border-glass)',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                         }}
                     >
                         {/* Header */}

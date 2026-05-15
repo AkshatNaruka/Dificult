@@ -1,20 +1,74 @@
-import Link from 'next/link';
+'use client';
+
+import { ThemePicker } from './ThemePicker';
+import { SoundPicker } from './SoundPicker';
 
 export function Footer() {
     return (
-        <footer style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-surface)' }}>
-            <div className="flex flex-col md:flex-row justify-between items-center w-full py-6 px-8 max-w-[1200px] mx-auto gap-4">
-                <span className="font-mono text-sm font-bold" style={{ color: 'var(--text-muted)' }}>dificult</span>
-                <div className="flex items-center gap-6">
-                    {['GitHub', 'Discord', 'Privacy', 'Terms'].map(link => (
-                        <a key={link} href="#" className="text-ui transition-colors hover:text-[var(--accent)]" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
+        <footer style={{
+            position: 'relative',
+            zIndex: 10,
+            padding: '12px clamp(20px, 4vw, 48px)',
+        }}>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                maxWidth: 1100,
+                margin: '0 auto',
+            }}>
+                {/* Left: brand + links */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                }}>
+                    <span style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: 'var(--text-muted)',
+                        letterSpacing: '-0.01em',
+                    }}>
+                        dificult
+                    </span>
+                    <span style={{
+                        width: 1,
+                        height: 12,
+                        background: 'rgba(255,255,255,0.06)',
+                        flexShrink: 0,
+                    }} />
+                    {['GitHub', 'Discord', 'Privacy'].map(link => (
+                        <a
+                            key={link}
+                            href="#"
+                            style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: 10,
+                                fontWeight: 400,
+                                color: 'var(--text-muted)',
+                                textDecoration: 'none',
+                                transition: 'color 0.15s ease',
+                                letterSpacing: '0.02em',
+                            }}
+                            onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+                        >
                             {link}
                         </a>
                     ))}
                 </div>
-                <p className="text-ui" style={{ color: 'var(--text-muted)' }}>
-                    © 2025 dificult
-                </p>
+
+                {/* Right: Theme + Sound pickers */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                }}>
+                    <ThemePicker />
+                    <SoundPicker />
+                </div>
             </div>
         </footer>
     );

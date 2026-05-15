@@ -433,7 +433,8 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="w-[60vw] min-w-[320px] max-w-[800px] flex flex-col items-center gap-4"
+                            className="w-[60vw] min-w-[320px] max-w-[800px] flex flex-col items-center"
+                            style={{ gap: '80px' }}
                         >
                             {/* ═════ TEST SETTINGS PANEL ═════ */}
                             <motion.div

@@ -15,7 +15,7 @@ export default async function LoginPage({
         <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
             <Navbar />
 
-            <main className="flex-grow flex items-center justify-center px-4 py-16 pt-32">
+            <main className="flex-grow flex items-center justify-center px-4 py-16">
                 <div className="w-full max-w-[440px] flex flex-col items-center">
                     {/* Header Section */}
                     <div className="text-center mb-10">

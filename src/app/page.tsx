@@ -1,14 +1,17 @@
 import { createClient } from '@/utils/supabase/server';
 import TypingTestApp from '@/components/TypingTest/TypingTestApp';
-import LandingPage from '@/app/landing/LandingPage';
 
 export default async function Home() {
-  const supabase = await createClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
-
-  if (!user) {
-    return <LandingPage />;
+  let user = null;
+  try {
+    const supabase = await createClient();
+    if (supabase) {
+      const { data } = await supabase.auth.getUser();
+      user = data.user ? { email: data.user.email, id: data.user.id } : null;
+    }
+  } catch {
+    // Auth unavailable — continue as guest
   }
 
-  return <TypingTestApp user={{ email: user.email, id: user.id }} />;
+  return <TypingTestApp user={user} />;
 }

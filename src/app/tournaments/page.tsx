@@ -19,7 +19,7 @@ export default async function TournamentsPage() {
         <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1 pt-32 pb-24 w-full">
+            <main className="flex-1 pt-8 pb-24 w-full">
                 {/* Hero Section */}
                 <section className="max-w-container-max mx-auto px-margin-safe text-center mb-24">
                     <SectionHeader
