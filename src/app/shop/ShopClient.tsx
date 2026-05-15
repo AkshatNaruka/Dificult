@@ -56,7 +56,7 @@ export function ShopClient() {
                                     <p className="font-mono text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{theme.name}</p>
                                     <p className="text-ui" style={{ color: 'var(--text-muted)', fontSize: '10px' }}>{theme.description}</p>
                                 </div>
-                                {theme.access.type === 'free' ? (
+                                {(!theme.access || theme.access.type === 'free') ? (
                                     <span className="text-ui" style={{ color: 'var(--accent-secondary)', fontSize: '9px' }}>FREE</span>
                                 ) : (
                                     <span className="material-symbols-outlined text-sm" style={{ color: 'var(--accent-warning)' }}>lock</span>
