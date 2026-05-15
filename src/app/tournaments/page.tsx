@@ -3,6 +3,10 @@ import { Navbar } from '@/components/Navbar';
 import { tournaments } from '@/data/tournaments';
 import { AdBanner } from '@/components/AdBanner';
 import { getDefaultEntitlements, getEntitlementsForUser } from '@/utils/entitlements';
+import { Footer } from '@/components/Footer';
+import Image from 'next/image';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { GlassCard } from '@/components/ui/GlassCard';
 
 export default async function TournamentsPage() {
     const supabase = await createClient();
@@ -12,118 +16,95 @@ export default async function TournamentsPage() {
         : getDefaultEntitlements();
 
     return (
-        <div
-            className="min-h-screen flex flex-col transition-colors duration-300"
-            style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-        >
+        <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1 pt-24">
-                <div className="max-w-3xl mx-auto px-5 pt-12 pb-24 flex flex-col gap-10">
-                    {/* Header */}
-                    <div className="text-center space-y-3">
-                        <div
-                            className="text-xs uppercase tracking-[0.32em]"
-                            style={{ color: 'var(--text-main)', opacity: 0.5 }}
-                        >
-                            Tournaments
-                        </div>
-                        <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                            Branded speed events
-                        </h1>
-                        <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-main)', opacity: 0.65 }}>
-                            Monthly competitions with sponsor-backed prize pools and leaderboard branding.
-                        </p>
+            <main className="flex-1 pt-32 pb-24 w-full">
+                {/* Hero Section */}
+                <section className="max-w-container-max mx-auto px-margin-safe text-center mb-24">
+                    <SectionHeader
+                        label="Tournaments"
+                        heading="Branded speed events"
+                        subtitle="Monthly competitions with sponsor-backed prize pools and leaderboard branding. Push your typing limits in the ultimate flow state environment."
+                    />
+                </section>
+
+                {entitlements.adsEnabled && (
+                    <div className="flex justify-center mb-12">
+                        <AdBanner
+                            slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
+                            format="horizontal"
+                            className="w-full max-w-container-max"
+                            style={{ minHeight: '90px' }}
+                        />
                     </div>
+                )}
 
-                    {entitlements.adsEnabled && (
-                        <div className="flex justify-center">
-                            <AdBanner
-                                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
-                                format="horizontal"
-                                className="w-full"
-                                style={{ minHeight: '90px' }}
-                            />
-                        </div>
-                    )}
+                {/* Tournament Feed */}
+                <div className="max-w-container-max mx-auto px-margin-safe space-y-12">
+                    {tournaments.map((tournament) => (
+                        <GlassCard key={tournament.id} className="p-8 md:p-12 relative group overflow-hidden">
+                            {tournament.image && (
+                                <div className="absolute inset-0 opacity-10 grayscale group-hover:grayscale-0 transition-all duration-700 pointer-events-none overflow-hidden">
+                                    <Image
+                                        src={tournament.image}
+                                        alt={tournament.name}
+                                        fill
+                                        className="object-cover"
+                                        unoptimized
+                                    />
+                                </div>
+                            )}
 
-                    <div className="flex flex-col gap-5">
-                        {tournaments.map((tournament) => (
-                            <div
-                                key={tournament.id}
-                                className="rounded-2xl border overflow-hidden"
-                                style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
-                            >
-                                {/* Card top */}
-                                <div className="p-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b" style={{ borderColor: 'var(--border-glass)' }}>
-                                    <div className="space-y-1">
-                                        <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-                                            {tournament.name}
-                                        </div>
-                                        <div
-                                            className="text-[11px] uppercase tracking-[0.16em]"
-                                            style={{ color: 'var(--text-main)', opacity: 0.5 }}
-                                        >
-                                            {new Date(tournament.date).toLocaleDateString('en-US', {
-                                                month: 'long',
-                                                day: 'numeric',
-                                                year: 'numeric',
-                                            })}
+                            <div className="relative z-10 flex flex-col gap-8">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h2 className="heading-section">{tournament.name}</h2>
+                                        <div className="flex gap-4 items-center">
+                                            <span className="text-ui" style={{ color: 'var(--text-muted)' }}>
+                                                {new Date(tournament.date).toLocaleDateString('en-US', {
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    year: 'numeric',
+                                                })}
+                                            </span>
+                                            <span style={{ color: 'var(--text-muted)' }}>/</span>
+                                            <a className="text-ui transition-colors hover:underline" href={tournament.sponsor.url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                                                by {tournament.sponsor.logoText}
+                                            </a>
                                         </div>
                                     </div>
-                                    <a
-                                        href={tournament.sponsor.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-xs font-bold px-3 py-1.5 rounded-full border shrink-0 hover:opacity-80 transition-opacity"
-                                        style={{ borderColor: 'var(--border-glass)', color: 'var(--text-main)' }}
-                                    >
-                                        by {tournament.sponsor.logoText}
-                                    </a>
                                 </div>
 
-                                {/* Description + stats */}
-                                <div className="p-6 flex flex-col gap-5">
-                                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-main)', opacity: 0.7 }}>
-                                        {tournament.description}
-                                    </p>
+                                <p className="text-body max-w-3xl leading-relaxed">
+                                    {tournament.description}
+                                </p>
 
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {[
-                                            { label: 'Entry fee', value: tournament.entryFee },
-                                            { label: 'Prize pool', value: tournament.prizePool },
-                                            { label: 'Leaderboard', value: tournament.leaderboardNote },
-                                        ].map(({ label, value }) => (
-                                            <div
-                                                key={label}
-                                                className="rounded-xl border px-3 py-3 space-y-1"
-                                                style={{ borderColor: 'var(--border-glass)', background: 'rgba(255,255,255,0.03)' }}
-                                            >
-                                                <div
-                                                    className="text-[10px] uppercase tracking-[0.16em]"
-                                                    style={{ color: 'var(--text-main)', opacity: 0.5 }}
-                                                >
-                                                    {label}
-                                                </div>
-                                                <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
-                                                    {value}
-                                                </div>
-                                            </div>
-                                        ))}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
+                                    <div>
+                                        <p className="text-ui uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Entry Fee</p>
+                                        <p className="heading-section">{tournament.entryFee}</p>
                                     </div>
-
-                                    <button
-                                        className="w-full sm:w-auto sm:self-start px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-[0.98]"
-                                        style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
-                                    >
-                                        Join waitlist
-                                    </button>
+                                    <div>
+                                        <p className="text-ui uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Prize Pool</p>
+                                        <p className="heading-section">{tournament.prizePool}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-ui uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Leaderboard</p>
+                                        <p className="heading-section">{tournament.leaderboardNote}</p>
+                                    </div>
                                 </div>
+
+                                <button className="btn-primary w-full">
+                                    Join waitlist
+                                </button>
                             </div>
-                        ))}
-                    </div>
+                        </GlassCard>
+                    ))}
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }
