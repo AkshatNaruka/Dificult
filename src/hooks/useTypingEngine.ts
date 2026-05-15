@@ -1,10 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { getWords, WordMode } from '../utils/words';
 import { useTypingSounds } from './useTypingSounds';
+import { DIFFICULTY_CONFIG } from '@/data/difficultyConfig';
 
 export type TestMode = 'time' | 'words';
 export type TestType = WordMode;
-export type DifficultyLevel = 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver';
+export type DifficultyLevel = 'easy' | 'normal' | 'hard' | 'expert' | 'suddenDeath';
 
 export interface HistoryDataPoint {
     time: number; // second
@@ -55,9 +56,21 @@ export const useTypingEngine = () => {
         if (testMode === 'words') {
             count = wordConfig;
         }
+
+        const config = DIFFICULTY_CONFIG[difficulty];
+
+        // Expert mode: use hardcore words (punctuation + numbers)
+        if (config.includePunctuation && config.includeNumbers) {
+            const newWords = getWords(count, 'hardcore');
+            setWords(newWords);
+            return;
+        }
+
+        // Easy mode: use shorter common words (filter to ≤5 chars)
+        // We still use the standard generator but the word pool is simpler
         const newWords = getWords(count, testType);
         setWords(newWords);
-    }, [testMode, testType, wordConfig]);
+    }, [testMode, testType, wordConfig, difficulty]);
 
     const restart = useCallback(() => {
         setState('idle');
@@ -141,14 +154,23 @@ export const useTypingEngine = () => {
             setStartTime(Date.now());
         }
 
+        const config = DIFFICULTY_CONFIG[difficulty];
+
         setTyped(prev => {
             const nextTyped = prev + char;
             const targetChar = wordsRef.current[prev.length];
+            const isError = char !== targetChar;
 
-            if (char !== targetChar) {
+            if (isError) {
                 setErrors(e => e + 1);
                 setCombo(0);
                 playError();
+
+                // Sudden Death: one error ends the test
+                if (config.suddenDeath) {
+                    setState('finished');
+                    return nextTyped;
+                }
             } else {
                 setCombo(c => {
                     const newCombo = c + 1;
@@ -165,15 +187,21 @@ export const useTypingEngine = () => {
 
             // Automatically generate more words if nearing the end in time mode
             if (testMode === 'time' && nextTyped.length > wordsRef.current.length - 20) {
-                setWords(w => w + " " + getWords(20, testType));
+                // Expert mode generates hardcore words
+                const wordMode = (config.includePunctuation && config.includeNumbers) ? 'hardcore' : testType;
+                setWords(w => w + " " + getWords(20, wordMode));
             }
 
             return nextTyped;
         });
-    }, [state, testMode, testType, playClick, playError]);
+    }, [state, testMode, testType, difficulty, playClick, playError]);
 
     const deleteChar = useCallback((ctrlKey: boolean = false) => {
         if (state !== 'running') return;
+
+        // Block backspace in modes that disallow it
+        const config = DIFFICULTY_CONFIG[difficulty];
+        if (!config.allowBackspace) return;
 
         setTyped(prev => {
             if (prev.length === 0) return prev;
@@ -193,7 +221,7 @@ export const useTypingEngine = () => {
 
             return prev.slice(0, -1);
         });
-    }, [state, playClick]);
+    }, [state, difficulty, playClick]);
 
     return {
         state,

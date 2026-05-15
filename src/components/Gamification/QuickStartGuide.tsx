@@ -41,7 +41,7 @@ const quickStartGuides = [
             '🎯 Speed demons: 50, 100+ WPM',
             '💯 Perfect runs: 95%, 100% accuracy',
             '🔥 Combo master: 25, 50, 100+ chain',
-            '☠️ Survive nightmare mode difficulty',
+            '💀 Survive sudden death difficulty',
         ],
     },
 ];

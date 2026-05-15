@@ -7,7 +7,7 @@ const tips = [
     { emoji: '⚡', title: 'Speed Matters', desc: 'Higher WPM = more XP. Push your limits!' },
     { emoji: '🎯', title: 'Accuracy Counts', desc: 'Every error costs points. Focus gets you further.' },
     { emoji: '🔥', title: 'Combo Kings', desc: 'Build massive combos for bonus XP multipliers!' },
-    { emoji: '☠️', title: 'Nightmare Mode', desc: 'Survive chaos mode for 2.4x XP rewards.' },
+    { emoji: '💀', title: 'Sudden Death', desc: 'Survive sudden death for 2.2x XP rewards.' },
     { emoji: '📈', title: 'Level Up', desc: 'Reach new levels, unlock new challenges and modes.' },
     { emoji: '🏆', title: 'Daily Streaks', desc: 'Play every day to build unbreakable streaks!' },
     { emoji: '🎊', title: 'Achievement Hunting', desc: 'Collect badges for unique challenges and milestones.' },

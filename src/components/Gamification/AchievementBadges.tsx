@@ -12,7 +12,7 @@ export const achievementDefinitions = {
     combo_25: { emoji: '🔥', name: 'Hot Hand', description: '25 char combo' },
     combo_50: { emoji: '🌪️', name: 'Tornado Mode', description: '50 char combo' },
     combo_100: { emoji: '⭐', name: 'Legend Status', description: '100 char combo' },
-    nightmare_complete: { emoji: '👿', name: 'Nightmare Slayer', description: 'Complete nightmare mode' },
+    sudden_death_complete: { emoji: '💀', name: 'Cheated Death', description: 'Complete sudden death mode' },
     level_5: { emoji: '📈', name: 'Climber', description: 'Reach level 5' },
     level_10: { emoji: '👑', name: 'Champion', description: 'Reach level 10' },
     streak_7: { emoji: '🔗', name: '7 Day Chain', description: '7 day streak' },

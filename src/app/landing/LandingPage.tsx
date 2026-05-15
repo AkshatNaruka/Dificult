@@ -57,7 +57,7 @@ export default function LandingPage() {
                         gap: 24,
                     }}>
                         {[
-                            { icon: 'speed', title: 'Difficulty Modes', desc: 'From Normal to Nightmare. Each mode adds visual chaos, faster words, and multiplied XP rewards.' },
+                            { icon: 'speed', title: 'Difficulty Modes', desc: 'From Easy to Sudden Death. No backspace, hidden text, instant fail — real gameplay restrictions with XP multipliers.' },
                             { icon: 'groups', title: 'Multiplayer Races', desc: 'Race friends or strangers in real-time. Watch their cursor advance as you type.' },
                             { icon: 'emoji_events', title: 'Tournaments', desc: 'Monthly sponsor-backed competitions with prize pools and leaderboard branding.' },
                             { icon: 'trending_up', title: 'Progress Tracking', desc: 'WPM history, accuracy trends, combo streaks, and achievement unlocks over time.' },

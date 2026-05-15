@@ -179,12 +179,11 @@ const typeOptions = [
 ];
 
 const diffOptions = [
-  { key: 'normal', label: 'Easy' },
+  { key: 'easy', label: 'Easy' },
+  { key: 'normal', label: 'Normal' },
   { key: 'hard', label: 'Hard' },
-  { key: 'insane', label: 'Insane' },
-  { key: 'chaos', label: 'Chaos' },
-  { key: 'nightmare', label: 'Hell' },
-  { key: 'screensaver', label: 'Screen' },
+  { key: 'expert', label: 'Expert' },
+  { key: 'suddenDeath', label: 'Death' },
 ];
 
 export default function SettingsBar({

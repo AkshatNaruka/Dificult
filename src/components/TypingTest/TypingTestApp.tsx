@@ -7,10 +7,8 @@ import { usePlayerStore } from '@/store/playerStore';
 import { WordDisplay } from './WordDisplay';
 import { StatsScreen } from './StatsScreen';
 import { SignUpPrompt } from '../SignUpPrompt';
-import { DifficultyEffects } from './DifficultyEffects';
 import { DifficultyWordEffects } from './DifficultyWordEffects';
-import { ThirdModeBackgrounds } from './ThirdModeBackgrounds';
-import { ScreensaverBounce } from './ScreensaverBounce';
+import { DIFFICULTY_CONFIG } from '@/data/difficultyConfig';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AchievementBadges, achievementDefinitions, AchievementUnlockNotification } from '@/components/Gamification/AchievementBadges';
 import { CelebrationEffects, Confetti } from '@/components/Gamification/CelebrationEffects';
@@ -27,14 +25,7 @@ import SettingsBar from './SettingsBar';
 import RankBadge from './RankBadge';
 import { TypingBackground } from './TypingBackground';
 
-const difficultyMultipliers: Record<'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver', number> = {
-    normal: 1,
-    hard: 1.2,
-    insane: 1.5,
-    chaos: 1.9,
-    nightmare: 2.4,
-    screensaver: 2.2,
-};
+// XP multipliers now come from DIFFICULTY_CONFIG
 
 const comboMilestones = [10, 25, 50, 75];
 
@@ -77,7 +68,7 @@ function checkAchievements(
     if (combo >= 25 && !currentAchievements.includes('combo_25')) newAchievements.push('combo_25');
     if (combo >= 50 && !currentAchievements.includes('combo_50')) newAchievements.push('combo_50');
     if (combo >= 100 && !currentAchievements.includes('combo_100')) newAchievements.push('combo_100');
-    if (difficulty === 'nightmare' && !currentAchievements.includes('nightmare_complete')) newAchievements.push('nightmare_complete');
+    if (difficulty === 'suddenDeath' && !currentAchievements.includes('sudden_death_complete')) newAchievements.push('sudden_death_complete');
     if (level >= 5 && !currentAchievements.includes('level_5')) newAchievements.push('level_5');
     if (level >= 10 && !currentAchievements.includes('level_10')) newAchievements.push('level_10');
     if (streak >= 7 && !currentAchievements.includes('streak_7')) newAchievements.push('streak_7');
@@ -211,7 +202,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
     const xpToNextLevel = profileLevel * 1000;
     const xpProgress = Math.min(100, Math.round((profileXp / xpToNextLevel) * 100));
     const currentCombo = engine.combo;
-    const difficultyMultiplier = difficultyMultipliers[engine.difficulty];
+    const difficultyMultiplier = DIFFICULTY_CONFIG[engine.difficulty].xpMultiplier;
     const modeMultiplier = gameModesDefinitions[specialMode].multiplier;
     const baseXpReward = engine.state === 'finished'
         ? Math.max(25, Math.round((finalWpm * 4 + accuracy * 2 + engine.maxCombo * 6 + timeTaken * 2) * difficultyMultiplier * modeMultiplier / 4))
@@ -284,7 +275,7 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
 
         setRewardToast({
             title: `Run complete: level ${profileLevel}`,
-            message: `+${xpReward} XP earned${engine.difficulty === 'nightmare' ? ' for surviving nightmare mode.' : '.'}`,
+            message: `+${xpReward} XP earned${engine.difficulty === 'suddenDeath' ? ' for surviving sudden death.' : '.'}`,
             accent: 'var(--text-accent)',
         });
         window.setTimeout(() => setRewardToast(null), 2200);
@@ -334,11 +325,9 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
             {/* ── User-selected aesthetic background ── */}
             <TypingBackground />
 
-            <ThirdModeBackgrounds difficulty={engine.difficulty} />
 
             {/* ── Difficulty Effects ── */}
-            <DifficultyEffects difficulty={engine.difficulty} typed={engine.typed} />
-            <DifficultyWordEffects difficulty={engine.difficulty} words={engine.words} typed={engine.typed} />
+            <DifficultyWordEffects difficulty={engine.difficulty} />
 
             {/* ── Celebration Effects ── */}
             <CelebrationEffects trigger={triggerCelebration} type="achievement" />
@@ -456,20 +445,20 @@ export default function TypingTestApp({ user }: { user: { email?: string, id: st
                                     onTimeChange={(v) => engine.testMode === 'time' ? engine.setTimeConfig(v) : engine.setWordConfig(v)}
                                     timeOptions={engine.testMode === 'time' ? [15, 30, 60] : [10, 25, 50]}
                                     difficulty={engine.difficulty}
-                                    onDiffChange={(d) => engine.setDifficulty(d as 'normal' | 'hard' | 'insane' | 'chaos' | 'nightmare' | 'screensaver')}
+                                    onDiffChange={(d) => engine.setDifficulty(d as 'easy' | 'normal' | 'hard' | 'expert' | 'suddenDeath')}
                                 />
                             </motion.div>
                             {/* Words area */}
-                            <ScreensaverBounce difficulty={engine.difficulty} className="w-full">
+                            <div className="w-full">
                                 <motion.div
                                     className="w-full transition-all duration-500 rounded-3xl py-4 px-8 cursor-text"
                                     ref={containerRef}
                                     onClick={focusInput}
                                     animate={{ scale: engine.combo >= 20 ? 1.01 : 1 }}
                                 >
-                                    <WordDisplay words={engine.words} typed={engine.typed} difficulty={engine.difficulty} />
+                                    <WordDisplay words={engine.words} typed={engine.typed} />
                                 </motion.div>
-                            </ScreensaverBounce>
+                            </div>
 
                             {/* ═════ RANK BADGE (below typing area) ═════ */}
                             {player && (
