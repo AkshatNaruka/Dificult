@@ -1,20 +1,31 @@
 import { createClient } from '@/utils/supabase/server';
 import { getDefaultEntitlements, getEntitlementsForUser } from '@/utils/entitlements';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { RankBadge } from '@/components/ui/RankBadge';
+import { GlassCard } from '@/components/ui/GlassCard';
 import { AdBanner } from '@/components/AdBanner';
 import Link from 'next/link';
-import { Navbar } from '@/components/Navbar';
 
 interface ProfileJoin {
     id: string;
     email?: string;
+    level?: number;
 }
 
-const rankLabel = (i: number) => {
-    if (i === 0) return '🥇';
-    if (i === 1) return '🥈';
-    if (i === 2) return '🥉';
-    return `#${i + 1}`;
-};
+function timeAgo(dateString: string) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d ago`;
+}
 
 export default async function LeaderboardPage() {
     const supabase = await createClient();
@@ -24,20 +35,12 @@ export default async function LeaderboardPage() {
         : getDefaultEntitlements();
     const leaderboardLimit = entitlements.leaderboardLimit;
 
-    let topXpProfiles: { id: string; email: string; xp: number; level: number }[] | null = null;
-    let topWpmUsers: { id: string; email: string; wpm: number; accuracy: number }[] = [];
+    let topWpmUsers: { id: string; email: string; wpm: number; accuracy: number; level: number; date: string }[] = [];
 
     if (supabase) {
-        const { data } = await supabase
-            .from('profiles')
-            .select('id, email, xp, level')
-            .order('xp', { ascending: false })
-            .limit(leaderboardLimit);
-        topXpProfiles = data;
-
         const { data: topStats } = await supabase
             .from('stats')
-            .select('wpm, accuracy, profiles!inner(id, email)')
+            .select('wpm, accuracy, created_at, profiles!inner(id, email, level)')
             .order('wpm', { ascending: false })
             .limit(Math.max(leaderboardLimit * 3, 30));
 
@@ -50,9 +53,11 @@ export default async function LeaderboardPage() {
                 if (!uniqueWpmMap.has(userId)) {
                     uniqueWpmMap.set(userId, {
                         id: userId,
-                        email: profile?.email,
+                        email: profile?.email || 'Unknown',
+                        level: profile?.level || 1,
                         wpm: stat.wpm,
-                        accuracy: stat.accuracy
+                        accuracy: stat.accuracy,
+                        date: stat.created_at || new Date().toISOString()
                     });
                 }
                 if (uniqueWpmMap.size >= leaderboardLimit) break;
@@ -61,178 +66,113 @@ export default async function LeaderboardPage() {
         topWpmUsers = Array.from(uniqueWpmMap.values());
     }
 
+    const top3 = topWpmUsers.slice(0, 3);
+    const rest = topWpmUsers.slice(3);
+
     return (
-        <div
-            className="min-h-screen flex flex-col"
-            style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-        >
+        <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
             <Navbar user={user} isPro={entitlements.isPro} />
 
-            <main className="flex-1 pt-24">
-                <div className="max-w-5xl mx-auto px-5 pt-12 pb-24 flex flex-col gap-10">
-                    {/* Header */}
-                    <div className="text-center space-y-2">
-                        <div className="text-xs uppercase tracking-[0.32em]" style={{ color: 'var(--text-main)', opacity: 0.5 }}>
-                            Global rankings
-                        </div>
-                        <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                            Leaderboard
-                        </h1>
-                        <p className="text-sm" style={{ color: 'var(--text-main)', opacity: 0.6 }}>
-                            Rank up. Dominate the boards.
-                        </p>
-                    </div>
+            <main className="flex-1 pt-28 pb-24 px-6 max-w-[1100px] mx-auto w-full">
+                <SectionHeader label="Global Rankings" heading="Leaderboard" subtitle="Rank up. Dominate the boards. Optimize your flow." />
 
-                    {/* Upsell banner */}
-                    {!entitlements.isPro && (
-                        <div
-                            className="flex items-center justify-between gap-4 p-5 rounded-2xl border"
-                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
-                        >
-                            <div className="space-y-0.5">
-                                <div className="text-xs uppercase tracking-[0.2em] opacity-50" style={{ color: 'var(--text-main)' }}>
-                                    Pro leaderboard
-                                </div>
-                                <div className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>
-                                    Unlock top 50 rankings + advanced filters
-                                </div>
-                            </div>
-                            <Link
-                                href="/pricing"
-                                className="shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all hover:opacity-90"
-                                style={{ background: 'var(--text-accent)', color: 'var(--bg-primary)' }}
-                            >
-                                Upgrade
-                            </Link>
-                        </div>
-                    )}
-
-                    {/* Tables */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* WPM board */}
-                        <div
-                            className="rounded-2xl border overflow-hidden"
-                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
-                        >
-                            <div className="px-6 py-4 border-b flex items-center gap-2" style={{ borderColor: 'var(--border-glass)' }}>
-                                <span className="text-lg">⚡</span>
-                                <h2 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Highest WPM</h2>
-                            </div>
-                            <div className="divide-y" style={{ borderColor: 'var(--border-glass)' }}>
-                                {topWpmUsers.length === 0 ? (
-                                    <div className="px-6 py-8 text-sm opacity-40 text-center" style={{ color: 'var(--text-main)' }}>
-                                        No stats recorded yet.
+                {/* Top 3 Podium */}
+                {top3.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                        {top3.map((p, idx) => (
+                            <GlassCard key={p.id} className={`p-6 text-center ${idx === 0 ? 'md:order-2 ring-1 ring-[#fbbf24]/30' : idx === 1 ? 'md:order-1' : 'md:order-3'}`}>
+                                <RankBadge rank={idx + 1} size="lg" />
+                                <div className="mt-4 mb-2">
+                                    <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-lg font-bold font-mono" style={{ background: 'var(--bg-surface-elevated)', color: 'var(--text-primary)' }}>
+                                        {p.email[0].toUpperCase()}
                                     </div>
-                                ) : topWpmUsers.map((p, idx) => {
-                                    const isMe = user?.id === p.id;
-                                    return (
-                                        <div
-                                            key={`wpm-${p.id}`}
-                                            className="flex items-center px-5 py-3.5 gap-3 transition-colors"
-                                            style={{
-                                                background: isMe ? 'color-mix(in srgb, var(--text-accent) 10%, transparent)' : 'transparent',
-                                            }}
-                                        >
-                                            <span
-                                                className="text-sm font-bold w-8 shrink-0 text-center"
-                                                style={{ color: idx < 3 ? 'var(--text-accent)' : 'var(--text-main)', opacity: idx < 3 ? 1 : 0.45 }}
-                                            >
-                                                {rankLabel(idx)}
-                                            </span>
-                                            <div
-                                                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
-                                                style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                                            >
-                                                {p.email?.[0]?.toUpperCase() ?? '?'}
-                                            </div>
-                                            <span
-                                                className="flex-1 font-medium text-sm truncate"
-                                                style={{ color: isMe ? 'var(--text-accent)' : 'var(--text-primary)' }}
-                                            >
-                                                {p.email?.split('@')[0]}
-                                                {isMe && <span className="ml-2 text-[10px] opacity-60">(you)</span>}
-                                            </span>
-                                            <div className="text-right shrink-0">
-                                                <div className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>{p.wpm}</div>
-                                                <div className="text-[10px] opacity-50" style={{ color: 'var(--text-main)' }}>{p.accuracy}% acc</div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* XP board */}
-                        <div
-                            className="rounded-2xl border overflow-hidden"
-                            style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-glass)' }}
-                        >
-                            <div className="px-6 py-4 border-b flex items-center gap-2" style={{ borderColor: 'var(--border-glass)' }}>
-                                <span className="text-lg">⭐</span>
-                                <h2 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Highest Level</h2>
-                            </div>
-                            <div className="divide-y" style={{ borderColor: 'var(--border-glass)' }}>
-                                {!topXpProfiles || topXpProfiles.length === 0 ? (
-                                    <div className="px-6 py-8 text-sm opacity-40 text-center" style={{ color: 'var(--text-main)' }}>
-                                        No profiles found.
-                                    </div>
-                                ) : topXpProfiles.map((p, idx) => {
-                                    const isMe = user?.id === p.id;
-                                    return (
-                                        <div
-                                            key={`xp-${p.id}`}
-                                            className="flex items-center px-5 py-3.5 gap-3 transition-colors"
-                                            style={{
-                                                background: isMe ? 'color-mix(in srgb, var(--text-accent) 10%, transparent)' : 'transparent',
-                                            }}
-                                        >
-                                            <span
-                                                className="text-sm font-bold w-8 shrink-0 text-center"
-                                                style={{ color: idx < 3 ? 'var(--text-accent)' : 'var(--text-main)', opacity: idx < 3 ? 1 : 0.45 }}
-                                            >
-                                                {rankLabel(idx)}
-                                            </span>
-                                            <div
-                                                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
-                                                style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                                            >
-                                                {p.email?.[0]?.toUpperCase() ?? '?'}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div
-                                                    className="font-medium text-sm truncate"
-                                                    style={{ color: isMe ? 'var(--text-accent)' : 'var(--text-primary)' }}
-                                                >
-                                                    {p.email?.split('@')[0]}
-                                                    {isMe && <span className="ml-2 text-[10px] opacity-60">(you)</span>}
-                                                </div>
-                                                <div className="text-[10px] opacity-45" style={{ color: 'var(--text-main)' }}>
-                                                    Level {p.level || 1}
-                                                </div>
-                                            </div>
-                                            <div className="text-right shrink-0">
-                                                <div className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>{p.xp || 0}</div>
-                                                <div className="text-[10px] opacity-50" style={{ color: 'var(--text-main)' }}>XP</div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                </div>
+                                <p className="font-mono text-sm font-bold truncate" style={{ color: 'var(--text-primary)' }}>{p.email.split('@')[0]}</p>
+                                <p className="text-stat text-3xl font-bold mt-2" style={{ color: 'var(--accent)' }}>{p.wpm}</p>
+                                <p className="text-ui mt-1" style={{ color: 'var(--text-muted)' }}>WPM</p>
+                            </GlassCard>
+                        ))}
                     </div>
+                )}
 
-                    {entitlements.adsEnabled && (
-                        <div className="flex justify-center">
-                            <AdBanner
-                                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''}
-                                format="horizontal"
-                                className="w-full"
-                                style={{ minHeight: '90px' }}
-                            />
-                        </div>
-                    )}
+                {/* Filter Bar */}
+                <div className="glass-card p-3 mb-6 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-1">
+                        {['Global', 'Friends'].map(tab => (
+                            <button key={tab} className="text-ui px-4 py-1.5 rounded transition-colors" style={{ background: tab === 'Global' ? 'rgba(167,139,250,0.1)' : 'transparent', color: tab === 'Global' ? 'var(--accent)' : 'var(--text-secondary)' }}>
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <select className="bg-transparent text-ui py-1 px-2 rounded" style={{ color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
+                            <option value="30">30s</option>
+                            <option value="60">60s</option>
+                        </select>
+                    </div>
                 </div>
+
+                {/* Table */}
+                <div className="glass-card overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                                <th className="text-ui px-6 py-4" style={{ color: 'var(--text-muted)' }}>Rank</th>
+                                <th className="text-ui px-6 py-4" style={{ color: 'var(--text-muted)' }}>Typist</th>
+                                <th className="text-ui px-6 py-4 text-right" style={{ color: 'var(--text-muted)' }}>WPM</th>
+                                <th className="text-ui px-6 py-4 text-right hidden md:table-cell" style={{ color: 'var(--text-muted)' }}>Accuracy</th>
+                                <th className="text-ui px-6 py-4 text-right hidden md:table-cell" style={{ color: 'var(--text-muted)' }}>When</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rest.length === 0 && top3.length === 0 && (
+                                <tr><td colSpan={5} className="px-6 py-12 text-center text-body">No stats recorded yet.</td></tr>
+                            )}
+                            {rest.map((p, idx) => {
+                                const rank = idx + 4;
+                                const isMe = user?.id === p.id;
+                                return (
+                                    <tr key={p.id} className="transition-colors" style={{ borderBottom: '1px solid var(--border-subtle)', background: isMe ? 'rgba(167,139,250,0.05)' : undefined }}>
+                                        <td className="px-6 py-4"><RankBadge rank={rank} size="sm" /></td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-mono" style={{ background: 'var(--bg-surface-elevated)', color: 'var(--text-secondary)' }}>
+                                                    {p.email[0].toUpperCase()}
+                                                </div>
+                                                <span className="font-mono text-sm" style={{ color: isMe ? 'var(--accent)' : 'var(--text-primary)' }}>
+                                                    {p.email.split('@')[0]}
+                                                    {isMe && <span className="ml-2 text-ui px-1.5 py-0.5 rounded" style={{ background: 'rgba(167,139,250,0.15)', color: 'var(--accent)', fontSize: '9px' }}>YOU</span>}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right text-stat text-lg font-bold" style={{ color: 'var(--accent)' }}>{p.wpm}</td>
+                                        <td className="px-6 py-4 text-right text-stat text-sm hidden md:table-cell" style={{ color: 'var(--text-secondary)' }}>{p.accuracy}%</td>
+                                        <td className="px-6 py-4 text-right text-ui hidden md:table-cell" style={{ color: 'var(--text-muted)' }}>{timeAgo(p.date)}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pro Barrier */}
+                {!entitlements.isPro && topWpmUsers.length > 0 && (
+                    <div className="glass-card p-12 text-center mt-6">
+                        <span className="text-ui block mb-4" style={{ color: 'var(--accent-warning)' }}>PRO FEATURE</span>
+                        <h3 className="heading-section text-xl mb-2">Unlock Full Rankings</h3>
+                        <p className="text-body mb-6">See top 50 rankings, advanced stats, and personal progress tracking.</p>
+                        <Link href="/pricing" className="btn-primary !px-8" style={{ textDecoration: 'none' }}>Upgrade to Pro</Link>
+                    </div>
+                )}
+
+                {entitlements.adsEnabled && (
+                    <div className="flex justify-center mt-12">
+                        <AdBanner slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || ''} format="horizontal" className="w-full max-w-[728px]" style={{ minHeight: '90px' }} />
+                    </div>
+                )}
             </main>
+
+            <Footer />
         </div>
     );
 }
