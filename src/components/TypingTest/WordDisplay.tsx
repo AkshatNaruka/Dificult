@@ -69,7 +69,7 @@ export function WordDisplay({ words, typed, difficulty = 'normal' }: WordDisplay
     };
 
     return (
-        <div className="relative w-[60vw] min-w-[320px] max-w-[800px] mx-auto h-[160px] overflow-hidden text-[38px] font-typing leading-relaxed tracking-wide px-4" style={{ color: 'var(--text-main)' }}>
+        <div className="typing-mask relative w-[60vw] min-w-[320px] max-w-[800px] mx-auto h-[160px] overflow-hidden text-[32px] md:text-[38px] font-typing-buffer leading-relaxed tracking-tight px-4" style={{ color: 'var(--on-surface-variant)' }}>
 
             <div
                 ref={containerRef}
@@ -92,10 +92,10 @@ export function WordDisplay({ words, typed, difficulty = 'normal' }: WordDisplay
 
                                 if (typedChar !== undefined) {
                                     if (typedChar === char) {
-                                        stateClass = 'text-[var(--text-primary)] font-semibold';
+                                        stateClass = 'text-[var(--on-surface)] font-semibold';
                                     } else {
-                                        stateClass = 'text-[var(--text-error)] bg-[var(--bg-error)] rounded-[4px] font-semibold';
-                                        extraStyles = { borderBottom: '2px solid var(--text-error)' };
+                                        stateClass = 'text-[var(--error)] bg-[var(--error-container)] rounded-[4px] font-semibold';
+                                        extraStyles = { borderBottom: '2px solid var(--error)' };
                                     }
                                 } else {
                                     // Apply difficulty effects to untyped characters
@@ -132,7 +132,7 @@ export function WordDisplay({ words, typed, difficulty = 'normal' }: WordDisplay
                                             <span
                                                 key={`extra-${idx}`}
                                                 ref={isActive ? activeCharRef : null}
-                                                className="char text-[var(--text-error)] opacity-80 border-b-[3px] border-[var(--text-error)] font-bold bg-[var(--bg-error)] rounded-sm"
+                                                className="char text-[var(--error)] opacity-80 border-b-[3px] border-[var(--error)] font-bold bg-[var(--error-container)] rounded-sm"
                                             >
                                                 {extraChar}
                                             </span>

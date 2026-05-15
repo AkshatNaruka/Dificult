@@ -9,6 +9,8 @@ export const gearItems: GearItem[] = [
     category: 'Keyboard',
     priceRange: '$169–$209',
     url: 'https://www.keychron.com',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuALrgvOel-LIS9agbOqRK-RsZnKL5S2BqsouT-rPyA5XhUvaczUj2RkOsHpxsXk1tqyke3sCPNZVonrTc2loqPyypRI4rAmejpiFaTn26JMS2XzlAfuYkcrNSy6q_GYsHVpTzb5fUurA8CZTNyvbVX1Cs6viqkrzX-q9isyThC_BQ1o_V26InKNRWDj5HqXo-D_okoVNdh0Tol2wZSjIQSsCGPB1DkCZ1mTW0b3rcwuC2rLjrJdQn-DHWjHkkUHrVAgPb27bV8m5qUF',
+    imageAlt: 'A professional studio photograph of a Keychron Q1 Pro mechanical keyboard. The device features a premium navy blue CNC aluminum body with high-quality PBT keycaps. The lighting is moody and cinematic, highlighting the metallic texture and the glowing RGB backlight. The style is minimalist and high-performance, fitting a dark-mode tech aesthetic.',
   },
   {
     id: 'drop-alt',
@@ -18,6 +20,8 @@ export const gearItems: GearItem[] = [
     category: 'Keyboard',
     priceRange: '$179–$249',
     url: 'https://drop.com',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGvdlHfToA2z8lv8TQEYPma0KUtq7L69x50BBKBmpk3PQVAQltEroO7YAFlaXzyq2TP9jSL0i6mXGNxHvaL5aoG_zX6gs5njLk2YL-qBUGvRjK6Ya5gjYi0dOwP5kvGXApIMgvOqzApkWOfmqYqGXS7HR2gLo9tUIRemeuI2N7VvhGRwBVTCgezmfKY-bwpY3r4qnoEPFgLONkJCcKsJQz7UvLvU4ZhXng5vzl6M50wONIyvQKc56ZJDxvKCMoc0fOcvKrXqzN2n2-',
+    imageAlt: 'A sleek Drop ALT V2 keyboard showcased in a minimalist desk setup. The image focuses on the low-profile aluminum frame and the vibrant under-glow lighting that casts a soft blue hue on the dark desk surface. The composition is clean and technical, emphasizing the compact 65 percent layout and premium switch details.',
   },
   {
     id: 'zsa-moonlander',
@@ -27,6 +31,8 @@ export const gearItems: GearItem[] = [
     category: 'Ergonomic',
     priceRange: '$365+',
     url: 'https://www.zsa.io/moonlander',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCRmKIrQjWkYy0BcvoYAK5MfGjWwLBsE0vG_xidOObEUAS-D99MeNzPg5ibznP0e25i6Zp_hl8wK2GRcGt4aZXfjdPgThbdG8KsfDdxjyjGRzW2SToERgpz7zVLsK-LaFtqhKH7QDE8_BUERy6gO3bShinOZNKA5oSs8F9GpgrO8F7IEpJQpbLQv0_DywsJDQKHRUIt92FacWwd-ScGudr-s98ti_1wOSoIjtuuIyWE4mTc9B0Hob2bo9Pl4zK8DQPhswnkdv3UNmP8',
+    imageAlt: 'A split ergonomic Moonlander keyboard presented on a dark, textured desktop. The two halves of the keyboard are angled for maximum comfort, featuring an ortholinear key layout and customizable thumb clusters. The aesthetic is highly futuristic and clinical, with subtle glow-in-the-dark legends on the keys and a focus on ergonomic perfection.',
   },
   {
     id: 'logi-mx-keys',
@@ -36,6 +42,8 @@ export const gearItems: GearItem[] = [
     category: 'Keyboard',
     priceRange: '$99–$119',
     url: 'https://www.logitech.com',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsCEnfm3_1g44uSKWF5JuabI-qXwsMjVfPQfQKTrnmw9JTcyYGKTYtGlhQv2IX94RMC8dvgsY1yvZcblXd2oZaNbdIqrvnE4eV3dn72bntZNWUnGjAofs6ZKiBRg5Y6KcMI6gUy1Y3ZGXEZ9ggHNko2izAMDGiSGSXSSbg1GyTmtHt1vrP-NQPK7C5Ano0tP-wSrkIi0-MMkvVh2LIdfIt4dFwZnte_Fb-W9JOS1JMQjgRDHooBVmk1M5XY8Q6LcT_WamnpUwEidce',
+    imageAlt: 'A top-down view of a Logitech MX Keys keyboard on a clean, modern workspace. The lighting is soft and diffused, emphasizing the spherically dished keys and the sleek dark gray finish. The background includes a professional mouse and a laptop, creating a high-end corporate productivity atmosphere with high contrast and sharp focus.',
   },
   {
     id: 'grip-mat',
@@ -45,5 +53,7 @@ export const gearItems: GearItem[] = [
     category: 'Accessories',
     priceRange: '$19–$29',
     url: 'https://www.amazon.com',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB0_Ogi5LTGWgFjDVEiMBz6PeOQqjK7WYKLJR8AKvoei6UJoToNXpANa83PVPG44Eh7z2E_zXYYspfhy-W8HW7NR2SNwtC7ZPOOHXzUdfOk-JCLHQ4aaeES15kWUGbDn4MIzoTH-oIOjTXez7XHCwI6HROhaFeKd_72QR8BxMTXcKYoWnMOXoumaXRcJR3eSAhKgayzJEYqrUhvlsP7iirKKSlO7clVVU2AqJ9FOdEmsFCr8ioSFJdk86pQRpWaxyXwHIYL_ocFPbA7',
+    imageAlt: 'A close-up shot of a high-quality desk mat texture. The mat is a deep obsidian black with a subtle micro-weave pattern that suggests precision and grip. The edge features high-density stitching in a matching tone. Soft overhead lighting creates a subtle gradient across the surface, highlighting its clean, non-reflective finish suited for a focused workstation.',
   },
 ];

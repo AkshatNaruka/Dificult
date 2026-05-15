@@ -13,4 +13,5 @@ export interface Tournament {
   prizePool: string;
   sponsor: TournamentSponsor;
   leaderboardNote: string;
+  image?: string;
 }
